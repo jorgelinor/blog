@@ -1,3 +1,5 @@
+#Clase de inicio de sesion
+
 import handler
 import hashlib
 from user import User
@@ -17,7 +19,7 @@ class Login(handler.Handler):
 		erroruser,errorpass='',''
 		user_query = db.GqlQuery('select * from User')
 		user_list = []
-		user_ob = None
+		user_ob = None #<---esta variable la uso mucho a la hora de asignar un objeto usuario
 		if user_query:
 			for e in user_query:
 				user_list.append(e.user_id)
@@ -33,12 +35,12 @@ class Login(handler.Handler):
 			if user_ob and user_ob.user_pw != hashlib.sha256(password[1]).hexdigest():
 				errorpass = 'Invalid password'
 			self.render('login.html',username=username[1],erroruser=erroruser,errorpass=errorpass)
-		else:
-			user_ob = User(user_id=username[1],user_pw=hashlib.sha256(username[1]+password[1]).hexdigest())
-			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.user_id)+'|'+str(user_ob.user_id+user_ob.user_pw)+';Path=/')
+		else: #si todo esta correcto
+			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.user_id)+'|'+str(user_ob.user_pw)+';Path=/') #se hace la cookie del usuario
 			self.redirect('/')
 
-
+#estas funciones sirven para validar el usuario y la contrasenia, pero se le pueden agregar mas condiciones al verificar.
+#Las salidas de dichas funciones son una tupla con un boolean como primer elemento y el usuario o contrasenia en el segundo
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
     if USER_RE.match(username):

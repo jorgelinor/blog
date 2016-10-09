@@ -1,11 +1,3 @@
-from google.appengine.api import memcache
-import re
-import random
-import string
-from xml.dom import minidom
-import urllib2
-import logging
-import imp
 import webapp2
 import os
 import sys
@@ -15,7 +7,7 @@ import signup
 import logout
 import page
 
-
+#este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
 
 

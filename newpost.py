@@ -1,3 +1,5 @@
+#clase para crear un post nuevo, depende del objeto Post
+
 import handler
 from post import Post
 

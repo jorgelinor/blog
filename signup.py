@@ -1,3 +1,5 @@
+#Clase de registro
+
 import handler
 from user import User
 import hashlib
@@ -22,7 +24,7 @@ class Signup(handler.Handler):
 		erroruser,errormail,errorpass,errorverify,errortel,errordesc,errordate='','','','','','',''
 		user_query = db.GqlQuery('select * from User')
 		user_list = []
-		user_ob = None
+		user_ob = None #<---esta variable la uso mucho a la hora de asignar un objeto usuario
 		if user_query:
 			for e in user_query:
 				user_list.append(e.user_id)
@@ -45,14 +47,16 @@ class Signup(handler.Handler):
 				errormail = 'Invalid e-mail'
 			self.render('signup.html',username=username[1],email=email[1],erroruser=erroruser,errormail=errormail,errorpass=errorpass,errorverify=errorverify,
 						errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel,description=description,date=date)
-		else:
+		else: #si el registro es valido
 			user_ob = User(user_id=username[1],user_pw=hashlib.sha256(username[1]+password[1]).hexdigest(),user_mail=hashlib.sha256(email[1]).hexdigest(),
-							user_tel=tel,user_date=date,user_desc=description)
-			user_ob.put()
-			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.user_id)+'|'+str(user_ob.user_pw)+';Path=/')
+							user_tel=tel,user_date=date,user_desc=description,user_type='user') #se crea un objeto usuario con los datos
+			user_ob.put() #se sube a la base de datos
+			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.user_id)+'|'+str(user_ob.user_pw)+';Path=/') #y se crea la cookie
 			self.redirect('/')
 
 
+#estas funciones sirven para validar el usuario,la contrasenia y el email, pero se le pueden agregar mas condiciones al verificar.
+#Las salidas de dichas funciones son una tupla con un boolean como primer elemento y el usuario,contrasenia o email en el segundo
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
     if USER_RE.match(username):

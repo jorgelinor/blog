@@ -1,3 +1,5 @@
+#Esta es la clase que sirve como objeto para el post y sus propiedades
+
 from google.appengine.ext import db
 
 class Post(db.Model):

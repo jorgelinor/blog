@@ -1,3 +1,5 @@
+#clase de salida
+
 import handler
 
 class Logout(handler.Handler):

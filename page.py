@@ -1,3 +1,5 @@
+#esta es la clase que muestra los posts
+
 import newpost
 from google.appengine.ext import db
 

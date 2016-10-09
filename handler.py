@@ -1,3 +1,5 @@
+#Esta es la clase principal, la cual hereda a la mayoria de las demas.
+
 import webapp2
 import os
 import jinja2
@@ -14,7 +16,3 @@ class Handler(webapp2.RequestHandler):
         return y.render(params)
     def render(self,template,**kw):
         self.write(self.render_str(template,**kw))
-    def render_json(self,d):
-        json_txt = json.dumps(d)
-        self.response.headers['Content-Type']='application/json; charset=UTF-8'
-        self.write(json_txt)
