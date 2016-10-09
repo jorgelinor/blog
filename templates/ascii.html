@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Mandar nuevo</title>
+	</head>
+	<body>
+		<h1>Manda lo que quieras</h1>
+		<form method="post">
+			<label>
+				<h4 style="margin:0px">Título</h4>
+				<input type="text" name="subject" value="{{title}}">
+			</label>
+			<label>
+				<h4 style="margin:0px">Contenido</h4>
+				<textarea name="content" style="width:400px;height:150px">{{art}}</textarea>
+			</label>
+			<div class='error' style="color:red">{{error}}</div>
+			<div><button>Enviar</button></div>
+		</form><a href="/" style="float:right">Volver</a><br>
+		<hr>
+	</body>
+</html>

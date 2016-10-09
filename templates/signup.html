@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Singup</title>
+</head>
+<body>
+    <form method='post'>
+        <h2>Singup</h2>
+        <br>
+        <label><b>User</b>
+            <input type='text' name='username' value='{{username}}'>
+        </label><label name='erroruser' style='color:red' value=''>{{erroruser}}</label><br>
+        <label><b>Password</b>
+            <input type='password' name='password'>
+        </label><label name='errorpass' style='color:red' value=''>{{errorpass}}</label><br>
+        <label><b>Verify password</b>
+            <input type='password' name='verify' value=''>
+        </label><label name='errorverify' style='color:red' value=''>{{errorverify}}</label><br>
+        <label><b>E-mail</b>
+            <input type='text' name='email' value='{{email}}'>
+        </label><label name='errormail' style='color:red' value=''>{{errormail}}</label><br>
+        <label><b>Phone</b>
+            <input type='text' name='tel' value="{{tel}}">
+        </label><label name='errortel' style='color:red' value=''>{{errortel}}</label><br>
+        <label><b>Birth Date</b>
+            <input type='text' name='date1' placeholder="AAAA"> <input type='text' name='date2' placeholder="MM"> <input type='text' name='date3' placeholder="DD">
+        </label><label name='errordate' style='color:red' value=''>{{errordate}}</label><br>
+        <label><b>Description (opcional)</b>
+            <input type='text' name='description' value='{{description}}'>
+        </label><label name='errordesc' style='color:red' value=''>{{errordesc}}</label><br>
+        <br>
+        <br>
+        <button>Submit</button>
+    </form>
+    <a href='/login' style="padding-left: 5px;float:right">Iniciar sesion</a>
+    <a href="/" style="float:right">Volver</a>
+</body>
+</html>

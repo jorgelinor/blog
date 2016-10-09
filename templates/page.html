@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Escribe pa mi</title>
+</head>
+<body>
+<center><h1>Escribe pa mi</h1></center>
+{%if user%}
+{{user}}<a href="/logout">(salir)</a>
+<a href="/newpost" style="float:right">Manda uno nuevo</a>
+{%else%}
+<a href="/login">Iniciar sesion</a>
+<a href="/signup" style="float:right">Registrar</a>
+{%endif%}
+<center>
+{%if posts%}
+	{%for post in posts%}
+		<h2 style="margin-left:20%;margin-right:20%">{{post.title}}</h2>
+		<div style="max-width:500px;word-wrap:break-word">{{post.post}}</div>
+		<label style="float:left">Enviado por: {{post.submitter}}</label>
+		<label style="float:right">{{post.created_str}}</label><br>
+		<hr>
+	{%endfor%}
+<br>
+{%endif%}
+</center>
+</body>
+</html>
