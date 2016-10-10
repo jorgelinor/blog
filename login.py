@@ -29,7 +29,7 @@ class Login(handler.Handler):
 			if not username[0]:
 				erroruser = 'Invalid username'
 			if not user_ob:
-				erroruser = "Username don't exists"
+				erroruser = "Username doesn't exist"
 			if not password[0]:
 				errorpass = 'Invalid password'
 			if user_ob and user_ob.user_pw != hashlib.sha256(password[1]).hexdigest():
