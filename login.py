@@ -17,14 +17,11 @@ class Login(handler.Handler):
 		username = valid_username(self.request.get('username'))
 		password = valid_pass(self.request.get('password'))
 		erroruser,errorpass='',''
-		user_query = db.GqlQuery('select * from User')
-		user_list = []
+		user_query = db.GqlQuery('select * from User where user_id=:1',username[1])
+		user_query = list(user_query)
 		user_ob = None #<---esta variable la uso mucho a la hora de asignar un objeto usuario
 		if user_query:
-			for e in user_query:
-				user_list.append(e.user_id)
-				if e.user_id == username[1]:
-					user_ob = e
+			user_ob = user_query[0]
 		if not(username[0] and password[0] and user_ob and user_ob.user_pw == hashlib.sha256(username[1]+password[1]).hexdigest()):
 			if not username[0]:
 				erroruser = 'Invalid username'
@@ -36,7 +33,8 @@ class Login(handler.Handler):
 				errorpass = 'Invalid password'
 			self.render('login.html',username=username[1],erroruser=erroruser,errorpass=errorpass)
 		else: #si todo esta correcto
-			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.user_id)+'|'+str(user_ob.user_pw)+';Path=/') #se hace la cookie del usuario
+			self.write(str(user_ob.key().id()))
+			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.key().id())+'|'+hashlib.sha256(str(user_ob.key().id())).hexdigest()+';Path=/') #se hace la cookie del usuario
 			self.redirect('/')
 
 #estas funciones sirven para validar el usuario y la contrasenia, pero se le pueden agregar mas condiciones al verificar.

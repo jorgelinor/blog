@@ -22,14 +22,11 @@ class Signup(handler.Handler):
 		verify = self.request.get('verify')==self.request.get('password')
 		email = valid_email(self.request.get('email'))
 		erroruser,errormail,errorpass,errorverify,errortel,errordesc,errordate='','','','','','',''
-		user_query = db.GqlQuery('select * from User')
-		user_list = []
+		user_query = db.GqlQuery('select * from User where user_id=:1',username[1])
+		user_query = list(user_query)
 		user_ob = None #<---esta variable la uso mucho a la hora de asignar un objeto usuario
 		if user_query:
-			for e in user_query:
-				user_list.append(e.user_id)
-				if e.user_id == username[1]:
-					user_ob = e
+			user_ob = user_query[0]
 		if not(username[0] and tel and len(date)==10 and email and password[0] and verify and email[0] and not user_ob):
 			if not username[0]:
 				erroruser = 'Invalid username'
@@ -51,7 +48,7 @@ class Signup(handler.Handler):
 			user_ob = User(user_id=username[1],user_pw=hashlib.sha256(username[1]+password[1]).hexdigest(),user_mail=email[1],
 							user_tel=tel,user_date=date,user_desc=description,user_type='user') #se crea un objeto usuario con los datos
 			user_ob.put() #se sube a la base de datos
-			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.user_id)+'|'+str(user_ob.user_pw)+';Path=/') #y se crea la cookie
+			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.key().id())+'|'+hashlib.sha256(str(user_ob.key().id())).hexdigest()+';Path=/') #y se crea la cookie
 			self.redirect('/')
 
 
