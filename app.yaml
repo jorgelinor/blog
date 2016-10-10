@@ -5,8 +5,8 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /clases
-  static_dir: clases
+- url: /css
+  static_dir: css
 
 - url: /favicon\.ico
   static_files: favicon.ico
