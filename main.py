@@ -6,11 +6,17 @@ import login
 import signup
 import logout
 import page
+import profile
 
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
 
 
 app = webapp2.WSGIApplication([
-    ('/newpost', newpost.Newpost),('/signup',signup.Signup),('/login',login.Login),('/logout',logout.Logout),('/',page.Page)
+    ('/newpost', newpost.Newpost),
+    ('/signup',signup.Signup),
+    ('/login',login.Login),
+    ('/logout',logout.Logout),
+    ('/',page.Page),
+    ('/profile/?', profile.Profile)
 ], debug=True)

@@ -1,0 +1,22 @@
+<!doctype hmtl>
+<html>
+	<head>
+		<title>Profile - {{user.user_id}}</title>
+	</head>
+	<body>
+		<div id="user-holder" style="width:30%; height:30%;margin-left:10px">
+			<div id="username"><b style="float:left">{{user.user_id}}</b></div><br><br>
+			<div style="width:100px;height:100px;border:black solid 1px;float:left">Pic</div>
+			<div id="user-info" style="float:right;text-align:left;">
+				<b>Fecha de nacimiento</b>: {{user.user_date}}<br>
+				<b>Numero de telefono</b>: {{user.user_tel}}<br>
+				<b>E-Mail</b>: {{user.user_mail}}<br>
+				{%if desc != None%}
+					<b>Descripcion</b>: {{user.user_desc}}
+				{%endif%}
+			</div>
+
+		</div>
+
+	</body>
+</html>
