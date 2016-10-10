@@ -70,10 +70,10 @@ def valid_pass(password):
         return (True,password)
     return (False,password)
 
+EMAIL_RE = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
 def valid_email(email):
-    if not email:
-        return (False,'')
-    if email[-4:] == '.com' and email.find('@')>-1:
-    	if len(email) > 4:
-    		return (True,email)
+    if email== "":
+        return None
+    if EMAIL_RE.match(email):
+        return (True,email)
     return (False,email)

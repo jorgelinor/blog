@@ -1,0 +1,19 @@
+#user-holder {
+	width:auto;
+	height:30%;
+	margin-left:10px
+}
+#user-id {
+	float:left;
+}
+#profile-picture {
+	width:100px;
+	height:100px;
+	border:black solid 1px;
+	float:left
+}
+#user-info {
+	margin-left:150px;
+	text-align:left;
+	word-wrap: break-word;
+}
