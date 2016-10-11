@@ -7,7 +7,9 @@ from user import User
 
 class Profile(handler.Handler):
 	def get(self):
-		user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		user = self.request.cookies.get('user_id')
+		if user:
+			user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if not self.request.get("u"):
 			if self.request.cookies.get("user_id") == "" or not self.request.cookies.get("user_id"):
 				self.redirect("/login")
@@ -49,9 +51,13 @@ def valid_tel(tel):
 
 class EditProfile(handler.Handler):
 	def get(self):
-		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		user = self.request.cookies.get('user_id')
+		if user:
+			if user.split('|')[0].isdigit():
+				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-			self.render("editprofile.html", user=user,date=user.user_date.split("-"))
+			date_pre = create_date()
+			self.render("editprofile.html", user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
 		else:
 			self.write("Usuario no encontrado")
 	def post(self):
@@ -72,18 +78,20 @@ class EditProfile(handler.Handler):
 		if actualnick[0] != False:
 			if actualnick[0][0].displayName != user.displayName:
 				check_nick == False
-		if (not nickname[0]) or (not tel[0]) or (len(date)!=10) or (check_pass == False) or (check_nick == False):
+		if (not nickname[0]) or (not tel[0]) or (len(date)<7) or (check_pass == False) or (check_nick == False):
 			if not nickname[0]:
 				erroruser = 'Nombre invalido'
 			if not tel[0]:
 				errortel = 'Numero invalido'
-			if not len(date)==10:
+			if not len(date)>7:
 				errordate = 'Fecha invalida'
 			if check_pass ==False:
 				passerror = 'Contrasena erronea'
 			if check_nick == False:
 				erroruser = 'Nombre tomado'
-			self.render('editprofile.html',user=user,dateerror=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),passerror=passerror)
+			date_pre = create_date()
+			self.render('editprofile.html',user=user,dateerror=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
+				years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],passerror=passerror)
 		else:
 			user.displayName=nickname[1]
 			user.user_tel=tel[1]
@@ -93,9 +101,22 @@ class EditProfile(handler.Handler):
 			time.sleep(2)
 			self.redirect('/profile')
 
+
+def create_date():
+	years,months,days = [],[],[]
+	for e in range(1,32):
+		days.append(e)
+	for e in range(1,13):
+		months.append(e)
+	for e in range(1950,2013):
+		years.append(e)
+	return (years,months,days)
+
 class EditPass(handler.Handler):
 	def get(self):
-		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		user = self.request.cookies.get('user_id')
+		if user:
+			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			self.render("editpass.html", user=user)
 		else:

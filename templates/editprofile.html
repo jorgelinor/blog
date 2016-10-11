@@ -13,7 +13,21 @@
 				<label>Numero de telefono</label>
 				<input type="text" name="tel" value="{{user.user_tel}}" class="editable"><div class="error">{{errortel}}</div></input><br><br>
 				<label>Fecha de nacimiento</label>
-				<input class="date-space" type='text' name='date1' value="{{date[0]}}"><input class="date-space" type='text' name='date2' value="{{date[1]}}"><input class="date-space" type='text' name='date3' value="{{date[2]}}"><div class="eror"><div class="error">{{errordate}}</div></input><br><br>
+		            <select name='date1' placeholder="AAAA">
+		                {%for year in years%}
+		                    <option value='{{year}}'>{{year}}</option>
+		                {%endfor%}
+		            </select>
+		             <select name='date2' placeholder="MM">
+		                {%for month in months%}
+		                    <option value='{{month}}'>{{month}}</option>
+		                {%endfor%}
+		             </select> 
+		             <select name='date3' placeholder="DD">
+		                {%for day in days%}
+		                    <option value='{{day}}'>{{day}}</option>
+		                {%endfor%}
+		            </select><div class="error">{{errordate}}</div></input><br><br>
 				<label>Descripcion</label><br>
 				<textarea name="description" id="desc-area">{{user.user_desc}}</textarea><br><br>
 				<label>Para guardar introduzca su contrasena actual aqui >>></label>

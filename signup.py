@@ -12,12 +12,14 @@ class Signup(handler.Handler):
 		user = self.request.cookies.get('user_id')
 		if user != "":
 			user = user.split("|")
+			date_pre = create_date()
 			if db.get(db.Key.from_path("User",int(user[0]))) and user[1] != hashlib.sha256(user[0]).hexdigest():
-				self.render('signup.html',url='Signup',link='/')
+				self.render('signup.html',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
 			else:
 				self.write("<a href='/'>Already registered</a>")
 		else:
-			self.render('signup.html',url='Signup',link='/')
+			date_pre = create_date()
+			self.render('signup.html',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
 	def post(self):
 		randomStr = ''.join(random.choice(string.letters) for _ in xrange(5))
 		username = valid_username(self.request.get('username'))
@@ -33,7 +35,7 @@ class Signup(handler.Handler):
 		user_ob = None #<---esta variable la uso mucho a la hora de asignar un objeto usuario
 		if user_query:
 			user_ob = user_query[0]
-		if not(username[0] and tel[0] and len(date)==10 and email and password[0] and verify and email[0] and not user_ob):
+		if not(username[0] and tel[0] and len(date)>7 and email and password[0] and verify and email[0] and not user_ob):
 			if not username[0]:
 				erroruser = 'Invalid username'
 			if user_ob:
@@ -44,12 +46,14 @@ class Signup(handler.Handler):
 				errorverify = "Passwords don't match"
 			if not tel[0]:
 				errortel = 'Introduce a phone number'
-			if not len(date)==10:
+			if not len(date)>7:
 				errordate = 'Invalid Birth Date'
 			if not email[0]:
 				errormail = 'Invalid e-mail'
+			date_pre = create_date()
 			self.render('signup.html',username=username[1],email=email[1],erroruser=erroruser,errormail=errormail,errorpass=errorpass,errorverify=errorverify,
-						errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description)
+						errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description,years=list(reversed(date_pre[0])),
+						months=date_pre[1],days=date_pre[2])
 		else: #si el registro es valido
 			user_ob = User(user_id=username[1],user_pw=hashlib.sha256(password[1]).hexdigest(),user_mail=email[1],
 							user_tel=tel[1],user_date=date,user_desc=description,user_type='user',displayName=username[1]+randomStr) #se crea un objeto usuario con los datos
@@ -77,9 +81,8 @@ EMAIL_RE = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
 def valid_email(email):
     if not email:
         return (False,'')
-    if email[-4:] == '.com' and email.find('@')>-1:
-    	if len(email) > 4:
-    		return (True,email)
+    if EMAIL_RE.match(email):
+    	return (True,email)
     return (False,email)
 
 def valid_tel(tel):
@@ -96,3 +99,13 @@ def valid_date(date):
 	if date.isdigit():
 		return (True,date)
 	return (False,'')
+
+def create_date():
+	years,months,days = [],[],[]
+	for e in range(1,32):
+		days.append(e)
+	for e in range(1,13):
+		months.append(e)
+	for e in range(1950,2013):
+		years.append(e)
+	return (years,months,days)
