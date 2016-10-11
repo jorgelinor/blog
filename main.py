@@ -18,5 +18,6 @@ app = webapp2.WSGIApplication([
     ('/login',login.Login),
     ('/logout',logout.Logout),
     ('/',page.Page),
-    ('/profile/?', profile.Profile)
+    ('/profile/?', profile.Profile),
+    ('/profile/_edit/?', profile.EditProfile)
 ], debug=True)
