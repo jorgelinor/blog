@@ -37,3 +37,11 @@
 .error {
 	color:red;
 }
+#post-submitter {
+	text-decoration: none;
+	color: gray;
+}
+#post-title {
+	color: gray;
+	text-decoration: none;
+}
