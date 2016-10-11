@@ -10,7 +10,8 @@ class Signup(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get('user_id')
 		if not user:
-			self.render('signup.html',url='Signup',link='/')
+			date_pre = create_date()
+			self.render('signup.html',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
 		else:
 			self.write("<a href='/'>Already registered</a>")
 	def post(self):
@@ -42,8 +43,10 @@ class Signup(handler.Handler):
 				errordate = 'Invalid Birth Date'
 			if not email[0]:
 				errormail = 'Invalid e-mail'
+			date_pre = create_date()
 			self.render('signup.html',username=username[1],email=email[1],erroruser=erroruser,errormail=errormail,errorpass=errorpass,errorverify=errorverify,
-						errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description)
+						errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description,years=list(reversed(date_pre[0])),
+						months=date_pre[1],days=date_pre[2])
 		else: #si el registro es valido
 			user_ob = User(user_id=username[1],user_pw=hashlib.sha256(password[1]).hexdigest(),user_mail=email[1],
 							user_tel=tel[1],user_date=date,user_desc=description,user_type='user') #se crea un objeto usuario con los datos
@@ -90,3 +93,13 @@ def valid_date(date):
 	if date.isdigit():
 		return (True,date)
 	return (False,'')
+
+def create_date():
+	years,months,days = [],[],[]
+	for e in range(1,32):
+		days.append(e)
+	for e in range(1,13):
+		months.append(e)
+	for e in range(1950,2013):
+		years.append(e)
+	return (years,months,days)
