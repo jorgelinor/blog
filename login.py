@@ -22,7 +22,7 @@ class Login(handler.Handler):
 		user_ob = None #<---esta variable la uso mucho a la hora de asignar un objeto usuario
 		if user_query:
 			user_ob = user_query[0]
-		if not(username[0] and password[0] and user_ob and user_ob.user_pw == hashlib.sha256(username[1]+password[1]).hexdigest()):
+		if not(username[0] and password[0] and user_ob and user_ob.user_pw == hashlib.sha256(password[1]).hexdigest()):
 			if not username[0]:
 				erroruser = 'Invalid username'
 			if not user_ob:
@@ -35,7 +35,7 @@ class Login(handler.Handler):
 		else: #si todo esta correcto
 			self.write(str(user_ob.key().id()))
 			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.key().id())+'|'+hashlib.sha256(str(user_ob.key().id())).hexdigest()+';Path=/') #se hace la cookie del usuario
-			self.redirect('/')
+			self.redirect('/profile')
 
 #estas funciones sirven para validar el usuario y la contrasenia, pero se le pueden agregar mas condiciones al verificar.
 #Las salidas de dichas funciones son una tupla con un boolean como primer elemento y el usuario o contrasenia en el segundo

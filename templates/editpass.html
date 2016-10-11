@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+	<title>{{user.user_id}} - Change Password</title>
+</head>
+<body>
+	<form method="post">
+		<label>Antigua contrasenia<input type="password" name="oldpass"></label>
+		<br>
+		<div class="error">{{errorpass}}</div>
+		<br>
+		<label>Nueva contrasenia<input type="password" name="newpass"></label>
+		<br>
+		<div class="error">{{errornew}}</div>
+		<br>
+		<label>Confirmar nueva contrasenia<input type="password" name="verify"></label>
+		<br>
+		<div class="error">{{errorverify}}</div>
+		<br>
+		<button>Guardar cambios</button>	
+	</form>
+</body>
+</html>

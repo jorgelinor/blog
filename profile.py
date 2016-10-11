@@ -33,10 +33,19 @@ def valid_username(username):
     else:
         return (False,username)
 
+PASS_RE = re.compile(r"^[a-zA-Z0-9]{3,20}$")
+def valid_pass(password):
+    if PASS_RE.match(password):
+        return (True,password)
+    return (False,password)
+
 class EditProfile(handler.Handler):
 	def get(self):
 		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-		self.render("editprofile.html", user=user,date=user.user_date.split("-"))
+		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
+			self.render("editprofile.html", user=user,date=user.user_date.split("-"))
+		else:
+			self.write("Not found")
 	def post(self):
 		username = valid_username(self.request.get('username'))
 		actual_password = self.request.get('actualpassword')
@@ -70,3 +79,36 @@ class EditProfile(handler.Handler):
 			user.put()
 			time.sleep(2)
 			self.redirect('/profile')
+
+class EditPass(handler.Handler):
+	def get(self):
+		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
+			self.render("editpass.html", user=user)
+		else:
+			self.write("Not found")
+	def post(self):
+		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		oldpass = valid_pass(self.request.get('oldpass'))
+		newpass = valid_pass(self.request.get('newpass'))
+		verify = self.request.get('verify') == newpass[1]
+		errorpass,errornew,errorverify = '','',''
+		if oldpass[0]:
+			if user.user_pw == hashlib.sha256(oldpass[1]).hexdigest():
+				if newpass[0]:
+					if verify:
+						user.user_pw = hashlib.sha256(newpass[1]).hexdigest()
+						user.put()
+						time.sleep(2)
+						self.redirect('/profile')
+					else:
+						errorverify = "Passwords doesn't match"
+				else:
+					errornew = 'Invalid password'
+			else:
+				errorpass = 'Incorrect password'
+		else:
+			errorpass = 'Invalid password'
+		self.render('editpass.html',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify)
+
+

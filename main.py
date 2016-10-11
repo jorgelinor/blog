@@ -19,5 +19,6 @@ app = webapp2.WSGIApplication([
     ('/logout',logout.Logout),
     ('/',page.Page),
     ('/profile/?', profile.Profile),
-    ('/profile/_edit/?', profile.EditProfile)
+    ('/profile/_edit/?', profile.EditProfile),
+    ('/profile/_editpass/?',profile.EditPass)
 ], debug=True)
