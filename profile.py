@@ -45,7 +45,8 @@ class EditProfile(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get('user_id')
 		if user:
-			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+			if user.isdigit():
+				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			date_pre = create_date()
 			self.render("editprofile.html", user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
