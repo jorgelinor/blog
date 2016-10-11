@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
 	<title>Escribe pa mi</title>
 </head>
 <body>
@@ -15,9 +16,9 @@
 <center>
 {%if posts%}
 	{%for post in posts%}
-		<h2 style="margin-left:20%;margin-right:20%">{{post.title}}</h2>
+		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title" href="/{{post.key().id()}}">{{post.title}}</a></h2>
 		<div style="max-width:500px;word-wrap:break-word">{{post.post}}</div>
-		<label style="float:left">Enviado por: {{post.submitter}}</label>
+		<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter}}">{{post.submitter}}</a></label>
 		<label style="float:right">{{post.created_str}}</label><br>
 		<hr>
 	{%endfor%}
