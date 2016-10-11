@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="/css/styles.css">
+		<title>Edita tu perfil</title>
+	</head>
+	<body>
+		<form method="post">
+			<div id="edit-holder">
+				<label>Nombre</label>
+				<input type="text" name="username" value="{{user.user_id}}" class="editable"><div class="error">{{erroruser}}</div></input><br><br>
+				<label>Numero de telefono</label>
+				<input type="text" name="tel" value="{{user.user_tel}}" class="editable"><div class="error">{{errortel}}</div></input><br><br>
+				<label>Fecha de nacimiento</label>
+				<input class="date-space" type='text' name='date1' value="{{date[0]}}"><input class="date-space" type='text' name='date2' value="{{date[1]}}"><input class="date-space" type='text' name='date3' value="{{date[2]}}"><div class="eror"><div class="error">{{errordate}}</div></input><br><br>
+				<label>Descripcion</label><br>
+				<textarea name="description" id="desc-area">{{user.user_desc}}</textarea><br><br>
+				<label>Para guardar introduzca su contrasena actual aqui >>></label>
+				<input type="password" name="actualpassword" class="editable"><div class="error">{{passerror}}<div></input><br>
+				<button type="submit">Guardar</button>
+			</div>
+	</body
+</html>

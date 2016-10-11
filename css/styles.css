@@ -17,3 +17,23 @@
 	text-align:left;
 	word-wrap: break-word;
 }
+#desc-area {
+	width: 100%;
+	height: 150px;
+}
+.editable {
+	float:right;
+}
+#edit-holder {
+	margin-left:10px;
+	width: 40%;
+	height:auto;
+}
+.date-space {
+	width: 40px;
+	float:right;
+	margin-left:20px;
+}
+.error {
+	color:red;
+}

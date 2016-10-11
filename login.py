@@ -25,15 +25,16 @@ class Login(handler.Handler):
 				user_list.append(e.user_id)
 				if e.user_id == username[1]:
 					user_ob = e
-		if not(username[0] and password[0] and user_ob and user_ob.user_pw == hashlib.sha256(username[1]+password[1]).hexdigest()):
+		if not(username[0] and password[0] and user_ob and user_ob.user_pw == hashlib.sha256(password[1]).hexdigest()):
 			if not username[0]:
 				erroruser = 'Invalid username'
 			if not user_ob:
 				erroruser = "Username doesn't exist"
 			if not password[0]:
 				errorpass = 'Invalid password'
-			if user_ob and user_ob.user_pw != hashlib.sha256(password[1]).hexdigest():
-				errorpass = 'Invalid password'
+			if user_ob:
+				if user_ob.user_pw != hashlib.sha256(password[1]).hexdigest():
+					errorpass = 'Invalid password'
 			self.render('login.html',username=username[1],erroruser=erroruser,errorpass=errorpass)
 		else: #si todo esta correcto
 			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.user_id)+'|'+str(user_ob.user_pw)+';Path=/') #se hace la cookie del usuario
