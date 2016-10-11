@@ -1,5 +1,6 @@
 #Clase de registro
-
+import random
+import string
 import handler
 from user import User
 import hashlib
@@ -9,11 +10,16 @@ from google.appengine.ext import db
 class Signup(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get('user_id')
-		if not user:
-			self.render('signup.html',url='Signup',link='/')
+		if user != "":
+			user = user.split("|")
+			if db.get(db.Key.from_path("User",int(user[0]))) and user[1] != hashlib.sha256(user[0]).hexdigest():
+				self.render('signup.html',url='Signup',link='/')
+			else:
+				self.write("<a href='/'>Already registered</a>")
 		else:
-			self.write("<a href='/'>Already registered</a>")
+			self.render('signup.html',url='Signup',link='/')
 	def post(self):
+		randomStr = ''.join(random.choice(string.letters) for _ in xrange(5))
 		username = valid_username(self.request.get('username'))
 		password = valid_pass(self.request.get('password'))
 		tel = valid_tel(self.request.get('tel'))
@@ -46,7 +52,7 @@ class Signup(handler.Handler):
 						errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description)
 		else: #si el registro es valido
 			user_ob = User(user_id=username[1],user_pw=hashlib.sha256(password[1]).hexdigest(),user_mail=email[1],
-							user_tel=tel[1],user_date=date,user_desc=description,user_type='user') #se crea un objeto usuario con los datos
+							user_tel=tel[1],user_date=date,user_desc=description,user_type='user',displayName=username[1]+randomStr) #se crea un objeto usuario con los datos
 			user_ob.put() #se sube a la base de datos
 			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.key().id())+'|'+hashlib.sha256(str(user_ob.key().id())).hexdigest()+';Path=/') #y se crea la cookie
 			self.redirect('/profile')

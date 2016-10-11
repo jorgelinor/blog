@@ -10,3 +10,4 @@ class User(db.Model):
 	user_tel = db.StringProperty(required=True)
 	user_date = db.StringProperty(required=True)
 	user_desc = db.TextProperty(required=False)
+	displayName = db.StringProperty(required=False)
