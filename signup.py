@@ -1,5 +1,6 @@
 #Clase de registro
-
+import random
+import string
 import handler
 from user import User
 import hashlib
@@ -9,12 +10,18 @@ from google.appengine.ext import db
 class Signup(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get('user_id')
-		if not user:
+		if user != "":
+			user = user.split("|")
+			date_pre = create_date()
+			if db.get(db.Key.from_path("User",int(user[0]))) and user[1] != hashlib.sha256(user[0]).hexdigest():
+				self.render('signup.html',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
+			else:
+				self.write("<a href='/'>Already registered</a>")
+		else:
 			date_pre = create_date()
 			self.render('signup.html',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
-		else:
-			self.write("<a href='/'>Already registered</a>")
 	def post(self):
+		randomStr = ''.join(random.choice(string.letters) for _ in xrange(5))
 		username = valid_username(self.request.get('username'))
 		password = valid_pass(self.request.get('password'))
 		tel = valid_tel(self.request.get('tel'))
@@ -49,7 +56,7 @@ class Signup(handler.Handler):
 						months=date_pre[1],days=date_pre[2])
 		else: #si el registro es valido
 			user_ob = User(user_id=username[1],user_pw=hashlib.sha256(password[1]).hexdigest(),user_mail=email[1],
-							user_tel=tel[1],user_date=date,user_desc=description,user_type='user') #se crea un objeto usuario con los datos
+							user_tel=tel[1],user_date=date,user_desc=description,user_type='user',displayName=username[1]+randomStr) #se crea un objeto usuario con los datos
 			user_ob.put() #se sube a la base de datos
 			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.key().id())+'|'+hashlib.sha256(str(user_ob.key().id())).hexdigest()+';Path=/') #y se crea la cookie
 			self.redirect('/profile')
@@ -74,9 +81,8 @@ EMAIL_RE = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
 def valid_email(email):
     if not email:
         return (False,'')
-    if email[-4:] == '.com' and email.find('@')>-1:
-    	if len(email) > 4:
-    		return (True,email)
+    if EMAIL_RE.match(email):
+    	return (True,email)
     return (False,email)
 
 def valid_tel(tel):

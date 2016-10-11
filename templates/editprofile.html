@@ -7,8 +7,9 @@
 	<body>
 		<form method="post">
 			<div id="edit-holder">
-				<label>Nombre</label>
-				<input type="text" name="username" value="{{user.user_id}}" class="editable"><div class="error">{{erroruser}}</div></input><br><br>
+				<label>Nombre de usuario fijo: <b>{{user.user_id}}</b></label><br><br>
+				<label>Apodo</label>
+				<input type="text" name="nickname" value="{{user.displayName}}" class="editable"><div class="error">{{erroruser}}</div></input><br><br>
 				<label>Numero de telefono</label>
 				<input type="text" name="tel" value="{{user.user_tel}}" class="editable"><div class="error">{{errortel}}</div></input><br><br>
 				<label>Fecha de nacimiento</label>
