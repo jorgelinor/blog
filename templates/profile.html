@@ -6,9 +6,12 @@
 	</head>
 	<body>
 		<div id="user-holder">
-			<div id="username"><b id="user-id">{{user.user_id}}</b></div><br><br>
+			<div><b id="nickname">{{user.displayName}}</b></div><br><br>
 			<div id="profile-picture">Pic</div>
 			<div id="user-info">
+				{%if modificable == True%}
+					<b>Nombre de usuario:</b> {{user.user_id}}<br>
+				{%endif%}
 				<b>Fecha de nacimiento</b>: {{user.user_date}}<br>
 				<b>Numero de telefono</b>: {{user.user_tel}}<br>
 				<b>E-Mail</b>: {{user.user_mail}}<br>

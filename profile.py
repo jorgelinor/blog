@@ -39,41 +39,54 @@ def valid_pass(password):
         return (True,password)
     return (False,password)
 
+def valid_tel(tel):
+	if not tel:
+		return (False,tel)
+	if tel.isdigit():
+		if len(tel) > 7:
+			return (True,tel)
+	return (False,tel)
+
 class EditProfile(handler.Handler):
 	def get(self):
 		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			self.render("editprofile.html", user=user,date=user.user_date.split("-"))
 		else:
-			self.write("Not found")
+			self.write("Usuario no encontrado")
 	def post(self):
-		username = valid_username(self.request.get('username'))
+		nickname = valid_username(self.request.get('nickname'))
 		actual_password = self.request.get('actualpassword')
-		tel = self.request.get('tel')
+		tel = valid_tel(self.request.get('tel'))
 		date = self.request.get('date1')+'-'+self.request.get('date2')+'-'+self.request.get('date3')
 		description = self.request.get('description')
 		erroruser,errortel,errordesc,errordate,passerror='','','','',''
-		actualuser = db.GqlQuery("select * from User where user_id='"+username[1]+"'").fetch(1)
+		actualnick = [False]
+		if db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1):
+			actualnick[0] = db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1)
 		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-		check_password = False
-		if user.user_pw == hashlib.sha256(actual_password).hexdigest():
-			check_password = True
-		if not(username[0] or tel or len(date)==10 or not actualuser or check_password == True):
-			if not username[0]:
+		check_pass = False
+		check_nick = True
+		if hashlib.sha256(actual_password).hexdigest()==user.user_pw:
+			check_pass = True
+		if actualnick[0] != False:
+			if actualnick[0][0].displayName != user.displayName:
+				check_nick == False
+		if (not nickname[0]) or (not tel[0]) or (len(date)!=10) or (check_pass == False) or (check_nick == False):
+			if not nickname[0]:
 				erroruser = 'Nombre invalido'
-			if actualuser and actualuser[0].user_id != self.request.cookies.get('user_id').split("|")[0]:
-					erroruser = 'Nombre ya existente'
-			if not tel:
+			if not tel[0]:
 				errortel = 'Numero invalido'
 			if not len(date)==10:
 				errordate = 'Fecha invalida'
-			if check_password == False:
+			if check_pass ==False:
 				passerror = 'Contrasena erronea'
-			self.render('editprofile.html',user=user[0],dateerror=errordate, erroruser=erroruser,errortel=errortel,date=user[0].user_date.split("-"),passerror=passerror)
+			if check_nick == False:
+				erroruser = 'Nombre tomado'
+			self.render('editprofile.html',user=user,dateerror=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),passerror=passerror)
 		else:
-			self.response.headers.add_header('Set-Cookie','user_id='+str(username[1])+'|'+str(user[0].user_pw)+';Path=/')
-			user.user_id=username[1]
-			user.user_tel=tel
+			user.displayName=nickname[1]
+			user.user_tel=tel[1]
 			user.user_date=date
 			user.user_desc=description
 			user.put()
