@@ -63,22 +63,21 @@ class EditProfile(handler.Handler):
 		check_password = False
 		if user.user_pw == hashlib.sha256(actual_password).hexdigest():
 			check_password = True
-		if not(username[0] or tel or len(date)==10 or not actualuser or check_password == True):
+		if not(username[0] or tel or len(date)>7 or not actualuser or check_password == True):
 			if not username[0]:
 				erroruser = 'Nombre invalido'
 			if actualuser and actualuser[0].user_id != self.request.cookies.get('user_id').split("|")[0]:
 					erroruser = 'Nombre ya existente'
 			if not tel:
 				errortel = 'Numero invalido'
-			if not len(date)==10:
+			if not len(date)>7:
 				errordate = 'Fecha invalida'
 			if check_password == False:
 				passerror = 'Contrasena erronea'
 			date_pre = create_date()
-			self.render('editprofile.html',user=user[0],dateerror=errordate, erroruser=erroruser,errortel=errortel,
-				date=user[0].user_date.split("-"),passerror=passerror,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
+			self.render('editprofile.html',user=user,dateerror=errordate, erroruser=erroruser,errortel=errortel,
+				date=user.user_date.split("-"),passerror=passerror,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
 		else:
-			self.response.headers.add_header('Set-Cookie','user_id='+str(username[1])+'|'+str(user[0].user_pw)+';Path=/')
 			user.user_id=username[1]
 			user.user_tel=tel
 			user.user_date=date

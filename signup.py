@@ -28,7 +28,7 @@ class Signup(handler.Handler):
 		user_ob = None #<---esta variable la uso mucho a la hora de asignar un objeto usuario
 		if user_query:
 			user_ob = user_query[0]
-		if not(username[0] and tel[0] and len(date)==10 and email and password[0] and verify and email[0] and not user_ob):
+		if not(username[0] and tel[0] and len(date)>7 and email and password[0] and verify and email[0] and not user_ob):
 			if not username[0]:
 				erroruser = 'Invalid username'
 			if user_ob:
@@ -39,7 +39,7 @@ class Signup(handler.Handler):
 				errorverify = "Passwords don't match"
 			if not tel[0]:
 				errortel = 'Introduce a phone number'
-			if not len(date)==10:
+			if not len(date)>7:
 				errordate = 'Invalid Birth Date'
 			if not email[0]:
 				errormail = 'Invalid e-mail'
