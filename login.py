@@ -9,10 +9,12 @@ from google.appengine.ext import db
 class Login(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get('user_id')
-		if not user:
-			self.render('login.html',url='Login',link='/')
-		else:
+		if user:
+			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			self.write("<a href='/'>Already logged</a>")
+		else:
+			self.render('login.html',url='Login',link='/')
 	def post(self):
 		username = valid_username(self.request.get('username'))
 		password = valid_pass(self.request.get('password'))

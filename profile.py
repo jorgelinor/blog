@@ -41,7 +41,9 @@ def valid_pass(password):
 
 class EditProfile(handler.Handler):
 	def get(self):
-		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		user = self.request.cookies.get('user_id')
+		if user:
+			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			self.render("editprofile.html", user=user,date=user.user_date.split("-"))
 		else:
@@ -82,7 +84,9 @@ class EditProfile(handler.Handler):
 
 class EditPass(handler.Handler):
 	def get(self):
-		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		user = self.request.cookies.get('user_id')
+		if user:
+			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			self.render("editpass.html", user=user)
 		else:

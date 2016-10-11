@@ -2,13 +2,17 @@
 
 import handler
 from post import Post
+from user import User
+import hashlib
 
 class Newpost(handler.Handler):
     def render_front(self,title = '',post = '',error = ''):
         self.render('ascii.html',title=title,post=post,error=error)
     def get(self):
-        username = self.request.cookies.get('user_id')
-        if username:
+        user = self.request.cookies.get('user_id')
+        if user:
+            user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+        if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
             self.render_front()
         else:
             self.redirect('/signup')
