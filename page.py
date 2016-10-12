@@ -11,7 +11,9 @@ class Page(newpost.Newpost):
         online = False
         if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
             user = user.split('|')[0]
-            user = User.get_by_id(int(user)).user_id
+            user = User.get_by_id(int(user))
+            if user:
+                user = user.user_id
         else:
         	user = None
         posts = db.GqlQuery('select * from Post order by created desc')

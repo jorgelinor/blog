@@ -10,7 +10,9 @@ class Permalink(handler.Handler):
 		user = self.request.cookies.get('user_id')
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
-			user = User.get_by_id(int(user)).user_id
+			user = User.get_by_id(int(user))
+			if user:
+				user = user.user_id
 		else:
 			user = None
 		post = Post.get_by_id(int(link[1:]))
