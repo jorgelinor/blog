@@ -7,6 +7,12 @@ threadsafe: yes
 handlers:
 - url: /css
   static_dir: css
+- url: /js
+  static_dir: js
+- url: /fonts
+  static_dir: fonts
+
+
 
 - url: /favicon\.ico
   static_files: favicon.ico
