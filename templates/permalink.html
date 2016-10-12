@@ -17,8 +17,12 @@
 {%if post%}
 		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title">{{post.title}}</a></h2>
 		<div style="max-width:500px;word-wrap:break-word">{{post.post}}</div>
-		<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter}}">{{post.submitter}}</a></label>
+		{%if post.submitter.split("|")[1] != "False"%}
+			<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter.split('|')[0]}}">{{post.submitter.split("|")[0]}}</a></label>
+		{%else%}
+			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
 		<label style="float:right">{{post.created_str}}</label><br>
+		{%endif%}
 		<hr>
 <br>
 {%endif%}
