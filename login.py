@@ -12,7 +12,7 @@ class Login(handler.Handler):
 		if user:
 			if user.isdigit():
 				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
+		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1] and User.get_by_id(int(user.split("|")[0])):
 			self.write("<a href='/'>Already logged</a>")
 		else:
 			self.render('login.html',url='Login',link='/')

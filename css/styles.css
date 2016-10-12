@@ -49,3 +49,28 @@
 	color:black;
 	text-decoration: line-through;
 }
+#comment {
+	width:25%;
+	height: auto;
+}
+#post-comment-title {
+	float:left;
+	color:orange;
+	font-weight:bold;
+}
+#post-comment-content {
+	float: left;
+	color: black;
+}
+#post-comment-submitter {
+	float:left;
+	text-decoration: underline;
+}
+.post-comment {
+	background-color:gray;
+	width: auto;
+}
+.button {
+	text-decoration: none;
+	font-weight: bold;
+}

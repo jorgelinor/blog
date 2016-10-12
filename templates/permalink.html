@@ -16,14 +16,36 @@
 <center>
 {%if post%}
 		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title">{{post.title}}</a></h2>
-		<div style="max-width:500px;word-wrap:break-word">{{post.post}}</div>
+		<div style="max-width:500px;word-wrap:break-word"><pre>{{post.post}}</pre></div>
 		{%if post.submitter.split("|")[1] != "False"%}
 			<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter.split('|')[0]}}">{{post.submitter.split("|")[0]}}</a></label>
 		{%else%}
 			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
-		<label style="float:right">{{post.created_str}}</label><br>
 		{%endif%}
+		<label style="float:right">{{post.created_str}}</label><br>
+		<button><a class="button" href="/{{post.key().id()}}/_reply">Deja tu comentario</a></button>
 		<hr>
+		{%if comments%}
+			{%for comment in comments%}
+				<div class="post-comment">
+					<div id="post-comment-title">{{comment.title}}: </div> <div id="post-comment-content"> {{comment.content}}</div><br>
+					{%if comment.submitter.split("|")[1] != False%}
+						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
+					{%else%}
+						<div id="post-submitter-deleted">{{comment.submitter.split("|")[0]}}</div><br>
+					{%endif%}
+				</div>
+				<hr>
+			{%endfor%}
+		{%endif%}
+		<br>
+		{%if comment==True%}
+			<form method="post">
+				<textarea id="comment" name="content">{{content}}</textarea>
+				<button type="submit">Enviar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo comentar</button>
+			</form>
+		{%endif%}
+
 <br>
 {%endif%}
 </center>
