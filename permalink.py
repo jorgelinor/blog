@@ -2,6 +2,7 @@ import handler
 from post import Post
 import hashlib
 from user import User
+from google.appengine.ext import db
 
 
 class Permalink(handler.Handler):
@@ -13,6 +14,7 @@ class Permalink(handler.Handler):
 		else:
 			user = None
 		post = Post.get_by_id(int(link[1:]))
+		post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
 		if post:
 			self.render('permalink.html',post=post,user=user)
 		else:

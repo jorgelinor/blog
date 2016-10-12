@@ -8,12 +8,17 @@ from google.appengine.ext import db
 class Page(newpost.Newpost):
     def get(self):
         user = self.request.cookies.get('user_id')
+        online = False
         if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-        	user = user.split('|')[0]
-        	user = User.get_by_id(int(user)).user_id
+            user = user.split('|')[0]
+            user = User.get_by_id(int(user)).user_id
         else:
         	user = None
         posts = db.GqlQuery('select * from Post')
+        posts = list(posts)
         for e in posts:
-            e.id_str = e.key().id()
+            if e.submitter == user:
+                e.submitter = "ti"
+            else:
+                e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
         self.render('page.html',posts=posts,user=user) 
