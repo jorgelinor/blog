@@ -14,11 +14,16 @@ class Page(newpost.Newpost):
             user = User.get_by_id(int(user)).user_id
         else:
         	user = None
-        posts = db.GqlQuery('select * from Post')
+        posts = db.GqlQuery('select * from Post order by created desc')
         posts = list(posts)
         for e in posts:
             if e.submitter == user:
                 e.submitter = "ti"
             else:
-                e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+                submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
+                submitter = list(submitter)
+                if len(submitter) < 1:
+                    e.submitter = 'Este usuario se murio de SIDA'
+                else:
+                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
         self.render('page.html',posts=posts,user=user) 

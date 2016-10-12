@@ -10,7 +10,7 @@ from google.appengine.ext import db
 class Signup(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get('user_id')
-		if user != "":
+		if user:
 			user = user.split("|")
 			date_pre = create_date()
 			if db.get(db.Key.from_path("User",int(user[0]))) and user[1] != hashlib.sha256(user[0]).hexdigest():
