@@ -19,13 +19,15 @@ class Profile(handler.Handler):
 				else:
 					self.redirect("/login")
 		else:
-			user = db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'").fetch(1)
+			user = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
 			if user:
 				if str(user[0].key().id()) == str(self.request.cookies.get("user_id").split("|")[0]):
 					self.redirect("/profile")
 				else:
 					self.render("profile.html", user=user[0],desc=user[0].user_desc)
 			else:
+				if self.request.get("u") == "ti":
+					self.redirect("/profile")
 				self.write("Perfil no encontrado")
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")

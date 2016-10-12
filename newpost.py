@@ -4,6 +4,7 @@ import handler
 from post import Post
 from user import User
 import hashlib
+import time
 
 class Newpost(handler.Handler):
     def render_front(self,title = '',post = '',error = ''):
@@ -25,8 +26,8 @@ class Newpost(handler.Handler):
             a = Post(title=title,post=post,submitter=submitter)
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
-            a.put()            
-            self.redirect('/')
+            a.put()           
+            self.redirect('/'+str(a.key().id()))
         else:
             error = 'we need more...'
             self.render_front(title,post,error)
