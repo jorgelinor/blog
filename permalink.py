@@ -29,9 +29,16 @@ class Permalink(handler.Handler):
 		if post:
 			comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
 			comments = list(comments)
-			user = self.request.cookies.get("user_id").split("|")[0]
-			if user:
-				user = User.get_by_id(int(user)).user_id
+			user = self.request.cookies.get("user_id").split("|")
+			if user and hashlib.sha256(user[0]).hexdigest() == user[1]:
+				user = user[0]
+				user = User.get_by_id(int(user))
+				if user:
+					user = user.user_id
+				else:
+					self.redirect("/login")
+			else:
+				self.redirect("/login")
 			for e in comments:
 				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 				submitter = list(submitter)
@@ -87,13 +94,15 @@ class Comment(handler.Handler):
 			self.redirect('/')
 	def post(self,link):
 		submitter = self.request.cookies.get('user_id').split('|')[0]
-		submitter = User.get_by_id(int(submitter)).user_id
+		submitter = User.get_by_id(int(submitter))
+		if submitter.banned_from_comments == True:
+			self.redirect("/")
 		content = self.request.get("content")
 		comments = db.GqlQuery("select * from Comment where post='"+link+"'")
 		post_title = Post.get_by_id(int(link)).title
 		if len(content) < 1:
 			self.redirect('/'+link)
 		else:
-			com = comment.Comment(submitter=submitter,content=content,post=link,title="Comentario #"+str(len(list(comments))+1)+" en "+post_title)
+			com = comment.Comment(submitter=submitter.user_id,content=content,post=link,title="Comentario #"+str(len(list(comments))+1)+" en "+post_title)
 			com.put()
 			self.redirect("/"+link)
