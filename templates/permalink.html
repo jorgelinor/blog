@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+	<title>Escribe pa mi</title>
+</head>
+<body>
+<center><h1>Escribe pa mi</h1></center>
+{%if user%}
+{{user}}<a href="/logout">(salir)</a>
+<a href="/newpost" style="float:right">Manda uno nuevo</a>
+{%else%}
+<a href="/login">Iniciar sesion</a>
+<a href="/signup" style="float:right">Registrar</a>
+{%endif%}
+<center>
+{%if post%}
+		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title">{{post.title}}</a></h2>
+		<div style="max-width:500px;word-wrap:break-word">{{post.post}}</div>
+		<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter}}">{{post.submitter}}</a></label>
+		<label style="float:right">{{post.created_str}}</label><br>
+		<hr>
+<br>
+{%endif%}
+</center>
+</body>
+</html>

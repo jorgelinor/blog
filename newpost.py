@@ -19,9 +19,10 @@ class Newpost(handler.Handler):
     def post(self):
         title = self.request.get('subject')
         post = self.request.get('content')
-        submitter = self.request.cookies.get('user_id')
+        submitter = self.request.cookies.get('user_id').split('|')[0]
+        submitter = User.get_by_id(int(submitter)).user_id
         if title and post:
-            a = Post(title=title,post=post,submitter=submitter.split('|')[0])
+            a = Post(title=title,post=post,submitter=submitter)
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
             a.put()            
