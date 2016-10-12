@@ -17,7 +17,7 @@
 {%if posts%}
 	{%for post in posts%}
 		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title" href="/{{post.key().id()}}">{{post.title}}</a></h2>
-		<div style="max-width:500px;word-wrap:break-word">{{post.post}}</div>
+		<div style="max-width:500px;word-wrap:break-word"><pre>{{post.post}}</pre></div>
 		{%if post.submitter.split("|")[1] != "False"%}
 			<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter.split('|')[0]}}">{{post.submitter.split("|")[0]}}</a></label>
 		{%else%}

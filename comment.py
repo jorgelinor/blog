@@ -1,6 +1,8 @@
 from google.appengine.ext import db
 
 class Comment(db.Model):
-	submitter = db.StringProperty(required=True)
+	title = db.TextProperty(required=True)
 	content = db.TextProperty(required=True)
-	created = db.DateProperty(auto_now_add=True)
+	post = db.StringProperty(required=True)
+	submitter = db.StringProperty(required=True)
+	created = db.DateTimeProperty(auto_now_add=True)

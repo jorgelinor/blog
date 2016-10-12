@@ -12,7 +12,7 @@ import permalink
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
 
-PAGE_RE = r'(/(?:[0-9]+/?)*)'
+
 app = webapp2.WSGIApplication([
     ('/newpost', newpost.Newpost),
     ('/signup',signup.Signup),
@@ -22,5 +22,6 @@ app = webapp2.WSGIApplication([
     ('/profile/?', profile.Profile),
     ('/profile/_edit/?', profile.EditProfile),
     ('/profile/_editpass/?',profile.EditPass),
-    (PAGE_RE, permalink.Permalink)
+    ("/([0-9]+)/?", permalink.Permalink),
+    ("/([0-9]+)"+"/_reply", permalink.Comment)
 ], debug=True)
