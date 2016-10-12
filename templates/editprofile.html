@@ -30,9 +30,37 @@
 		            </select><div class="error">{{errordate}}</div></input><br><br>
 				<label>Descripcion</label><br>
 				<textarea name="description" id="desc-area">{{user.user_desc}}</textarea><br><br>
+				<!-- <div id="upload" >{{imgadd}}</div>
+				<div class="dropzone" id="dropzone" >agregue la imagen aqui</div> -->
 				<label>Para guardar introduzca su contrasena actual aqui >>></label>
 				<input type="password" name="actualpassword" class="editable"><div class="error">{{passerror}}<div></input><br>
 				<button type="submit">Guardar</button>
 			</div>
-	</body
+			<!-- <script>
+				(function() {
+					var dropzone = document.getElementById('dropzone');
+					var upload = function(file) {
+						var formData = new FormData(),
+						hxr = new XMLHttpRequest();
+						console.log(file);
+						// formData.append('file',file);
+					};
+					dropzone.ondrop = function(e) {
+						e.preventDefault();
+						this.className ='dropzone';
+						var upload = document.getElementById('upload')
+						upload.className()
+						console.log(e.dataTransfer.file);
+					};
+					dropzone.ondragover = function() {
+						this.className = 'dropzone dragover';
+						return false;
+					};
+					dropzone.ondragleave = function() {
+						this.className ='dropzone';
+						return false;
+					};
+				}());
+			</script> -->
+	</body>
 </html>

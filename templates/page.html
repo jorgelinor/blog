@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Blog Home - Start Bootstrap Template</title>
+    <title>Blog Home</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -46,13 +46,13 @@
                 <ul class="nav navbar-nav">
                 {% if user %}
                     <li>
-                        <img src="img/icon.png" style="width: 40px;height: 40px;padding: 10px;" >
+                        <img src="/img/icon.png" style="width: 40px;height: 40px;padding: 10px;" >
                     </li>
                     <li>
                         <a href="/newpost">{{user}}</a>
                     </li>
                     <li>
-                        <a href="/profile/{{user}}">Perfil</a>
+                        <a href="/profile/?">Perfil</a>
                     </li>
                     <li>
                         <a href="/logout">Log Out</a>
@@ -81,8 +81,7 @@
             <div class="col-md-8">
 
                 <h1 class="page-header">
-                    Page Heading
-                    <small>Secondary Text</small>
+                    Post Recientes
                 </h1>
 
                 <!-- First Blog Post -->
@@ -152,8 +151,8 @@
 
                 <!-- Side Widget Well -->
                 <div class="well">
-                    <h4>Side Widget Well</h4>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
+                    <h4>Info</h4>
+                    <p>Puedes seleccionar el tema o buscar directamente el nombre del post.</p>
                 </div>
 
             </div>

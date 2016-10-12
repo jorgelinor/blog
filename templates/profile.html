@@ -7,7 +7,7 @@
 	<body>
 		<div id="user-holder">
 			<div><b id="nickname">{{user.displayName}}</b></div><br><br>
-			<div id="profile-picture">Pic</div>
+			<div id="profile-picture"><img src="/img/icon.png"></div>
 			<div id="user-info">
 				{%if modificable == True%}
 					<b>Nombre de usuario:</b> {{user.user_id}}<br>
@@ -20,7 +20,7 @@
 				{%endif%}<br><br>
 				{%if modificable == True%}
 					<button><a href="profile/_edit">Modificar informacion</button>
-					<button><a href="profile/_editpass">Cambiar contrasenia</button>
+					<button><a href="profile/_editpass">Cambiar contrase&ntilde;a</button>
 				{%endif%}
 			</div>
 

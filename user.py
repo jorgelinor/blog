@@ -1,5 +1,5 @@
 #Esta es la clase que sirve como objeto para el usuario y sus propiedades
-
+from google.appengine.api import images
 from google.appengine.ext import db
 
 class User(db.Model):

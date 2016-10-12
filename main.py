@@ -8,6 +8,7 @@ import logout
 import page
 import profile
 import permalink
+from google.appengine.api import images
 
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
