@@ -45,3 +45,7 @@
 	color: gray;
 	text-decoration: none;
 }
+#post-submitter-deleted {
+	color:black;
+	text-decoration: line-through;
+}
