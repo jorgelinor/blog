@@ -14,7 +14,12 @@ class Permalink(handler.Handler):
 		else:
 			user = None
 		post = Post.get_by_id(int(link[1:]))
-		post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
+		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
+		submitter = list(submitter)
+		if len(submitter) < 1:
+			post.submitter = "Este usuario se murio de SIDA"
+		else:
+			post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
 		if post:
 			self.render('permalink.html',post=post,user=user)
 		else:
