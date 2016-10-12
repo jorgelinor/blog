@@ -35,12 +35,13 @@
 						<div id="post-submitter-deleted">{{comment.submitter.split("|")[0]}}</div><br>
 					{%endif%}
 				</div>
+				<hr>
 			{%endfor%}
 		{%endif%}
 		<br>
 		{%if comment==True%}
 			<form method="post">
-				<textarea id="comment" name="content">{{content}}</textarea><div class="error">{{contenterror}}</div>
+				<textarea id="comment" name="content">{{content}}</textarea>
 				<button type="submit">Enviar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo comentar</button>
 			</form>
 		{%endif%}

@@ -29,13 +29,16 @@ class Permalink(handler.Handler):
 		if post:
 			comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
 			comments = list(comments)
+			user = self.request.cookies.get("user_id").split("|")[0]
+			if user:
+				user = User.get_by_id(int(user)).user_id
 			for e in comments:
 				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 				submitter = list(submitter)
 				if len(submitter) < 1:
 					e.submitter = e.submitter+"|False"
 				else:
-					if e.submitter == submitter[0].user_id:
+					if e.submitter == user:
 						e.submitter = "ti"
 					else:
 						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
@@ -66,13 +69,16 @@ class Comment(handler.Handler):
 		if post:
 			comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
 			comments = list(comments)
+			user = self.request.cookies.get("user_id").split("|")[0]
+			if user:
+				user = User.get_by_id(int(user)).user_id
 			for e in comments:
 				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 				submitter = list(submitter)
 				if len(submitter) < 1:
 					e.submitter = e.submitter+"|False"
 				else:
-					if e.submitter == submitter[0].user_id:
+					if e.submitter == user:
 						e.submitter = "ti"
 					else:
 						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
