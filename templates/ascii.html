@@ -4,7 +4,11 @@
 		<title>Mandar nuevo</title>
 	</head>
 	<body>
-		<h1>Manda lo que quieras</h1>
+		{%if editable%}
+			<h1>Edita tu post</h1>
+		{%else%}
+			<h1>Manda lo que quieras</h1>
+		{%endif%}
 		<form method="post">
 			<label>
 				<h4 style="margin:0px">Título</h4>
@@ -12,7 +16,7 @@
 			</label>
 			<label>
 				<h4 style="margin:0px">Contenido</h4>
-				<textarea name="content" style="width:400px;height:150px">{{art}}</textarea>
+				<textarea name="content" style="width:400px;height:150px">{{post}}</textarea>
 			</label>
 			<div class='error' style="color:red">{{error}}</div>
 			<div><button>Enviar</button></div>

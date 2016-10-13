@@ -26,4 +26,5 @@ app = webapp2.WSGIApplication([
     ('/profile/_viewcomments/?', profile.ViewComments),
     ("/([0-9]+)/?", permalink.Permalink),
     ("/([0-9]+)"+"/_reply", permalink.Comment),
+    ('/([0-9]+)'+'/_editpost/?', permalink.EditPost)
 ], debug=True)
