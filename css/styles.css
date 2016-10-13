@@ -50,7 +50,7 @@
 	text-decoration: line-through;
 }
 #comment {
-	width:25%;
+	width:100%;
 	height: auto;
 }
 #post-comment-title {
@@ -81,4 +81,9 @@
 	text-decoration: none;
 	color: orange;
 	font-weight: bold;
+}
+#edit-link {
+	float:right;
+	text-decoration: none;
+	color:blue;
 }

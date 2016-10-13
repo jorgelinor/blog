@@ -35,6 +35,9 @@
 				<div class="post-comment">
 					<div id="post-comment-title">{{comment.title}}: </div> <div id="post-comment-content"> {{comment.content}}</div><br>
 					{%if comment.submitter.split("|")[1] != "False"%}
+						{%if comment.submitter=="ti"%}
+							<a id="edit-link" href="/{{post.key().id()}}/_editcomment?c={{comment.key().id()}}">Modificar</a>
+						{%endif%}
 						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
 					{%else%}
 						<div id="comment-submitter-deleted">Enviado por: {{comment.submitter.split("|")[0]}}</div><br>
@@ -44,10 +47,16 @@
 			{%endfor%}
 		{%endif%}
 		<br>
-		{%if comment==True%}
+		{%if newcomment==True%}
 			<form method="post">
 				<textarea id="comment" name="content">{{content}}</textarea>
 				<button type="submit">Enviar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo comentar</button>
+			</form>
+		{%endif%}
+		{%if editcomment==True%}
+			<form method="post">
+				<textarea id="comment" name="content">{{comment.content}}</textarea>
+				<button type="submit">Guardar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo guardar</button>
 			</form>
 		{%endif%}
 
