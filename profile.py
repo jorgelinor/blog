@@ -79,7 +79,7 @@ class EditProfile(handler.Handler):
 			check_pass = True
 		if actualnick[0] != False:
 			if actualnick[0][0].displayName != user.displayName:
-				check_nick == False
+				check_nick = False
 		if (not nickname[0]) or (not tel[0]) or (len(date)<7) or (check_pass == False) or (check_nick == False):
 			if not nickname[0]:
 				erroruser = 'Nombre invalido'
@@ -187,9 +187,9 @@ class ViewPosts(handler.Handler):
 
 class ViewComments(handler.Handler):
 	def get(self):
-		user = self.request.cookies.get("user_id").split("|")
-		if user and hashlib.sha256(user[0]).hexdigest() == user[1]:
-			user = user[0]
+		user = self.request.cookies.get("user_id")
+		if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
+			user = user.split("|")[0]
 			user = User.get_by_id(int(user))
 			if user:
 				user = user.user_id

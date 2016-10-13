@@ -20,11 +20,11 @@
 				{%endif%}<br><br>
 				{%if modificable == True%}
 					<button><a href="/profile/_edit">Modificar informacion</a></button>
-					<button><a href="/profile/_editpass">Cambiar contrasenia</a></button>
+					<button><a href="/profile/_editpass">Cambiar contrasenia</a></button><br>
 				{%endif%}
+				<a href="/profile/_viewposts?u={{user.displayName}}">Publicaciones/topicos</a>
+				<a href="/profile/_viewcomments?u={{user.displayName}}">Comentarios</a>
 			</div>
-			<a href="/profile/_viewposts?u={{user.displayName}}">Publicaciones/topicos</a><br>
-			<a href="/profile/_viewcomments?u={{user.displayName}}">Comentarios</a>
 
 		</div>
 
