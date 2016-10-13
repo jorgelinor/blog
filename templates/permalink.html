@@ -24,6 +24,11 @@
 		{%endif%}
 		<label style="float:right">{{post.created_str}}</label><br>
 		<button><a class="button" href="/{{post.key().id()}}/_reply">Deja tu comentario</a></button>
+		{%if post.modificable%}
+			{%if post.submitter.split("|")[0] == 'ti'%}
+			<a style="float:right" href="/{{post.key().id()}}/_editpost">Editar post</a>
+			{%endif%}
+		{%endif%}
 		<hr>
 		{%if comments%}
 			{%for comment in comments%}

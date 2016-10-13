@@ -29,7 +29,7 @@ class Permalink(handler.Handler):
 					post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
 			comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
 			comments = list(comments)
-			user = self.request.cookies.get("user_id")
+			user = self.request.cookies.get("user_id") #aqui habia error
 			if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
 				user = user.split("|")[0]
 				user = User.get_by_id(int(user))
@@ -63,7 +63,7 @@ class Comment(handler.Handler):
 				user = user.user_id
 		else:
 			self.redirect("/login")
-		post = Post.get_by_id(int(link[:]))
+		post = Post.get_by_id(int(link))
 		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
 		submitter = list(submitter)
 		if len(submitter) < 1:
@@ -106,6 +106,43 @@ class Comment(handler.Handler):
 			com = comment.Comment(submitter=submitter.user_id,content=content,post=link,title="Comentario #"+str(len(list(comments))+1)+" en "+post_title)
 			com.put()
 			self.redirect("/"+link)
+
+class EditPost(handler.Handler):
+	def get(self,link):
+		user = self.request.cookies.get('user_id')
+		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+			user = user.split('|')[0]
+			user = User.get_by_id(int(user))
+			if user:
+				user = user.user_id
+		else:
+			self.redirect("/login")
+		post = Post.get_by_id(int(link))
+		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
+		submitter = list(submitter)
+		if len(submitter) > 0:
+			if post.submitter == user:
+				if post.modificable == True:
+					self.render('ascii.html',title=post.title,post=post.post,error='',editable=True)
+				else:
+					self.write("<a href='/"+str(post.key().id())+"'>No tienes permiso para eso!</a>")
+			else:
+				self.write("<a href='/"+str(post.key().id())+"'>Este no es tu post!</a>")
+		else:
+			self.write("<a href='/"+str(post.key().id())+"'>Este post no tiene duenio</a>")
+	def post(self,link):
+		post = Post.get_by_id(int(link))
+		content = self.request.get('content')
+		title = self.request.get('subject')
+		if title and post:
+			post.title = title
+			post.post = content
+			post.put()
+			self.redirect('/'+str(post.key().id()))
+		else:
+			error = 'we need more...'
+			self.render_front(title,content,error)
+
 class EditComment(handler.Handler):
 	def get(self, link):
 		user = self.request.cookies.get("user_id")
