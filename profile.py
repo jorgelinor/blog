@@ -185,4 +185,37 @@ class ViewPosts(handler.Handler):
 				else:
 					self.redirect("/login")
 
+class ViewComments(handler.Handler):
+	def get(self):
+		user = self.request.cookies.get("user_id").split("|")
+		if user and hashlib.sha256(user[0]).hexdigest() == user[1]:
+			user = user[0]
+			user = User.get_by_id(int(user))
+			if user:
+				user = user.user_id
+			else:
+				self.redirect("/login")
+		else:
+			self.redirect("/login")
+		if self.request.get("u"):
+			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
+			if len(profile) == 1:
+				comments = db.GqlQuery("select * from Comment where submitter='"+profile[0].user_id+"' order by created desc")
+				comments = list(comments)
+				for e in comments:
+					if e.submitter == user:
+						e.submitter = "ti"
+					else:
+						e.submitter = self.request.get("u")+"|True"
+				self.render('just_comments.html',author=self.request.get("u"),comments=comments)
+			else:
+				self.write("Perfil no encontrado")
+		else:
+			comments = db.GqlQuery("select * from Comment where submitter='"+user+"' order by created desc")
+			comments = list(comments)
+			for e in comments:
+				e.submitter = "ti"
+			self.render("just_comments.html",author="mi autoria",comments=comments)
+
+
 

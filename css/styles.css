@@ -77,3 +77,8 @@
 #comment-submitter-deleted {
 	float:left;
 }
+#link-to-post {
+	text-decoration: none;
+	color: orange;
+	font-weight: bold;
+}
