@@ -74,3 +74,6 @@
 	text-decoration: none;
 	font-weight: bold;
 }
+#comment-submitter-deleted {
+	float:left;
+}
