@@ -17,21 +17,21 @@ class Permalink(handler.Handler):
 		else:
 			self.redirect("/login")
 		post = Post.get_by_id(int(link[:]))
-		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
-		submitter = list(submitter)
-		if len(submitter) < 1:
-			post.submitter = post.submitter+"|False"
-		else:
-			if post.submitter == user:
-				post.submitter = "ti"
-			else:
-				post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
 		if post:
+			submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
+			submitter = list(submitter)
+			if len(submitter) < 1:
+				post.submitter = post.submitter+"|False"
+			else:
+				if post.submitter == user:
+					post.submitter = "ti"
+				else:
+					post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
 			comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
 			comments = list(comments)
-			user = self.request.cookies.get("user_id").split("|")
-			if user and hashlib.sha256(user[0]).hexdigest() == user[1]:
-				user = user[0]
+			user = self.request.cookies.get("user_id")
+			if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
+				user = user.split("|")[0]
 				user = User.get_by_id(int(user))
 				if user:
 					user = user.user_id
