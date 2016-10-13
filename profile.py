@@ -79,7 +79,7 @@ class EditProfile(handler.Handler):
 			check_pass = True
 		if actualnick[0] != False:
 			if actualnick[0][0].displayName != user.displayName:
-				check_nick == False
+				check_nick = False
 		if (not nickname[0]) or (not tel[0]) or (len(date)<7) or (check_pass == False) or (check_nick == False):
 			if not nickname[0]:
 				erroruser = 'Nombre invalido'
@@ -146,5 +146,76 @@ class EditPass(handler.Handler):
 		else:
 			errorpass = 'Invalid password'
 		self.render('editpass.html',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify)
+
+class ViewPosts(handler.Handler):
+	def get(self):
+		if self.request.get("u"):
+			user = self.request.cookies.get('user_id')
+			if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+				user = user.split('|')[0]
+				user = User.get_by_id(int(user))
+				if user:
+					user = user.user_id
+				else:
+					user = None
+			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
+			if len(profile) == 1:
+				posts = db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc")
+				posts = list(posts)
+				for e in posts:
+					if e.submitter == user:
+						e.submitter = "ti"
+					else:
+						e.submitter = self.request.get("u")+"|True"
+				self.render('page.html',posts=posts,user=user)			
+			else:
+				self.write("Perfil no encontrado")
+		else:
+			user = self.request.cookies.get('user_id')
+			if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+				user = user.split('|')[0]
+				user = User.get_by_id(int(user))
+				if user:
+					user = user.user_id
+					posts = db.GqlQuery("select * from Post where submitter='"+user+"' order by created desc")
+					posts = list(posts)
+					for e in posts:
+						e.submitter = "ti"
+					self.render('page.html',posts=posts,user=user) 
+				else:
+					self.redirect("/login")
+
+class ViewComments(handler.Handler):
+	def get(self):
+		user = self.request.cookies.get("user_id")
+		if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
+			user = user.split("|")[0]
+			user = User.get_by_id(int(user))
+			if user:
+				user = user.user_id
+			else:
+				self.redirect("/login")
+		else:
+			self.redirect("/login")
+		if self.request.get("u"):
+			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
+			if len(profile) == 1:
+				comments = db.GqlQuery("select * from Comment where submitter='"+profile[0].user_id+"' order by created desc")
+				comments = list(comments)
+				for e in comments:
+					if e.submitter == user:
+						e.submitter = "ti"
+					else:
+						e.submitter = self.request.get("u")+"|True"
+				self.render('just_comments.html',author=self.request.get("u"),comments=comments)
+			else:
+				self.write("Perfil no encontrado")
+		else:
+			comments = db.GqlQuery("select * from Comment where submitter='"+user+"' order by created desc")
+			comments = list(comments)
+			for e in comments:
+				e.submitter = "ti"
+			self.render("just_comments.html",author="mi autoria",comments=comments)
+
 
 

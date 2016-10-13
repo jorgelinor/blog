@@ -29,10 +29,10 @@
 			{%for comment in comments%}
 				<div class="post-comment">
 					<div id="post-comment-title">{{comment.title}}: </div> <div id="post-comment-content"> {{comment.content}}</div><br>
-					{%if comment.submitter.split("|")[1] != False%}
+					{%if comment.submitter.split("|")[1] != "False"%}
 						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
 					{%else%}
-						<div id="post-submitter-deleted">{{comment.submitter.split("|")[0]}}</div><br>
+						<div id="comment-submitter-deleted">Enviado por: {{comment.submitter.split("|")[0]}}</div><br>
 					{%endif%}
 				</div>
 				<hr>
