@@ -9,22 +9,28 @@ class Profile(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get('user_id')
 		if user:
+			if user.split('|')[0].isdigit():
+				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 			user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
+			user=user.user_id
+		else:
+			user=None
 		if not self.request.get("u"):
 			if self.request.cookies.get("user_id") == "" or not self.request.cookies.get("user_id"):
 				self.redirect("/login")
 			else:
 				if user_db:
-					self.render("profile.html", user=user_db,desc=user_db.user_desc,modificable=True)
+					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db,desc=user_db.user_desc,modificable=True)
 				else:
 					self.redirect("/login")
 		else:
-			user = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
-			if user:
-				if str(user[0].key().id()) == str(self.request.cookies.get("user_id").split("|")[0]):
+			user_db = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
+			if user_db:
+				if str(user_db[0].key().id()) == str(self.request.cookies.get("user_id").split("|")[0]):
 					self.redirect("/profile")
 				else:
-					self.render("profile.html", user=user[0],desc=user[0].user_desc)
+					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc)
 			else:
 				if self.request.get("u") == "ti":
 					self.redirect("/profile")
@@ -59,7 +65,7 @@ class EditProfile(handler.Handler):
 				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			date_pre = create_date()
-			self.render("editprofile.html", user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
+			self.render("editprofile.html",pagename='Editar Perfil', user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
 		else:
 			self.write("Usuario no encontrado")
 	def post(self):
@@ -92,7 +98,7 @@ class EditProfile(handler.Handler):
 			if check_nick == False:
 				erroruser = 'Nombre tomado'
 			date_pre = create_date()
-			self.render('editprofile.html',user=user,dateerror=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
+			self.render('editprofile.html',pagename='Editar Perfil',user=user,dateerror=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
 				years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],passerror=passerror)
 		else:
 			user.displayName=nickname[1]
@@ -120,7 +126,7 @@ class EditPass(handler.Handler):
 		if user:
 			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-			self.render("editpass.html", user=user)
+			self.render("editpass.html",pagename='Editar contrasenia', user=user)
 		else:
 			self.write("Not found")
 	def post(self):
@@ -145,7 +151,7 @@ class EditPass(handler.Handler):
 				errorpass = 'Incorrect password'
 		else:
 			errorpass = 'Invalid password'
-		self.render('editpass.html',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify)
+		self.render('editpass.html',pagename='Editar contrasenia',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify)
 
 class ViewPosts(handler.Handler):
 	def get(self):
@@ -167,7 +173,7 @@ class ViewPosts(handler.Handler):
 						e.submitter = "ti"
 					else:
 						e.submitter = self.request.get("u")+"|True"
-				self.render('page.html',posts=posts,user=user)			
+				self.render('page.html',pagename='Ver posts',posts=posts,user=user)			
 			else:
 				self.write("Perfil no encontrado")
 		else:
@@ -181,7 +187,7 @@ class ViewPosts(handler.Handler):
 					posts = list(posts)
 					for e in posts:
 						e.submitter = "ti"
-					self.render('page.html',posts=posts,user=user) 
+					self.render('page.html',pagename='Ver posts',posts=posts,user=user) 
 				else:
 					self.redirect("/login")
 
@@ -207,15 +213,15 @@ class ViewComments(handler.Handler):
 						e.submitter = "ti"
 					else:
 						e.submitter = self.request.get("u")+"|True"
-				self.render('just_comments.html',author=self.request.get("u"),comments=comments)
+				self.render('just_comments.html',pagename='Ver comentarios',author=self.request.get('u'),user=user,comments=comments)
 			else:
 				self.write("Perfil no encontrado")
-		else:
+		else:	
 			comments = db.GqlQuery("select * from Comment where submitter='"+user+"' order by created desc")
 			comments = list(comments)
 			for e in comments:
 				e.submitter = "ti"
-			self.render("just_comments.html",author="mi autoria",comments=comments)
+			self.render("just_comments.html",pagename='Ver comentarios',author=user,user=user,comments=comments)
 
 
 

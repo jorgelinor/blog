@@ -49,7 +49,7 @@ class Permalink(handler.Handler):
 						e.submitter = "ti"
 					else:
 						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-			self.render('permalink.html',post=post,user=user,comments=comments)
+			self.render('permalink.html',pagename='Post',post=post,user=user,comments=comments)
 		else:
 			self.redirect('/')
 
@@ -89,7 +89,7 @@ class Comment(handler.Handler):
 						e.submitter = "ti"
 					else:
 						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-			self.render('permalink.html',post=post,user=user,newcomment=True,comments=comments)
+			self.render('permalink.html',pagename='Comentar',post=post,user=user,newcomment=True,comments=comments)
 		else:
 			self.redirect('/')
 	def post(self,link):
@@ -122,14 +122,15 @@ class EditPost(handler.Handler):
 		submitter = list(submitter)
 		if len(submitter) > 0:
 			if post.submitter == user:
-				if post.modificable == True:
-					self.render('ascii.html',title=post.title,post=post.post,error='',editable=True)
+				if post.modificable == 'True':
+					self.render('ascii.html',pagename='Editar post',title=post.title,post=post.post,error='',editable=True)
 				else:
 					self.write("<a href='/"+str(post.key().id())+"'>No tienes permiso para eso!</a>")
 			else:
 				self.write("<a href='/"+str(post.key().id())+"'>Este no es tu post!</a>")
 		else:
 			self.write("<a href='/"+str(post.key().id())+"'>Este post no tiene duenio</a>")
+
 	def post(self,link):
 		post = Post.get_by_id(int(link))
 		content = self.request.get('content')
@@ -141,7 +142,7 @@ class EditPost(handler.Handler):
 			self.redirect('/'+str(post.key().id()))
 		else:
 			error = 'we need more...'
-			self.render_front(title,content,error)
+			self.render('ascii.html',pagename='Editar post',title=title,post=content,error=error,editable=True)
 
 class EditComment(handler.Handler):
 	def get(self, link):
@@ -168,7 +169,7 @@ class EditComment(handler.Handler):
 										else:
 											e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
 								post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
-								self.render("permalink.html",user=user.user_id,comments=comments,post=post,editcomment=True,comment=com)
+								self.render("permalink.html",pagename='Editar comentario',user=user.user_id,comments=comments,post=post,editcomment=True,comment=com)
 							else:
 								self.write("Este comentario no pertenece a este Post.")
 						else:

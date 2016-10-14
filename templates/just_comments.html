@@ -1,10 +1,11 @@
-<!doctype html>
-<html>
-	<head>
-		<title>Comentarios de {{author}}</title>
-		<link rel="stylesheet" type="text/css" href="/css/styles.css">
-	</head>
-	<body>
+{%extends 'base.html'%}
+{%block content%}
+<h2>{%if author == user%}
+		Mis comentarios
+	{%else%}
+		Comentarios de author
+	{%endif%}
+</h2>
 	{%if comments%}
 		{%for comment in comments%}
 			<div class="post-comment">
@@ -16,5 +17,4 @@
 	{%else%}
 		Ningun comentario encontrado. <a href="/">Volver.</a>
 	{%endif%}
-	<body>
-</html>
+{%endblock%}

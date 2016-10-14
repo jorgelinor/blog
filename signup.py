@@ -14,12 +14,12 @@ class Signup(handler.Handler):
 			user = user.split("|")
 			date_pre = create_date()
 			if db.get(db.Key.from_path("User",int(user[0]))) and user[1] != hashlib.sha256(user[0]).hexdigest() or not User.get_by_id(int(user[0])):
-				self.render('signup.html',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
+				self.render('signup.html',pagename='Registrar',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
 			else:
 				self.write("<a href='/'>Already registered</a>")
 		else:
 			date_pre = create_date()
-			self.render('signup.html',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
+			self.render('signup.html',pagename='Registrar',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
 	def post(self):
 		randomStr = ''.join(random.choice(string.letters) for _ in xrange(5))
 		username = valid_username(self.request.get('username'))
@@ -51,7 +51,7 @@ class Signup(handler.Handler):
 			if not email[0]:
 				errormail = 'Invalid e-mail'
 			date_pre = create_date()
-			self.render('signup.html',username=username[1],email=email[1],erroruser=erroruser,errormail=errormail,errorpass=errorpass,errorverify=errorverify,
+			self.render('signup.html',pagename='Registrar',username=username[1],email=email[1],erroruser=erroruser,errormail=errormail,errorpass=errorpass,errorverify=errorverify,
 						errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description,years=list(reversed(date_pre[0])),
 						months=date_pre[1],days=date_pre[2])
 		else: #si el registro es valido
