@@ -7,4 +7,4 @@ class Post(db.Model):
     submitter = db.StringProperty(required=True)
     created = db.DateTimeProperty(auto_now_add = True)
     created_str = db.StringProperty(required=False)
-    modificable = db.BooleanProperty(required=True)
+    modificable = db.StringProperty(required=True)
