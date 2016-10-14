@@ -87,3 +87,10 @@
 	text-decoration: none;
 	color:blue;
 }
+.admin-link {
+	margin:4%;
+	font-weight: bold;
+	font-size: 20px;
+	color: gray;
+	text-decoration: none;
+}
