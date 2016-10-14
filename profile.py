@@ -2,8 +2,11 @@ import handler
 import hashlib
 import re
 import time
+import logging
+import os.path
 from google.appengine.ext import db
 from user import User
+from google.appengine.api import images
 
 class Profile(handler.Handler):
 	def get(self):
@@ -68,6 +71,9 @@ class EditProfile(handler.Handler):
 		tel = valid_tel(self.request.get('tel'))
 		date = self.request.get('date1')+'-'+self.request.get('date2')+'-'+self.request.get('date3')
 		description = self.request.get('description')
+		img = self.request.get('pic')
+		img_name = img.filename
+		logging.error(img_name, "prueva de objeto" )
 		erroruser,errortel,errordesc,errordate,passerror='','','','',''
 		actualnick = [False]
 		if db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1):
@@ -99,6 +105,7 @@ class EditProfile(handler.Handler):
 			user.user_tel=tel[1]
 			user.user_date=date
 			user.user_desc=description
+			# user.user_img=img
 			user.put()
 			time.sleep(2)
 			self.redirect('/profile')

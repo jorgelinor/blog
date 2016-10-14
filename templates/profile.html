@@ -6,8 +6,13 @@
 	</head>
 	<body>
 		<div id="user-holder">
+			{{user.user_img}}
 			<div><b id="nickname">{{user.displayName}}</b></div><br><br>
-			<div id="profile-picture"><img src="/img/icon.png"></div>
+			{% if user.user_img %}
+				<div id="profile-picture"><img src="{{user.user_img}}"></div>
+			{% else %}
+				<div id="profile-picture"><img src="/img/icon.png"></div>
+			{% endif %}
 			<div id="user-info">
 				{%if modificable == True%}
 					<b>Nombre de usuario:</b> {{user.user_id}}<br>

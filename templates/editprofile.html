@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="/css/styles.css">
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<title>Edita tu perfil</title>
 	</head>
 	<body>
@@ -30,37 +31,22 @@
 		            </select><div class="error">{{errordate}}</div></input><br><br>
 				<label>Descripcion</label><br>
 				<textarea name="description" id="desc-area">{{user.user_desc}}</textarea><br><br>
-				<!-- <div id="upload" >{{imgadd}}</div>
-				<div class="dropzone" id="dropzone" >agregue la imagen aqui</div> -->
+				<input type="file" accept="image/*" capture="camera" id="camera">
+				<img id="frame">
+				<script>
+  					var camera = document.getElementById('camera');
+  					var frame = document.getElementById('frame');
+
+  					camera.addEventListener('change', function(e) {
+    				var file = e.target.files[0]; 
+    				// Do something with the audio file.
+				    frame.src = URL.createObjectURL(file);
+				  });
+				</script>
+				<br>
 				<label>Para guardar introduzca su contrasena actual aqui >>></label>
 				<input type="password" name="actualpassword" class="editable"><div class="error">{{passerror}}<div></input><br>
 				<button type="submit">Guardar</button>
 			</div>
-			<!-- <script>
-				(function() {
-					var dropzone = document.getElementById('dropzone');
-					var upload = function(file) {
-						var formData = new FormData(),
-						hxr = new XMLHttpRequest();
-						console.log(file);
-						// formData.append('file',file);
-					};
-					dropzone.ondrop = function(e) {
-						e.preventDefault();
-						this.className ='dropzone';
-						var upload = document.getElementById('upload')
-						upload.className()
-						console.log(e.dataTransfer.file);
-					};
-					dropzone.ondragover = function() {
-						this.className = 'dropzone dragover';
-						return false;
-					};
-					dropzone.ondragleave = function() {
-						this.className ='dropzone';
-						return false;
-					};
-				}());
-			</script> -->
 	</body>
 </html>
