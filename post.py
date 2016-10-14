@@ -8,3 +8,4 @@ class Post(db.Model):
     created = db.DateTimeProperty(auto_now_add = True)
     created_str = db.StringProperty(required=False)
     modificable = db.StringProperty(required=True)
+    razon = db.StringProperty(required=False)

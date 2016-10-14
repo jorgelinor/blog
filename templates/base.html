@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+	<title>{{pagename}} - Blog</title>
+</head>
+<body>
+<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" style="float:left;width: 24px; height: 24px;"></a>
+<form style="float:left" action="/profile">
+	<input type="text" name="u" placeholder="Buscar usuario por nombre">
+	<button>Buscar</button>
+</form>
+	{%if user%}
+		<center style='height: 0px'><a href="/profile" style="font-size: 3ex;text-decoration: none;">{{user}}</a></center>
+		<a href="/logout" style="float: right;text-decoration: none;">Salir</a>   
+		<a href="/newpost" style="float:right;text-decoration: none;">Postear&nbsp;&nbsp;</a>
+		<br>
+		<br>
+	{%else%}
+		<a href="/signup" style="float:right;text-decoration: none;">Registrar</a>   
+		<a href="/login" style="float: right;text-decoration: none;">Iniciar sesion&nbsp;&nbsp;</a>
+		<br>
+		<br>
+	{%endif%}
+{%block content%}
+{%endblock%}
+</body>
+</html>

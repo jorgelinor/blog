@@ -7,14 +7,14 @@ import hashlib
 import time
 
 class Newpost(handler.Handler):
-    def render_front(self,title = '',post = '',error = ''):
-        self.render('ascii.html',title=title,post=post,error=error)
+    def render_front(self,title = '',post = '',error = '',user=''):
+        self.render('ascii.html',user=user,title=title,post=post,error=error,pagename='Postear')
     def get(self):
         user = self.request.cookies.get('user_id')
         if user:
             user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-            self.render_front()
+            self.render_front(user=user.user_id)
         else:
             self.redirect('/signup')
     def post(self):
@@ -30,4 +30,11 @@ class Newpost(handler.Handler):
             self.redirect('/'+str(a.key().id()))
         else:
             error = 'we need more...'
-            self.render_front(title,post,error)
+            user = self.request.cookies.get('user_id')
+            if user:
+                user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+            if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
+                self.render_front(title,post,error,user)
+            else:
+                self.redirect('/signup')
+            

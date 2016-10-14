@@ -9,12 +9,12 @@ class Admin(handler.Handler):
 		user = self.request.cookies.get("user_id")
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
-			if user.type == "admin":
-				self.render("admin.html")
+			if user.user_type == "admin":
+				self.render("admin.html", pagename="Administracion",user=user.user_id)
 			else:
-				self.error(502)
+				self.redirect("/")
 		else:
-			self.redirect("/")
+			self.redirect("/login")
 
 class PostRequest(handler.Handler):
 	def get(self):
@@ -25,7 +25,7 @@ class PostRequest(handler.Handler):
 				posts = db.GqlQuery("select * from Post where modificable='pending'")
 				if posts:
 					posts = list(posts)
-					self.render("page.html", user=user.user_id,posts=posts)
+					self.render("page.html", user=user.user_id,posts=posts,pagename="Edicion de publicaciones")
 				else:
 					self.write("No hay posts pendientes por el momento")
 			else:

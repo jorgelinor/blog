@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel="stylesheet" type="text/css" href="/css/styles.css">
-	<title>{{user.user_id}} - Change Password</title>
-</head>
-<body>
+{%extends 'base.html'%}
+{%block content%}
 	<form method="post">
 		<label>Antigua contrasenia<input type="password" name="oldpass"></label>
 		<br>
@@ -20,5 +15,4 @@
 		<br>
 		<button>Guardar cambios</button>	
 	</form>
-</body>
-</html>
+{%endblock%}

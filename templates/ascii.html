@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Mandar nuevo</title>
-	</head>
-	<body>
+{%extends 'base.html'%}
+{%block content%}
 		{%if editable%}
 			<h1>Edita tu post</h1>
 		<form method="post">
@@ -32,5 +28,4 @@
 			<div><button>Enviar</button></div>
 		</form><a href="/" style="float:right">Volver</a><br>
 		<hr>
-	</body>
-</html>
+{%endblock%}
