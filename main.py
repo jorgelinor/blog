@@ -8,6 +8,7 @@ import logout
 import page
 import profile
 import permalink
+import admin
 
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
@@ -27,5 +28,8 @@ app = webapp2.WSGIApplication([
     ("/([0-9]+)/?", permalink.Permalink),
     ("/([0-9]+)"+"/_reply", permalink.Comment),
     ('/([0-9]+)'+'/_editpost/?', permalink.EditPost),
-    ("/([0-9]+)"+"/_editcomment", permalink.EditComment)
+    ("/([0-9]+)"+"/_editcomment", permalink.EditComment),
+    ("/admin/?", admin.Admin),
+    ("/admin/post_requests/?", admin.PostRequest),
+    ("/accept_request/"+ "([0-9]+)/?", admin.AcceptRequest)
 ], debug=True)

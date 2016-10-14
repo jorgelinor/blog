@@ -1,9 +1,9 @@
 {%extends 'base.html'%}
 {%block content%}
-<h2>{%if author == user%}
+<h2>{%if mios == True%}
 		Mis comentarios
 	{%else%}
-		Comentarios de author
+		Comentarios de {{author}}
 	{%endif%}
 </h2>
 	{%if comments%}

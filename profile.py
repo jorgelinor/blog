@@ -197,9 +197,7 @@ class ViewComments(handler.Handler):
 		if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
 			user = user.split("|")[0]
 			user = User.get_by_id(int(user))
-			if user:
-				user = user.user_id
-			else:
+			if not user:
 				self.redirect("/login")
 		else:
 			self.redirect("/login")
@@ -213,15 +211,18 @@ class ViewComments(handler.Handler):
 						e.submitter = "ti"
 					else:
 						e.submitter = self.request.get("u")+"|True"
-				self.render('just_comments.html',pagename='Ver comentarios',author=self.request.get('u'),user=user,comments=comments)
+				if user.displayName == self.request.get("u"):
+					self.render('just_comments.html',pagename='Ver comentarios',user=user.user_id,comments=comments, mios=True)
+				else:
+					self.render('just_comments.html',pagename='Ver comentarios',user=user.user_id,comments=comments,author=self.request.get("u"))	
 			else:
 				self.write("Perfil no encontrado")
 		else:	
-			comments = db.GqlQuery("select * from Comment where submitter='"+user+"' order by created desc")
+			comments = db.GqlQuery("select * from Comment where submitter='"+user.user_id+"' order by created desc")
 			comments = list(comments)
 			for e in comments:
 				e.submitter = "ti"
-			self.render("just_comments.html",pagename='Ver comentarios',author=user,user=user,comments=comments)
+			self.render("just_comments.html",pagename='Ver comentarios',user=user.user_id,comments=comments,mios=True)
 
 
 
