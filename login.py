@@ -15,7 +15,7 @@ class Login(handler.Handler):
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1] and User.get_by_id(int(user.split("|")[0])):
 			self.write("<a href='/'>Already logged</a>")
 		else:
-			self.render('login.html',url='Login',link='/')
+			self.render('login.html',pagename='Iniciar sesion',url='Login',link='/')
 	def post(self):
 		username = valid_username(self.request.get('username'))
 		password = valid_pass(self.request.get('password'))
@@ -34,9 +34,8 @@ class Login(handler.Handler):
 				errorpass = 'Invalid password'
 			if user_ob and user_ob.user_pw != hashlib.sha256(password[1]).hexdigest():
 				errorpass = 'Invalid password'
-			self.render('login.html',username=username[1],erroruser=erroruser,errorpass=errorpass)
+			self.render('login.html',pagename='Iniciar sesion',username=username[1],erroruser=erroruser,errorpass=errorpass)
 		else: #si todo esta correcto
-			self.write(str(user_ob.key().id()))
 			self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.key().id())+'|'+hashlib.sha256(str(user_ob.key().id())).hexdigest()+';Path=/') #se hace la cookie del usuario
 			self.redirect('/profile')
 

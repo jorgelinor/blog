@@ -28,4 +28,4 @@ class Page(newpost.Newpost):
                     e.submitter = e.submitter+"|False"
                 else:
                     e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-        self.render('page.html',posts=posts,user=user) 
+        self.render('page.html',pagename='Pagina principal',posts=posts,user=user) 

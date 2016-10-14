@@ -1,18 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel="stylesheet" type="text/css" href="/css/styles.css">
-	<title>Escribe pa mi</title>
-</head>
-<body>
-<center><h1>Escribe pa mi</h1></center>
-{%if user%}
-{{user}}<a href="/logout">(salir)</a>
-<a href="/newpost" style="float:right">Manda uno nuevo</a>
-{%else%}
-<a href="/login">Iniciar sesion</a>
-<a href="/signup" style="float:right">Registrar</a>
-{%endif%}
+{%extends 'base.html'%}
+{%block content%}
 <center>
 {%if posts%}
 	{%for post in posts%}
@@ -29,5 +16,4 @@
 <br>
 {%endif%}
 </center>
-</body>
-</html>
+{%endblock%}
