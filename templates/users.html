@@ -1,30 +1,29 @@
 {%extends "base.html"%}
 {%block content%}
 {%for e in users%}
-	{%if e.user_id != user%}
-		<br>
+	{%if e.user_id != user.user_id%}
 		<div id="user-chart">
 			<center>
 				<a id="user-chart-name" href="/profile?u={{e.displayName}}">{{e.user_id}}</a>
 			</center>
-				<hr>
-				<ul>
-					{%if e.user_type=="user"%}
-						<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=ascend">Ascender a Admin</a></button></li>
-					{%else%}
-						<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=descend">Descender a User</a></button></li>
-					{%endif%}
-					{%if e.banned_from_posting==False%}
-						<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=ban_posting">Prohibir posteos</a></button></li>
-					{%else%}
-						<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=allow_posting">Permitir posteos</a></button></li>
-					{%endif%}
-					{%if e.banned_from_comments==False%}
-						<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=ban_comments">Prohibir comentarios</a></button></li>
-					{%else%}
-						<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=allow_comments">Permitir comentarios</a></button></li>
-					{%endif%}
-				</ul>
+			<hr>
+			<ul>
+				{%if e.user_type=="user"%}
+					<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=ascend">Ascender a Admin</a></button></li>
+				{%else%}
+					<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=descend">Descender a User</a></button></li>
+				{%endif%}
+				{%if e.banned_from_posting==False or e.banned_from_posting == None%}
+					<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=ban_posting">Prohibir posteos</a></button></li>
+				{%else%}
+					<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=allow_posting">Permitir posteos</a></button></li>
+				{%endif%}
+				{%if e.banned_from_comments==False or e.banned_from_posting == None%}
+					<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=ban_comments">Prohibir comentarios</a></button></li>
+				{%else%}
+					<li><button><a class="user-chart-link" href="/admin/users?u={{e.user_id}}&action=allow_comments">Permitir comentarios</a></button></li>
+				{%endif%}
+			</ul>
 		</div>
 	{%endif%}
 {%endfor%}

@@ -95,12 +95,12 @@
 	text-decoration: none;
 }
 #user-chart {
-	float: left;
 	display:block;
 	width: 15%;
 	height:auto;
 	background-color: darkgray;
 	border: black solid 1px;
+	float:left;
 	margin:10px;
 }
 .user-chart-link {
@@ -113,7 +113,7 @@
 	text-decoration:none;
 	font-family: "Courier New", monospace;
 	font-weight: bold;
-	color:lightblue;
+	color:darkblue;
 }
 .header-link {
 	font-size: 3ex;

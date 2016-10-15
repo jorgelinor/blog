@@ -3,6 +3,7 @@ import handler
 import hashlib
 from user import User
 from post import Post
+import time
 
 class Admin(handler.Handler):
 	def get(self):
@@ -45,7 +46,7 @@ class PostRequest(handler.Handler):
 				else:
 					if posts:
 						posts = list(posts)
-						self.render("page.html", user=user.user_id,posts=posts,pagename="Edicion de publicaciones")
+						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones")
 					else:
 						self.write("No hay posts pendientes por el momento")
 			else:
@@ -62,20 +63,28 @@ class Users(handler.Handler):
 				if self.request.get("u"):
 					profile = db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'").fetch(1)[0]
 					if profile:
+						changed = False
 						if self.request.get("action"):
 							if self.request.get("action") == "ascend":
 								profile.user_type = "admin"
+								changed = True
 							if self.request.get("action") == "descend":
 								profile.user_type = "user"
+								changed = True
 							if self.request.get("action") == "ban_posting":
 								profile.banned_from_posting = True
+								changed = True
 							if self.request.get("action") == "allow_posting":
 								profile.banned_from_posting = False
+								changed = True
 							if self.request.get("action") == "ban_comments":
 								profile.banned_from_comments = True
+								changed = True
 							if self.request.get("action") == "allow_comments":
 								profile.banned_from_comments = False
-							profile.put()
+								changed = True
+							if changed == True:
+								profile.put()
 							self.redirect("/admin/users")
 						else:
 							self.redirect("/admin/users")
