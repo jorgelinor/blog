@@ -12,8 +12,8 @@ class Permalink(handler.Handler):
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
 			user = User.get_by_id(int(user))
-			if user:
-				user = user.user_id
+			if not user:
+				self.redirect("/login")
 		else:
 			self.redirect("/login")
 		post = Post.get_by_id(int(link[:]))
@@ -23,7 +23,7 @@ class Permalink(handler.Handler):
 			if len(submitter) < 1:
 				post.submitter = post.submitter+"|False"
 			else:
-				if post.submitter == user:
+				if post.submitter == user.user_id:
 					post.submitter = "ti"
 				else:
 					post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
@@ -33,9 +33,7 @@ class Permalink(handler.Handler):
 			if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
 				user = user.split("|")[0]
 				user = User.get_by_id(int(user))
-				if user:
-					user = user.user_id
-				else:
+				if not user:
 					self.redirect("/login")
 			else:
 				self.redirect("/login")
@@ -45,7 +43,7 @@ class Permalink(handler.Handler):
 				if len(submitter) < 1:
 					e.submitter = e.submitter+"|False"
 				else:
-					if e.submitter == user:
+					if e.submitter == user.user_id:
 						e.submitter = "ti"
 					else:
 						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
@@ -59,8 +57,6 @@ class Comment(handler.Handler):
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
 			user = User.get_by_id(int(user))
-			if user:
-				user = user.user_id
 		else:
 			self.redirect("/login")
 		post = Post.get_by_id(int(link))
@@ -69,7 +65,7 @@ class Comment(handler.Handler):
 		if len(submitter) < 1:
 			post.submitter = post.submitter+"|False"
 		else:
-			if post.submitter == user:
+			if post.submitter == user.user_id:
 				post.submitter = "ti"
 			else:
 				post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
@@ -78,14 +74,14 @@ class Comment(handler.Handler):
 			comments = list(comments)
 			user = self.request.cookies.get("user_id").split("|")[0]
 			if user:
-				user = User.get_by_id(int(user)).user_id
+				user = User.get_by_id(int(user))
 			for e in comments:
 				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 				submitter = list(submitter)
 				if len(submitter) < 1:
 					e.submitter = e.submitter+"|False"
 				else:
-					if e.submitter == user:
+					if e.submitter == user.user_id:
 						e.submitter = "ti"
 					else:
 						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
@@ -114,16 +110,16 @@ class EditPost(handler.Handler):
 			user = user.split('|')[0]
 			user = User.get_by_id(int(user))
 			if user:
-				user = user.user_id
+				user = user
 		else:
 			self.redirect("/login")
 		post = Post.get_by_id(int(link))
 		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
 		submitter = list(submitter)
 		if len(submitter) > 0:
-			if post.submitter == user:
+			if post.submitter == user.user_id:
 				if post.modificable == 'True':
-					self.render('ascii.html',pagename='Editar post',title=post.title,post=post.post,error='',editable=True)
+					self.render('ascii.html',user=user,pagename='Editar post',title=post.title,post=post.post,error='',editable=True)
 				else:
 					self.write("<a href='/"+str(post.key().id())+"'>No tienes permiso para eso!</a>")
 			else:
@@ -135,14 +131,17 @@ class EditPost(handler.Handler):
 		post = Post.get_by_id(int(link))
 		content = self.request.get('content')
 		title = self.request.get('subject')
-		if title and post:
+		user = User.get_by_id(int(self.request.cookies.get("user_id").split("|")[0]))
+		if not user:
+			self.redirect("/")
+		if title and content:
 			post.title = title
 			post.post = content
 			post.put()
 			self.redirect('/'+str(post.key().id()))
 		else:
-			error = 'we need more...'
-			self.render('ascii.html',pagename='Editar post',title=title,post=content,error=error,editable=True)
+			error = 'Contenido requerido'
+			self.render('ascii.html',user=user,pagename='Editar post',title=title,post=content,error=error,editable=True)
 
 class EditComment(handler.Handler):
 	def get(self, link):
@@ -168,8 +167,11 @@ class EditComment(handler.Handler):
 											e.submitter = "ti"
 										else:
 											e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-								post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
-								self.render("permalink.html",pagename='Editar comentario',user=user.user_id,comments=comments,post=post,editcomment=True,comment=com)
+								if post.submitter == user.user_id:
+									post.submitter = "ti"
+								else:
+									post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
+								self.render("permalink.html",pagename='Editar comentario',user=user,comments=comments,post=post,editcomment=True,comment=com)
 							else:
 								self.write("Este comentario no pertenece a este Post.")
 						else:

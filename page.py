@@ -12,14 +12,12 @@ class Page(newpost.Newpost):
         if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
             user = user.split('|')[0]
             user = User.get_by_id(int(user))
-            if user:
-                user = user.user_id
         else:
         	user = None
         posts = db.GqlQuery('select * from Post order by created desc')
         posts = list(posts)
         for e in posts:
-            if e.submitter == user:
+            if user != None and e.submitter == user.user_id:
                 e.submitter = "ti"
             else:
                 submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
