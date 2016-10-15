@@ -14,7 +14,10 @@ class Newpost(handler.Handler):
         if user:
             user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-            self.render_front(user=user)
+            if not user.banned_from_posting:
+                self.render_front(user=user)
+            else:
+                self.redirect('/')
         else:
             self.redirect('/signup')
     def post(self):

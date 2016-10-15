@@ -21,6 +21,13 @@
 			<a href="/newpost" class="header-link">Postear</a>
 			<br>
 			<hr>
+			{%if user.banned_from_posting and user.banned_from_comments%}
+				<div id="banned-error">Attencion: No puedes postear ni comentar porque se te han quitado los derechos.</div>
+			{%elif user.banned_from_posting%}
+				<div id="banned-error">Attencion: No puedes postear porque se te han quitado los derechos.</div>
+			{%elif user.banned_from_comments%}
+				<div id="banned-error">Attencion: No puedes comentar porque se te han quitado los derechos.</div>
+			{%endif%}
 		{%else%}
 			<a href="/signup" class="header-link">Registrar</a>   
 			<a href="/login" class="header-link">Iniciar sesion</a>
@@ -29,7 +36,7 @@
 		{%endif%}
 	</div>
 <div class="page-content">
-<br><br><br>
+<br><br><br><br>
 	{%block content%}
 	{%endblock%}
 </div>
