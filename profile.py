@@ -12,9 +12,7 @@ class Profile(handler.Handler):
 			if user.split('|')[0].isdigit():
 				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 			user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-			user=user.user_id
-		else:
+		if not user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			user=None
 		if not self.request.get("u"):
 			if self.request.cookies.get("user_id") == "" or not self.request.cookies.get("user_id"):
@@ -160,16 +158,14 @@ class ViewPosts(handler.Handler):
 			if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 				user = user.split('|')[0]
 				user = User.get_by_id(int(user))
-				if user:
-					user = user.user_id
-				else:
+				if not user:
 					user = None
 			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
 			if len(profile) == 1:
 				posts = db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc")
 				posts = list(posts)
 				for e in posts:
-					if e.submitter == user:
+					if e.submitter == user.user_id:
 						e.submitter = "ti"
 					else:
 						e.submitter = self.request.get("u")+"|True"
@@ -182,7 +178,6 @@ class ViewPosts(handler.Handler):
 				user = user.split('|')[0]
 				user = User.get_by_id(int(user))
 				if user:
-					user = user.user_id
 					posts = db.GqlQuery("select * from Post where submitter='"+user+"' order by created desc")
 					posts = list(posts)
 					for e in posts:
@@ -207,14 +202,14 @@ class ViewComments(handler.Handler):
 				comments = db.GqlQuery("select * from Comment where submitter='"+profile[0].user_id+"' order by created desc")
 				comments = list(comments)
 				for e in comments:
-					if e.submitter == user:
+					if e.submitter == user.user_id:
 						e.submitter = "ti"
 					else:
 						e.submitter = self.request.get("u")+"|True"
 				if user.displayName == self.request.get("u"):
-					self.render('just_comments.html',pagename='Ver comentarios',user=user.user_id,comments=comments, mios=True)
+					self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments, mios=True)
 				else:
-					self.render('just_comments.html',pagename='Ver comentarios',user=user.user_id,comments=comments,author=self.request.get("u"))	
+					self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments,author=self.request.get("u"))	
 			else:
 				self.write("Perfil no encontrado")
 		else:	
@@ -222,7 +217,7 @@ class ViewComments(handler.Handler):
 			comments = list(comments)
 			for e in comments:
 				e.submitter = "ti"
-			self.render("just_comments.html",pagename='Ver comentarios',user=user.user_id,comments=comments,mios=True)
+			self.render("just_comments.html",pagename='Ver comentarios',user=user,comments=comments,mios=True)
 
 
 
