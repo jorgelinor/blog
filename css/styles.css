@@ -94,3 +94,14 @@
 	color: gray;
 	text-decoration: none;
 }
+.page-content{
+	margin-left: 10%;
+	margin-right: 10%;
+	overflow-y: auto;
+}
+.page-header{
+	position: fixed;
+	width:98%;
+	top:0px;
+	background-color: white;
+}
