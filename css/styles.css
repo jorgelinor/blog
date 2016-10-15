@@ -134,3 +134,8 @@
 	width:98%;
 	top:0px;
 }
+#banned-error{
+	text-align:center;
+	color: red;
+	background-color: white
+}
