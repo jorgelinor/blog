@@ -24,6 +24,8 @@
 					{%if comment.submitter.split("|")[1] != "False"%}
 						{%if comment.submitter=="ti"%}
 							<a id="edit-link" href="/{{post.key().id()}}/_editcomment?c={{comment.key().id()}}">Modificar</a>
+						{%else%}
+							<a id="edit-link" href="/{{post.key().id()}}/_reportcomment?c={{comment.key().id()}}">Reportar</a>
 						{%endif%}
 						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
 					{%else%}
@@ -44,6 +46,13 @@
 			<form method="post">
 				<textarea id="comment" name="content">{{comment.content}}</textarea>
 				<button type="submit">Guardar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo guardar</button>
+			</form>
+		{%endif%}
+
+		{%if reportcomment==True%}
+			<form method="post">
+				<input type="text" id="comment" name="razon" placeholder="Escribe una razon valida"></input>
+				<button type="submit">Reportar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo hacer esto</button>
 			</form>
 		{%endif%}
 

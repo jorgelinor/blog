@@ -6,3 +6,5 @@ class Comment(db.Model):
 	post = db.StringProperty(required=True)
 	submitter = db.StringProperty(required=True)
 	created = db.DateTimeProperty(auto_now_add=True)
+	reported = db.BooleanProperty(required=True)
+	razon = db.ListProperty(str,required=True)

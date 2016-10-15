@@ -99,7 +99,19 @@ class Users(handler.Handler):
 		else:
 			self.redirect("/login")
 
-
+class Reports(handler.Handler):
+	def get(self):
+		user = self.request.cookies.get("user_id")
+		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
+			user = User.get_by_id(int(user.split("|")[0]))
+			if user.user_type == "admin":
+				reported_comments = db.GqlQuery('select * from Comment where reported=True')
+				reported_comments = list(reported_comments)
+				self.render('reported.html',user=user,pagename='Reportes',comments=reported_comments)
+			else:
+				self.redirect('/')
+		else:
+			self.redirect('/login')
 
 
 

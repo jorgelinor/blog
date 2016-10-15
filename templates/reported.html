@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+{%block content%}
+	{%if comments%}
+		{%for comment in comments%}
+			<div>
+				<label>{{comment.title}}</label>:<label>{{comment.content}}</label>
+				<br>
+				<a href="/{{comment.post}}">Ver post de origen</a>
+				<br>
+				Razones:
+				{%for razon in comment.razon%}
+					<li>{{razon}}</li>
+				{%endfor%}
+			</div>
+		{%endfor%}
+	{%endif%}
+{%endblock%}
