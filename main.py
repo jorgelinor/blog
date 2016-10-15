@@ -31,5 +31,5 @@ app = webapp2.WSGIApplication([
     ("/([0-9]+)"+"/_editcomment", permalink.EditComment),
     ("/admin/?", admin.Admin),
     ("/admin/post_requests/?", admin.PostRequest),
-    ("/accept_request/"+ "([0-9]+)/?", admin.AcceptRequest)
+    ("/admin/users/?", admin.Users)
 ], debug=True)

@@ -14,7 +14,7 @@ class Newpost(handler.Handler):
         if user:
             user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-            self.render_front(user=user.user_id)
+            self.render_front(user=user)
         else:
             self.redirect('/signup')
     def post(self):
@@ -23,13 +23,13 @@ class Newpost(handler.Handler):
         submitter = self.request.cookies.get('user_id').split('|')[0]
         submitter = User.get_by_id(int(submitter)).user_id
         if title and post:
-            a = Post(title=title,post=post,submitter=submitter,modificable="pending")
+            a = Post(title=title,post=post,submitter=submitter,modificable="False")
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
             a.put()           
             self.redirect('/'+str(a.key().id()))
         else:
-            error = 'we need more...'
+            error = 'Titulo y contenido requeridos'
             user = self.request.cookies.get('user_id')
             if user:
                 user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
