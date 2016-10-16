@@ -3,15 +3,19 @@
 	{%if comments%}
 		{%for comment in comments%}
 			<div>
-				<label>{{comment.title}}</label>:<label>{{comment.content}}</label>
+				<label>{{comment.title}}</label>:<label>{{comment.content}}</label><a href="/{{comment.key().id()}}/_delete">Borrar</a>
 				<br>
 				<a href="/{{comment.post}}">Ver post de origen</a>
 				<br>
 				Razones:
+				<ul>
 				{%for razon in comment.razon%}
 					<li>{{razon}}</li>
 				{%endfor%}
+				</ul>
 			</div>
 		{%endfor%}
+	{%else%}
+	<h1>No hay reportes.</h1>
 	{%endif%}
 {%endblock%}

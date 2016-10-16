@@ -8,16 +8,20 @@ import time
 from google.appengine.ext import db
 
 class Newpost(handler.Handler):
-    def render_front(self,title = '',post = '',error = '',user=''):
-        messages = None
+    def render_front(self,title = '',post = '',error = '',user='',messages=None):
         self.render('ascii.html',user=user,title=title,post=post,error=error,pagename='Postear',recent_msg=messages)
     def get(self):
         user = self.request.cookies.get('user_id')
         if user:
             user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+        messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+        if messages:
+            messages = list(messages)
+            for e in messages:
+                e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
             if not user.banned_from_posting:
-                self.render_front(user=user)
+                self.render_front(user=user,messages=messages)
             else:
                 self.redirect('/')
         else:
@@ -27,6 +31,11 @@ class Newpost(handler.Handler):
         post = self.request.get('content')
         submitter = self.request.cookies.get('user_id').split('|')[0]
         submitter = User.get_by_id(int(submitter)).user_id
+        messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+        if messages:
+            messages = list(messages)
+            for e in messages:
+                e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
         if title and post:
             a = Post(title=title,post=post,submitter=submitter,modificable="False")
             a.created_str = str(a.created)
@@ -39,7 +48,7 @@ class Newpost(handler.Handler):
             if user:
                 user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
             if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-                self.render_front(title,post,error,user)
+                self.render_front(title,post,error,user,messages)
             else:
                 self.redirect('/signup')
             
