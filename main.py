@@ -9,6 +9,7 @@ import page
 import profile
 import permalink
 import admin
+import test
 
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
@@ -25,6 +26,7 @@ app = webapp2.WSGIApplication([
     ('/profile/_editpass/?',profile.EditPass),
     ('/profile/_viewposts/?', profile.ViewPosts),
     ('/profile/_viewcomments/?', profile.ViewComments),
+    ("/profile/_sendpm/?", profile.SendPm),
     ("/([0-9]+)/?", permalink.Permalink),
     ("/([0-9]+)"+"/_reply", permalink.Comment),
     ('/([0-9]+)'+'/_editpost/?', permalink.EditPost),

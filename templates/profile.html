@@ -1,25 +1,28 @@
 {%extends 'base.html'%}
 {%block content%}
-		<div id="user-holder">
-			<div><b id="nickname">{{user_ob.displayName}}</b></div><br><br>
-			<div id="profile-picture">Pic</div>
-			<div id="user-info">
-				{%if modificable == True%}
-					<b>Nombre de usuario:</b> {{user_ob.user_id}}<br>
-				{%endif%}
-				<b>Fecha de nacimiento</b>: {{user_ob.user_date}}<br>
-				<b>Numero de telefono</b>: {{user_ob.user_tel}}<br>
-				<b>E-Mail</b>: {{user_ob.user_mail}}<br>
-				{%if desc%}
-					<b>Descripcion</b>: {{desc}}
-				{%endif%}<br><br>
-				{%if modificable == True%}
-					<button><a href="/profile/_edit">Modificar informacion</a></button>
-					<button><a href="/profile/_editpass">Cambiar contrasenia</a></button><br>
-				{%endif%}
-				<a href="/profile/_viewposts?u={{user_ob.displayName}}">Publicaciones/topicos</a>
-				<a href="/profile/_viewcomments?u={{user_ob.displayName}}">Comentarios</a>
-			</div>
-
+	<div id="user-holder">
+		<div><b id="nickname">{{user_ob.displayName}}</b></div><br><br>
+		<div id="profile-picture">Pic</div>
+		<div id="user-info">
+			{%if modificable == True%}
+				<b>Nombre de usuario:</b> {{user_ob.user_id}}<br>
+			{%endif%}
+			<b>Fecha de nacimiento</b>: {{user_ob.user_date}}<br>
+			<b>Numero de telefono</b>: {{user_ob.user_tel}}<br>
+			<b>E-Mail</b>: {{user_ob.user_mail}}<br>
+			{%if desc%}
+				<b>Descripcion</b>: {{desc}}
+			{%endif%}<br><br>
+			{%if modificable == True%}
+				<button><a href="/profile/_edit">Modificar informacion</a></button>
+				<button><a href="/profile/_editpass">Cambiar contrasenia</a></button><br>
+			{%endif%}
 		</div>
+	</div>
+	<br>
+	<a href="/profile/_viewposts?u={{user_ob.displayName}}">Publicaciones/topicos</a><br>
+	<a href="/profile/_viewcomments?u={{user_ob.displayName}}">Comentarios</a><br>
+	{%if modificable!=True%}
+		<a href="/profile/_sendpm?u={{user_ob.displayName}}">Enviar un Mensaje</a><br>
+	{%endif%}
 {%endblock%}

@@ -7,6 +7,7 @@ from google.appengine.ext import db
 
 class Page(newpost.Newpost):
     def get(self):
+        messages = None
         user = self.request.cookies.get('user_id')
         online = False
         if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
@@ -26,4 +27,10 @@ class Page(newpost.Newpost):
                     e.submitter = e.submitter+"|False"
                 else:
                     e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-        self.render('page.html',pagename='Pagina principal',posts=posts,user=user) 
+        if user != None:
+            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+            if messages:
+                messages = list(messages)
+                for e in messages:
+                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName          
+        self.render('page.html',pagename='Pagina principal',posts=posts,user=user,recent_msg=messages) 
