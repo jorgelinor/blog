@@ -119,13 +119,19 @@ class Users(handler.Handler):
 
 class Reports(handler.Handler):
 	def get(self):
+		messages=None
 		user = self.request.cookies.get("user_id")
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
+				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+				if messages:
+					messages = list(messages)
+					for e in messages:
+						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 				reported_comments = db.GqlQuery('select * from Comment where reported=True')
 				reported_comments = list(reported_comments)
-				self.render('reported.html',user=user,pagename='Reportes',comments=reported_comments)
+				self.render('reported.html',user=user,pagename='Reportes',comments=reported_comments,recent_msg=messages)
 			else:
 				self.redirect('/')
 		else:

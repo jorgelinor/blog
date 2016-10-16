@@ -122,7 +122,7 @@ class Comment(handler.Handler):
 
 class EditPost(handler.Handler):
 	def get(self,link):
-		messaes = None
+		messages = None
 		user = self.request.cookies.get('user_id')
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
