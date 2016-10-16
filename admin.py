@@ -4,6 +4,7 @@ import hashlib
 from user import User
 from post import Post
 import time
+from comment import Comment
 
 class Admin(handler.Handler):
 	def get(self):
@@ -139,4 +140,24 @@ class Reports(handler.Handler):
 
 
 
+class DeleteComment(handler.Handler):
+	def get(self,link):
+		comment = Comment.get_by_id(int(link))
+		user = self.request.cookies.get('user_id')
+		if user:
+			if user.split('|')[0].isdigit():
+				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+					user = User.get_by_id(int(user.split('|')[0]))
+					if user.user_type == 'admin':
+						db.delete(comment)
+						time.sleep(2)
+						self.redirect('/admin/reports')
+					else:
+						self.redirect('/')
+				else:
+					self.redirect('/login')
+			else:
+				self.redirect('/login')
+		else:
+			self.redirect('/login')
 

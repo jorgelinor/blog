@@ -199,11 +199,6 @@ class EditComment(handler.Handler):
 											e.submitter = "ti"
 										else:
 											e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-								post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
-								if post.submitter == user.user_id:
-									post.submitter = "ti"
-								else:
-									post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
 								self.render("permalink.html",pagename='Editar comentario',user=user,comments=comments,post=post,editcomment=True,comment=com,recent_msg=messages)
 							else:
 								self.write("Este comentario no pertenece a este Post.")
