@@ -6,6 +6,7 @@
 </head>
 <body>
 	<div id="header">
+	<br>
 		<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" style="float:left;width: 24px; height: 24px;"></a>
 		<form style="float:left" action="/profile">
 			<input type="text" name="u" placeholder="Buscar usuario por nombre">
@@ -20,12 +21,19 @@
 			<a href="/logout" class="header-link">Salir</a>
 			<a class="header-link" id="inbox-link" onclick="activate()">Bandeja de entrada</a>
 			<br>
-			<br>
+			<hr>
+			{%if user.banned_from_posting and user.banned_from_comments%}
+				<div id="banned-error">Attencion: No puedes postear ni comentar porque se te han quitado los derechos.</div>
+			{%elif user.banned_from_posting%}
+				<div id="banned-error">Attencion: No puedes postear porque se te han quitado los derechos.</div>
+			{%elif user.banned_from_comments%}
+				<div id="banned-error">Attencion: No puedes comentar porque se te han quitado los derechos.</div>
+			{%endif%}
 		{%else%}
 			<a href="/signup" class="header-link">Registrar</a>   
 			<a href="/login" class="header-link">Iniciar sesion</a>
 			<br>
-			<br>
+			<hr>
 		{%endif%}
 	</div>
 	<div id='bandeja'>
@@ -43,8 +51,11 @@
 			{%endfor%}
 		{%endif%}
 	</div>
-	{%block content%}
-	{%endblock%}
+		<div class="page-content">
+		<br><br><br><br>
+			{%block content%}
+			{%endblock%}
+		</div>
 	<script src="/js/jquery.js"></script>
 	<script src="/js/javascript.js"></script>
 </body>

@@ -88,11 +88,16 @@
 	color:blue;
 }
 .admin-link {
-	margin:4%;
+	margin:2%;
 	font-weight: bold;
 	font-size: 20px;
 	color: gray;
 	text-decoration: none;
+}
+.page-content{
+	margin-left: 10%;
+	margin-right: 10%;
+	overflow-y: auto;
 }
 #user-chart {
 	display:block;
@@ -128,7 +133,14 @@
 	font-family: "Courier New", monospace;
 	background-color: gray;
 	width:100%;
-	height:25px;
+	position: fixed;
+	width:98%;
+	top:0px;
+}
+#banned-error{
+	text-align:center;
+	color: red;
+	background-color: white
 }
 #inbox-link {
 	cursor:pointer;

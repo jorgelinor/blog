@@ -12,17 +12,17 @@ class Profile(handler.Handler):
 		messages = None
 		if user:
 			if user.split('|')[0].isdigit():
-				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-			user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-		if not user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-			user=None
-		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
-		if messages:
-			messages = list(messages)
-			for e in messages:
-				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+					user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+				user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		if user:
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		if not self.request.get("u"):
-			if self.request.cookies.get("user_id") == "" or not self.request.cookies.get("user_id"):
+			if not self.request.cookies.get("user_id"):
 				self.redirect("/login")
 			else:
 				if user_db:
@@ -32,8 +32,11 @@ class Profile(handler.Handler):
 		else:
 			user_db = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
 			if user_db:
-				if str(user_db[0].key().id()) == str(self.request.cookies.get("user_id").split("|")[0]):
-					self.redirect("/profile")
+				if self.request.cookies.get("user_id"):
+					if str(user_db[0].key().id()) == str(self.request.cookies.get("user_id").split("|")[0]):
+						self.redirect("/profile")
+					else:
+						self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc)
 				else:
 					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc,recent_msg=messages)
 			else:
@@ -201,12 +204,13 @@ class ViewPosts(handler.Handler):
 			if len(profile) == 1:
 				posts = db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc")
 				posts = list(posts)
-				for e in posts:
-					if e.submitter == user.user_id:
-						e.submitter = "ti"
-					else:
-						e.submitter = self.request.get("u")+"|True"
-				self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages)			
+				if user:
+					for e in posts:
+						if e.submitter == user.user_id:
+							e.submitter = "ti"
+						else:
+							e.submitter = self.request.get("u")+"|True"
+				self.render('page.html',pagename='Ver posts',posts=posts,user=user)
 			else:
 				self.write("Perfil no encontrado")
 		else:
@@ -250,13 +254,16 @@ class ViewComments(handler.Handler):
 			if len(profile) == 1:
 				comments = db.GqlQuery("select * from Comment where submitter='"+profile[0].user_id+"' order by created desc")
 				comments = list(comments)
-				for e in comments:
-					if e.submitter == user.user_id:
-						e.submitter = "ti"
+				if user:
+					for e in comments:
+						if e.submitter == user.user_id:
+							e.submitter = "ti"
+						else:
+							e.submitter = self.request.get("u")+"|True"
+					if user.displayName == self.request.get("u"):
+						self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments, mios=True,recent_msg=messages)
 					else:
-						e.submitter = self.request.get("u")+"|True"
-				if user.displayName == self.request.get("u"):
-					self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments, mios=True,recent_msg=messages)
+						self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments,author=self.request.get("u"))
 				else:
 					self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments,author=self.request.get("u"),recent_msg=messages)	
 			else:

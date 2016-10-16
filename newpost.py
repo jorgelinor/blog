@@ -16,12 +16,10 @@ class Newpost(handler.Handler):
         if user:
             user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
-            if messages:
-                messages = list(messages)
-                for e in messages:
-                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
-            self.render_front(user=user)
+            if not user.banned_from_posting:
+                self.render_front(user=user)
+            else:
+                self.redirect('/')
         else:
             self.redirect('/signup')
     def post(self):

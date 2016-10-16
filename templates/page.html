@@ -1,6 +1,7 @@
 {%extends 'base.html'%}
 {%block content%}
 <center>
+<div class="banned-error">{{errorbanned}}</div>
 {%if posts%}
 	{%for post in posts%}
 		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title" href="/{{post.key().id()}}">{{post.title}}</a></h2>
