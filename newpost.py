@@ -5,10 +5,12 @@ from post import Post
 from user import User
 import hashlib
 import time
+from google.appengine.ext import db
 
 class Newpost(handler.Handler):
     def render_front(self,title = '',post = '',error = '',user=''):
-        self.render('ascii.html',user=user,title=title,post=post,error=error,pagename='Postear')
+        messages = None
+        self.render('ascii.html',user=user,title=title,post=post,error=error,pagename='Postear',recent_msg=messages)
     def get(self):
         user = self.request.cookies.get('user_id')
         if user:

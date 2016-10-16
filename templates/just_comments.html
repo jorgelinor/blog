@@ -15,6 +15,7 @@
 			<hr>
 		{%endfor%}
 	{%else%}
-		Ningun comentario encontrado. <a href="/">Volver.</a>
+		Ningun comentario encontrado.
+		<FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
 	{%endif%}
 {%endblock%}

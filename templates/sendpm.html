@@ -1,0 +1,19 @@
+{%extends "base.html"%}
+{%block content%}
+Estas enviando un mensaje privado a {{target.displayName}}
+<form method="post">
+	<br>
+	<label>Asunto</label>
+	<br>
+	<input name="pmtitle" type="text"></input>
+	<br>
+	<label>Mensaje</label>
+	<br>
+	<textarea name="pmcontent"></textarea>
+	<br>
+	<div class="error">{{error}}</div>
+	<br>
+	<button type="submit">Enviar mensaje</button>
+</form>
+<FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
+{%endblock%}

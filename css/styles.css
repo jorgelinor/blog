@@ -123,8 +123,11 @@
 .header-link {
 	font-size: 3ex;
 	text-decoration:none;
-	margin-left: 10%;
+	margin-left: 5%;
 	color: black;
+}
+.header-link:hover {
+	background-color: darkgray;
 }
 #header {
 	font-family: "Courier New", monospace;
@@ -138,4 +141,17 @@
 	text-align:center;
 	color: red;
 	background-color: white
+}
+#inbox-link {
+	cursor:pointer;
+}
+#bandeja {
+	position:fixed;
+	bottom: 300px;
+	right:3%;
+	width:40%;
+	height:315px;
+	display:none;
+	border: groove 3px darkgray;
+	overflow:scroll;
 }

@@ -2,23 +2,31 @@ import handler
 import hashlib
 import re
 import time
+from message import Message
 from google.appengine.ext import db
 from user import User
 
 class Profile(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get('user_id')
+		messages = None
 		if user:
 			if user.split('|')[0].isdigit():
 				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 					user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 				user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		if user:
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		if not self.request.get("u"):
 			if not self.request.cookies.get("user_id"):
 				self.redirect("/login")
 			else:
 				if user_db:
-					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db,desc=user_db.user_desc,modificable=True)
+					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db,desc=user_db.user_desc,modificable=True,recent_msg=messages)
 				else:
 					self.redirect("/login")
 		else:
@@ -30,7 +38,7 @@ class Profile(handler.Handler):
 					else:
 						self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc)
 				else:
-					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc)
+					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc,recent_msg=messages)
 			else:
 				if self.request.get("u") == "ti":
 					self.redirect("/profile")
@@ -59,16 +67,23 @@ def valid_tel(tel):
 
 class EditProfile(handler.Handler):
 	def get(self):
+		messages = None
 		user = self.request.cookies.get('user_id')
 		if user:
 			if user.split('|')[0].isdigit():
 				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			date_pre = create_date()
-			self.render("editprofile.html",pagename='Editar Perfil', user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+			self.render("editprofile.html",pagename='Editar Perfil', user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],recent_msg=messages)
 		else:
 			self.write("Usuario no encontrado")
 	def post(self):
+		messages = None
 		nickname = valid_username(self.request.get('nickname'))
 		actual_password = self.request.get('actualpassword')
 		tel = valid_tel(self.request.get('tel'))
@@ -79,6 +94,11 @@ class EditProfile(handler.Handler):
 		if db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1):
 			actualnick[0] = db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1)
 		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
+		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+		if messages:
+			messages = list(messages)
+			for e in messages:
+				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		check_pass = False
 		check_nick = True
 		if hashlib.sha256(actual_password).hexdigest()==user.user_pw:
@@ -99,7 +119,7 @@ class EditProfile(handler.Handler):
 				erroruser = 'Nombre tomado'
 			date_pre = create_date()
 			self.render('editprofile.html',pagename='Editar Perfil',user=user,dateerror=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
-				years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],passerror=passerror)
+				years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],passerror=passerror,recent_msg=messages)
 		else:
 			user.displayName=nickname[1]
 			user.user_tel=tel[1]
@@ -122,14 +142,21 @@ def create_date():
 
 class EditPass(handler.Handler):
 	def get(self):
+		messages = None
 		user = self.request.cookies.get('user_id')
 		if user:
 			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-			self.render("editpass.html",pagename='Editar contrasenia', user=user)
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+			self.render("editpass.html",pagename='Editar contrasenia', user=user,recent_msg=messages)
 		else:
 			self.write("Not found")
 	def post(self):
+		messages = None
 		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		oldpass = valid_pass(self.request.get('oldpass'))
 		newpass = valid_pass(self.request.get('newpass'))
@@ -151,10 +178,16 @@ class EditPass(handler.Handler):
 				errorpass = 'Incorrect password'
 		else:
 			errorpass = 'Invalid password'
-		self.render('editpass.html',pagename='Editar contrasenia',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify)
+		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+		if messages:
+			messages = list(messages)
+			for e in messages:
+				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+		self.render('editpass.html',pagename='Editar contrasenia',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify,recent_msg=messages)
 
 class ViewPosts(handler.Handler):
 	def get(self):
+		messages = None
 		if self.request.get("u"):
 			user = self.request.cookies.get('user_id')
 			if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
@@ -162,6 +195,11 @@ class ViewPosts(handler.Handler):
 				user = User.get_by_id(int(user))
 				if not user:
 					user = None
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
 			if len(profile) == 1:
 				posts = db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc")
@@ -172,26 +210,33 @@ class ViewPosts(handler.Handler):
 							e.submitter = "ti"
 						else:
 							e.submitter = self.request.get("u")+"|True"
-				self.render('page.html',pagename='Ver posts',posts=posts,user=user)			
+				self.render('page.html',pagename='Ver posts',posts=posts,user=user)
 			else:
 				self.write("Perfil no encontrado")
 		else:
+			messages = None
 			user = self.request.cookies.get('user_id')
 			if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 				user = user.split('|')[0]
 				user = User.get_by_id(int(user))
 				if user:
+					messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+					if messages:
+						messages = list(messages)
+						for e in messages:
+							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 					posts = db.GqlQuery("select * from Post where submitter='"+user+"' order by created desc")
 					posts = list(posts)
 					for e in posts:
 						e.submitter = "ti"
-					self.render('page.html',pagename='Ver posts',posts=posts,user=user) 
+					self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages) 
 				else:
 					self.redirect("/login")
 
 class ViewComments(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get("user_id")
+		messages = None
 		if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
 			user = user.split("|")[0]
 			user = User.get_by_id(int(user))
@@ -199,6 +244,11 @@ class ViewComments(handler.Handler):
 				self.redirect("/login")
 		else:
 			self.redirect("/login")
+		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+		if messages:
+			messages = list(messages)
+			for e in messages:
+				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		if self.request.get("u"):
 			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
 			if len(profile) == 1:
@@ -211,11 +261,11 @@ class ViewComments(handler.Handler):
 						else:
 							e.submitter = self.request.get("u")+"|True"
 					if user.displayName == self.request.get("u"):
-						self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments, mios=True)
+						self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments, mios=True,recent_msg=messages)
 					else:
 						self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments,author=self.request.get("u"))
 				else:
-					self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments,author=self.request.get("u"))	
+					self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments,author=self.request.get("u"),recent_msg=messages)	
 			else:
 				self.write("Perfil no encontrado")
 		else:	
@@ -223,7 +273,56 @@ class ViewComments(handler.Handler):
 			comments = list(comments)
 			for e in comments:
 				e.submitter = "ti"
-			self.render("just_comments.html",pagename='Ver comentarios',user=user,comments=comments,mios=True)
+			self.render("just_comments.html",pagename='Ver comentarios',user=user,comments=comments,mios=True,recent_msg=messages)
+
+class SendPm(handler.Handler):
+	def get(self):
+		messages = None
+		user = self.request.cookies.get("user_id")
+		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
+			user = User.get_by_id(int(user.split("|")[0]))
+			if self.request.get("u"):
+				destination = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
+				if len(destination) == 1:
+					target = destination[0]
+					if target.user_id == user.user_id:
+						self.write("No puedes enviarte un mensaje a ti mismo")
+					else:
+						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+						if messages:
+							messages = list(messages)
+							for e in messages:
+								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						self.render("sendpm.html",user=user,target=target,pagename="Mensaje Privado",recent_msg=messages)
+				else:
+					self.write("Persona no encontrada")
+			else:
+				self.redirect("/")
+		else:
+			self.redirect('/login')
+	def post(self):
+		messages = None
+		user = User.get_by_id(int(self.request.cookies.get("user_id").split("|")[0]))
+		subject = self.request.get("pmtitle")
+		if not subject:
+			subject = "Sin asunto"
+		content = self.request.get("pmcontent")
+		destination = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)[0].user_id
+		submitter = user.user_id
+		if not content:
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+			self.render("sendpm.html",user=user,target=destination,pagename="Mensaje Privado",error="Mensaje requerido",recent_msg=messages)
+		else:
+			msg = Message(submitter=submitter,destination=destination,subject=subject,content=content)
+			msg.put()
+			self.redirect("/profile?u="+self.request.get("u"))
+
+
+
 
 
 
