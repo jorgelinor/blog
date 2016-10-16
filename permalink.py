@@ -7,51 +7,46 @@ from google.appengine.ext import db
 
 
 class Permalink(handler.Handler):
-	def get(self,link):
+    def get(self,link):
 		user = self.request.cookies.get('user_id')
-		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-			user = user.split('|')[0]
-			user = User.get_by_id(int(user))
-			if user:
-				user = user.user_id
-		else:
-			self.redirect("/login")
-		post = Post.get_by_id(int(link[:]))
-		if post:
-			submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
-			submitter = list(submitter)
-			if len(submitter) < 1:
-				post.submitter = post.submitter+"|False"
-			else:
-				if post.submitter == user:
-					post.submitter = "ti"
-				else:
-					post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
-			comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
-			comments = list(comments)
-			user = self.request.cookies.get("user_id") #aqui habia error
-			if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
-				user = user.split("|")[0]
-				user = User.get_by_id(int(user))
-				if user:
-					user = user
-				else:
-					self.redirect("/login")
-			else:
-				self.redirect("/login")
-			for e in comments:
-				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
+		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1] and User.get_by_id(int(user.split('|')[0])):
+			user = User.get_by_id(int(user.split('|')[0]))
+			post = Post.get_by_id(int(link[:]))
+			if post:
+				submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
 				submitter = list(submitter)
 				if len(submitter) < 1:
-					e.submitter = e.submitter+"|False"
+					post.submitter = post.submitter+"|False"
 				else:
-					if e.submitter == user.user_id:
-						e.submitter = "ti"
+					if post.submitter == user.user_id:
+						post.submitter = "ti"
 					else:
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-			self.render('permalink.html',pagename='Post',post=post,user=user,comments=comments)
+						post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
+				comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
+				comments = list(comments)
+				user = self.request.cookies.get("user_id") #aqui habia error
+				if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
+					user = user.split("|")[0]
+					user = User.get_by_id(int(user))
+					if not user:
+						self.redirect("/login")
+				else:
+					self.redirect("/login")
+				for e in comments:
+					submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
+					submitter = list(submitter)
+					if len(submitter) < 1:
+						e.submitter = e.submitter+"|False"
+					else:
+						if e.submitter == user.user_id:
+							e.submitter = "ti"
+						else:
+							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
+				self.render('permalink.html',pagename='Post',post=post,user=user,comments=comments)
+			else:
+				self.redirect('/')
 		else:
-			self.redirect('/')
+			self.redirect("/login")
 
 class Comment(handler.Handler):
 	def get(self,link):
