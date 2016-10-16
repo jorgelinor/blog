@@ -8,6 +8,7 @@ from google.appengine.ext import db
 
 class Permalink(handler.Handler):
 	def get(self,link):
+		messages = None
 		user = self.request.cookies.get('user_id')
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
@@ -37,6 +38,11 @@ class Permalink(handler.Handler):
 					self.redirect("/login")
 			else:
 				self.redirect("/login")
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			for e in comments:
 				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 				submitter = list(submitter)
@@ -47,12 +53,13 @@ class Permalink(handler.Handler):
 						e.submitter = "ti"
 					else:
 						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-			self.render('permalink.html',pagename='Post',post=post,user=user,comments=comments)
+			self.render('permalink.html',pagename='Post',post=post,user=user,comments=comments,recent_msg=messages)
 		else:
 			self.redirect('/')
 
 class Comment(handler.Handler):
 	def get(self,link):
+		messages = None
 		user = self.request.cookies.get('user_id')
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
@@ -75,6 +82,11 @@ class Comment(handler.Handler):
 			user = self.request.cookies.get("user_id").split("|")[0]
 			if user:
 				user = User.get_by_id(int(user))
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			for e in comments:
 				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 				submitter = list(submitter)
@@ -85,7 +97,7 @@ class Comment(handler.Handler):
 						e.submitter = "ti"
 					else:
 						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-			self.render('permalink.html',pagename='Comentar',post=post,user=user,newcomment=True,comments=comments)
+			self.render('permalink.html',pagename='Comentar',post=post,user=user,newcomment=True,comments=comments,recent_msg=messages)
 		else:
 			self.redirect('/')
 	def post(self,link):
@@ -105,6 +117,7 @@ class Comment(handler.Handler):
 
 class EditPost(handler.Handler):
 	def get(self,link):
+		messaes = None
 		user = self.request.cookies.get('user_id')
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
@@ -113,13 +126,18 @@ class EditPost(handler.Handler):
 				user = user
 		else:
 			self.redirect("/login")
+		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+		if messages:
+			messages = list(messages)
+			for e in messages:
+				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		post = Post.get_by_id(int(link))
 		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
 		submitter = list(submitter)
 		if len(submitter) > 0:
 			if post.submitter == user.user_id:
 				if post.modificable == 'True':
-					self.render('ascii.html',user=user,pagename='Editar post',title=post.title,post=post.post,error='',editable=True)
+					self.render('ascii.html',user=user,pagename='Editar post',title=post.title,post=post.post,error='',editable=True,recent_msg=messages)
 				else:
 					self.write("<a href='/"+str(post.key().id())+"'>No tienes permiso para eso!</a>")
 			else:
@@ -145,10 +163,16 @@ class EditPost(handler.Handler):
 
 class EditComment(handler.Handler):
 	def get(self, link):
+		messages = None
 		user = self.request.cookies.get("user_id")
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			post = Post.get_by_id(int(link))
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			if messages:
+				messages = list(messages)
+				for e in messages:
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			if post:
 				if self.request.get("c"):
 					if comment.Comment.get_by_id(int(self.request.get("c"))):
@@ -171,7 +195,7 @@ class EditComment(handler.Handler):
 									post.submitter = "ti"
 								else:
 									post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
-								self.render("permalink.html",pagename='Editar comentario',user=user,comments=comments,post=post,editcomment=True,comment=com)
+								self.render("permalink.html",pagename='Editar comentario',user=user,comments=comments,post=post,editcomment=True,comment=com,recent_msg=messages)
 							else:
 								self.write("Este comentario no pertenece a este Post.")
 						else:

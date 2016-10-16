@@ -15,9 +15,10 @@
 			<a href="/profile" class="header-link">{{user.user_id}}</a>
 			{%if user.user_type=="admin"%}
 				<a href="/admin" class="header-link">Admin Panel</a>
-			{%endif%}
-			<a href="/logout" class="header-link">Salir</a>   
+			{%endif%}   
 			<a href="/newpost" class="header-link">Postear</a>
+			<a href="/logout" class="header-link">Salir</a>
+			<a class="header-link" id="inbox-link" onclick="activate()">Bandeja de entrada</a>
 			<br>
 			<br>
 		{%else%}
@@ -27,7 +28,24 @@
 			<br>
 		{%endif%}
 	</div>
+	<div id='bandeja'>
+		{%if recent_msg%}
+			{%for msg in recent_msg%}
+				<center>
+					{{msg.subject}}
+				</center>
+				<br>
+				De: <a href="/profile?u={{msg.submitter}}">{{msg.submitter}}</a><br>
+				<center>
+					{{msg.content}}
+				</center>
+				<hr>
+			{%endfor%}
+		{%endif%}
+	</div>
 	{%block content%}
 	{%endblock%}
+	<script src="/js/jquery.js"></script>
+	<script src="/js/javascript.js"></script>
 </body>
 </html>
