@@ -161,3 +161,25 @@ class DeleteComment(handler.Handler):
 		else:
 			self.redirect('/login')
 
+class KeepComment(handler.Handler):
+	def get(self,link):
+		comment = Comment.get_by_id(int(link))
+		user = self.request.cookies.get('user_id')
+		if user:
+			if user.split('|')[0].isdigit():
+				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+					user = User.get_by_id(int(user.split('|')[0]))
+					if user.user_type == 'admin':
+						comment.razon = []
+						comment.reported = False
+						comment.put()
+						time.sleep(2)
+						self.redirect('/admin/reports')
+					else:
+						self.redirect('/')
+				else:
+					self.redirect('/login')
+			else:
+				self.redirect('/login')
+		else:
+			self.redirect('/login')

@@ -36,5 +36,6 @@ app = webapp2.WSGIApplication([
     ("/admin/post_requests/?", admin.PostRequest),
     ("/admin/users/?", admin.Users),
     ("/admin/reports/?", admin.Reports),
-    ("/([0-9]+)"+"/_delete", admin.DeleteComment)
+    ("/([0-9]+)"+"/_delete", admin.DeleteComment),
+    ("/([0-9]+)"+"/_keep", admin.KeepComment)
 ], debug=True)
