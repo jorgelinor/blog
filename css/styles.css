@@ -87,7 +87,7 @@
 	text-decoration: none;
 	color:blue;
 }
-.admin-link {
+li-link {
 	margin:2%;
 	font-weight: bold;
 	font-size: 20px;
@@ -107,6 +107,7 @@
 	border: black solid 1px;
 	float:left;
 	margin:10px;
+	padding:10px;
 }
 .user-chart-link {
 	text-decoration:none;
@@ -131,11 +132,13 @@
 }
 #header {
 	font-family: "Courier New", monospace;
+	overflow:none;
 	background-color: gray;
 	width:100%;
 	position: fixed;
 	width:98%;
 	top:0px;
+	margin-left: 1%;
 }
 #banned-error{
 	text-align:center;
@@ -147,7 +150,7 @@
 }
 #bandeja {
 	position:fixed;
-	bottom: 300px;
+	bottom: 280px;
 	right:3%;
 	width:40%;
 	height:315px;
@@ -155,7 +158,45 @@
 	border: groove 3px darkgray;
 	overflow:scroll;
 }
-#report-razon{
+ul, ol {
+	list-style: none;
+}
+* {
+	margin: 0px;
+	padding: 0px;
+}
+.menu li a {
+	background-color: gray;
+	color: black;
+	text-decoration: none;
+	display: block;
+
+}
+.menu li a:hover {
+	background-color: darkgray;
+}
+.menu > li {
+	margin-left:5%;
+	float:left;
+}
+.menu li ul {
+	display: none;
+	position:absolute;
+	max-width: 140px;
+
+}
+.menu li:hover > ul{
+	display: block;
+}
+.admin-link {
+	margin:2%;
+	font-weight: bold;
+	font-size: 20px;
+	color: gray;
+	text-decoration: none;
+}
+
+#report-razon {
 	color:red;
 	margin-left: 60%;
 }

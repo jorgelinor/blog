@@ -20,7 +20,8 @@ class Profile(handler.Handler):
 			if messages:
 				messages = list(messages)
 				for e in messages:
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+					if e.submitter != "Administracion":
+						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		if not self.request.get("u"):
 			if not self.request.cookies.get("user_id"):
 				self.redirect("/login")
@@ -78,7 +79,8 @@ class EditProfile(handler.Handler):
 			if messages:
 				messages = list(messages)
 				for e in messages:
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+					if e.submitter != "Administracion":
+						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			self.render("editprofile.html",pagename='Editar Perfil', user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],recent_msg=messages)
 		else:
 			self.write("Usuario no encontrado")
@@ -98,7 +100,8 @@ class EditProfile(handler.Handler):
 		if messages:
 			messages = list(messages)
 			for e in messages:
-				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+				if e.submitter != "Administracion":
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		check_pass = False
 		check_nick = True
 		if hashlib.sha256(actual_password).hexdigest()==user.user_pw:
@@ -151,7 +154,8 @@ class EditPass(handler.Handler):
 			if messages:
 				messages = list(messages)
 				for e in messages:
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+					if e.submitter != "Administracion":
+						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			self.render("editpass.html",pagename='Editar contrasenia', user=user,recent_msg=messages)
 		else:
 			self.write("Not found")
@@ -182,7 +186,8 @@ class EditPass(handler.Handler):
 		if messages:
 			messages = list(messages)
 			for e in messages:
-				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+				if e.submitter != "Administracion":
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		self.render('editpass.html',pagename='Editar contrasenia',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify,recent_msg=messages)
 
 class ViewPosts(handler.Handler):
@@ -200,7 +205,8 @@ class ViewPosts(handler.Handler):
 					if messages:
 						messages = list(messages)
 						for e in messages:
-							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+							if e.submitter != "Administracion":
+								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
 			if len(profile) == 1:
 				posts = db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc")
@@ -214,7 +220,7 @@ class ViewPosts(handler.Handler):
 				else:
 					for e in posts:
 						e.submitter = self.request.get("u")+"|True"
-				self.render('page.html',pagename='Ver posts',posts=posts,user=user)
+				self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages)
 			else:
 				self.write("Perfil no encontrado")
 		else:
@@ -228,8 +234,9 @@ class ViewPosts(handler.Handler):
 					if messages:
 						messages = list(messages)
 						for e in messages:
-							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
-					posts = db.GqlQuery("select * from Post where submitter='"+user+"' order by created desc")
+							if e.submitter != "Administracion":
+								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+					posts = db.GqlQuery("select * from Post where submitter='"+user.user_id+"' order by created desc")
 					posts = list(posts)
 					for e in posts:
 						e.submitter = "ti"
@@ -251,7 +258,8 @@ class ViewComments(handler.Handler):
 				if messages:
 					messages = list(messages)
 					for e in messages:
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						if e.submitter != "Administracion":
+							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		else:
 			self.redirect("/login")
 		if self.request.get("u"):
@@ -297,7 +305,8 @@ class SendPm(handler.Handler):
 						if messages:
 							messages = list(messages)
 							for e in messages:
-								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+								if e.submitter != "Administracion":
+									e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 						self.render("sendpm.html",user=user,target=target,pagename="Mensaje Privado",recent_msg=messages)
 				else:
 					self.write("Persona no encontrada")
@@ -319,7 +328,8 @@ class SendPm(handler.Handler):
 			if messages:
 				messages = list(messages)
 				for e in messages:
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+					if e.submitter != "Administracion":
+						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			self.render("sendpm.html",user=user,target=destination,pagename="Mensaje Privado",error="Mensaje requerido",recent_msg=messages)
 		else:
 			msg = Message(submitter=submitter,destination=destination,subject=subject,content=content)

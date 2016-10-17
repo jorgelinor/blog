@@ -4,6 +4,7 @@ import hashlib
 from user import User
 from post import Post
 import time
+from message import Message
 from comment import Comment
 
 class Admin(handler.Handler):
@@ -17,7 +18,8 @@ class Admin(handler.Handler):
 				if messages:
 					messages = list(messages)
 					for e in messages:
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						if e.submitter != "Administracion":
+							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 				self.render("admin.html", pagename="Administracion",user=user,recent_msg=messages)
 			else:
 				self.redirect("/")
@@ -38,11 +40,15 @@ class PostRequest(handler.Handler):
 						if self.request.get("action"):
 							if self.request.get("action") == "accept_request":
 								post.modificable = 'True'
+								message = Message(submitter="Administracion", destination=post.submitter, subject="<div style='color:green'><b>PEDIDO ACEPTADO</b></div>", content="Se ha aceptado su pedido para cambiar <a href='/"+self.request.get("post")+"'>este post.</a>")
+								message.put()
 								post.put()
 								self.redirect("/admin/post_requests")
 							else:
 								if self.request.get("action") == "deny_request":
 									post.modificable = "False"
+									message = Message(submitter="Administracion", destination=post.submitter, subject="<div style='color:red'><b>PEDIDO DENEGADO</b></div>", content="Se ha denegado su pedido para cambiar <a href='/"+self.request.get("post")+"'>este post.</a>")
+									message.put()
 									post.put()
 									self.redirect("/admin/post_requests")
 								else:
@@ -57,7 +63,8 @@ class PostRequest(handler.Handler):
 						if messages:
 							messages = list(messages)
 							for e in messages:
-								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+								if e.submitter != "Administracion":
+									e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 						posts = list(posts)
 						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
 					else:
@@ -111,7 +118,8 @@ class Users(handler.Handler):
 						if messages:
 							messages = list(messages)
 							for e in messages:
-								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+								if e.submitter != "Administracion":
+									e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 						self.render("users.html",users=users,pagename="Panel de usuarios", user=user,recent_msg=messages)
 			else:
 				self.redirect("/")
@@ -129,7 +137,10 @@ class Reports(handler.Handler):
 				if messages:
 					messages = list(messages)
 					for e in messages:
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						if e.submitter != "Administracion":
+							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+				else:
+					messages = None
 				reported_comments = db.GqlQuery('select * from Comment where reported=True')
 				reported_comments = list(reported_comments)
 				self.render('reported.html',user=user,pagename='Reportes',comments=reported_comments,recent_msg=messages)
@@ -137,9 +148,6 @@ class Reports(handler.Handler):
 				self.redirect('/')
 		else:
 			self.redirect('/login')
-
-
-
 class DeleteComment(handler.Handler):
 	def get(self,link):
 		comment = Comment.get_by_id(int(link))
