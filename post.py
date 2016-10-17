@@ -9,3 +9,4 @@ class Post(db.Model):
     created_str = db.StringProperty(required=False)
     modificable = db.StringProperty(required=True)
     razon = db.TextProperty(required=False)
+    comments = db.IntegerProperty(required=True)

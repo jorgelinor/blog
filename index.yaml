@@ -26,12 +26,12 @@ indexes:
   properties:
   - name: destination
   - name: date
-    direction: desc
 
 - kind: Message
   properties:
   - name: destination
   - name: date
+    direction: desc
 
 - kind: Post
   properties:

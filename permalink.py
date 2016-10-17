@@ -114,12 +114,15 @@ class Comment(handler.Handler):
 		submitter = User.get_by_id(int(submitter))
 		content = self.request.get("content")
 		comments = db.GqlQuery("select * from Comment where post='"+link+"'")
-		post_title = Post.get_by_id(int(link)).title
+		post = Post.get_by_id(int(link))
+		post_title = post.title
 		if len(content) < 1:
 			self.redirect('/'+link)
 		else:
 			com = comment.Comment(submitter=submitter.user_id,content=content,post=link,reported=False,title="Comentario #"+str(len(list(comments))+1)+" en "+post_title)
 			com.put()
+			post.comments += 1
+			post.put()
 			self.redirect("/"+link)
 
 class EditPost(handler.Handler):
@@ -204,6 +207,7 @@ class EditComment(handler.Handler):
 											e.submitter = "ti"
 										else:
 											e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
+								post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
 								self.render("permalink.html",pagename='Editar comentario',user=user,comments=comments,post=post,editcomment=True,comment=com,recent_msg=messages)
 							else:
 								self.write("Este comentario no pertenece a este Post.")

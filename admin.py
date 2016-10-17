@@ -157,6 +157,9 @@ class DeleteComment(handler.Handler):
 				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 					user = User.get_by_id(int(user.split('|')[0]))
 					if user.user_type == 'admin':
+						post = Post.get_by_id(int(comment.post))
+						post.comments -= 1
+						post.put()
 						db.delete(comment)
 						time.sleep(2)
 						self.redirect('/admin/reports')
