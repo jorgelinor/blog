@@ -14,7 +14,7 @@ class Admin(handler.Handler):
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
-				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 				if messages:
 					messages = list(messages)
 					for e in messages:
@@ -59,7 +59,7 @@ class PostRequest(handler.Handler):
 						self.redirect("/admin/post_requests")
 				else:
 					if posts:
-						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 						if messages:
 							messages = list(messages)
 							for e in messages:
@@ -114,7 +114,7 @@ class Users(handler.Handler):
 				else:
 					if users:
 						users = list(users)
-						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 						if messages:
 							messages = list(messages)
 							for e in messages:
@@ -133,7 +133,7 @@ class Reports(handler.Handler):
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
-				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 				if messages:
 					messages = list(messages)
 					for e in messages:

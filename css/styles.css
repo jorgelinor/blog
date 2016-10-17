@@ -62,13 +62,26 @@
 	float: left;
 	color: black;
 }
+#comment-content-full {
+	display:none;
+	position: fixed;
+	right:240px;
+	width:60%;
+	background:darkgray;
+	word-wrap:break-word;
+}
+#post-comment-content:hover > #comment-content-full {
+	display:block;
+}
 #post-comment-submitter {
 	float:left;
 	text-decoration: underline;
 }
 .post-comment {
 	background-color:gray;
-	width: auto;
+	width: 100%;
+	display:block;
+	overflow: hidden;
 }
 .button {
 	text-decoration: none;

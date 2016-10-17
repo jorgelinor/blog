@@ -28,7 +28,7 @@ class Page(newpost.Newpost):
                 else:
                     e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
         if user != None:
-            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
             if messages:
                 messages = list(messages)
                 for e in messages:
