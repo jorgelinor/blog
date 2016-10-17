@@ -22,6 +22,17 @@ indexes:
   - name: created
     direction: desc
 
+- kind: Message
+  properties:
+  - name: destination
+  - name: date
+    direction: desc
+
+- kind: Message
+  properties:
+  - name: destination
+  - name: date
+
 - kind: Post
   properties:
   - name: submitter
