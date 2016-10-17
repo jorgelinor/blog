@@ -137,7 +137,7 @@ li-link {
 	position: fixed;
 	width:98%;
 	top:0px;
-	margin: auto;
+	margin-left: 1%;
 }
 #banned-error{
 	text-align:center;
@@ -186,4 +186,11 @@ ul, ol {
 }
 .menu li:hover > ul{
 	display: block;
+}
+.admin-link {
+	margin:2%;
+	font-weight: bold;
+	font-size: 20px;
+	color: gray;
+	text-decoration: none;
 }
