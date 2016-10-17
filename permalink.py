@@ -39,7 +39,7 @@ class Permalink(handler.Handler):
 						self.redirect("/login")
 				else:
 					self.redirect("/login")
-				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 				if messages:
 					messages = list(messages)
 					for e in messages:
@@ -90,7 +90,7 @@ class Comment(handler.Handler):
 			user = self.request.cookies.get("user_id").split("|")[0]
 			if user:
 				user = User.get_by_id(int(user))
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 			if messages:
 				messages = list(messages)
 				for e in messages:
@@ -136,7 +136,7 @@ class EditPost(handler.Handler):
 				user = user
 		else:
 			self.redirect("/login")
-		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 		if messages:
 			messages = list(messages)
 			for e in messages:
@@ -183,7 +183,7 @@ class EditComment(handler.Handler):
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			post = Post.get_by_id(int(link))
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 			if messages:
 				messages = list(messages)
 				for e in messages:
@@ -290,7 +290,7 @@ class EditRequest(handler.Handler):
 			if post:
 				if post.submitter == user.user_id:
 					if Post.get_by_id(int(link)).modificable == 'False':
-						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 						if messages:
 							messages = list(messages)
 							for e in messages:

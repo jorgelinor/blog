@@ -16,7 +16,7 @@ class Profile(handler.Handler):
 					user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 				user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user:
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 			if messages:
 				messages = list(messages)
 				for e in messages:
@@ -75,7 +75,7 @@ class EditProfile(handler.Handler):
 				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			date_pre = create_date()
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 			if messages:
 				messages = list(messages)
 				for e in messages:
@@ -96,7 +96,7 @@ class EditProfile(handler.Handler):
 		if db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1):
 			actualnick[0] = db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1)
 		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 		if messages:
 			messages = list(messages)
 			for e in messages:
@@ -150,7 +150,7 @@ class EditPass(handler.Handler):
 		if user:
 			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 			if messages:
 				messages = list(messages)
 				for e in messages:
@@ -182,7 +182,7 @@ class EditPass(handler.Handler):
 				errorpass = 'Incorrect password'
 		else:
 			errorpass = 'Invalid password'
-		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 		if messages:
 			messages = list(messages)
 			for e in messages:
@@ -201,7 +201,7 @@ class ViewPosts(handler.Handler):
 				if not user:
 					user = None
 				if user:
-					messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+					messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 					if messages:
 						messages = list(messages)
 						for e in messages:
@@ -230,7 +230,7 @@ class ViewPosts(handler.Handler):
 				user = user.split('|')[0]
 				user = User.get_by_id(int(user))
 				if user:
-					messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+					messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 					if messages:
 						messages = list(messages)
 						for e in messages:
@@ -254,7 +254,7 @@ class ViewComments(handler.Handler):
 			if not user:
 				self.redirect("/login")
 			if user:
-				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 				if messages:
 					messages = list(messages)
 					for e in messages:
@@ -301,7 +301,7 @@ class SendPm(handler.Handler):
 					if target.user_id == user.user_id:
 						self.write("No puedes enviarte un mensaje a ti mismo")
 					else:
-						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 						if messages:
 							messages = list(messages)
 							for e in messages:
@@ -324,7 +324,7 @@ class SendPm(handler.Handler):
 		destination = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)[0].user_id
 		submitter = user.user_id
 		if not content:
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 			if messages:
 				messages = list(messages)
 				for e in messages:

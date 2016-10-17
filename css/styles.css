@@ -62,8 +62,18 @@
 	background-color: gray;
 	float: left;
 	color: black;
-	word-break: break-word;
-	max-width: 100%;
+	
+}
+#comment-content-full {
+	display:none;
+	position: fixed;
+	right:240px;
+	width:60%;
+	background:darkgray;
+	word-wrap:break-word;
+}
+#post-comment-content:hover > #comment-content-full {
+	display:block;
 }
 #post-comment-submitter {
 	float:left;
@@ -71,7 +81,9 @@
 }
 .post-comment {
 	background-color:gray;
-	width: auto;
+	width: 100%;
+	display:block;
+	overflow: hidden;
 }
 .button {
 	text-decoration: none;

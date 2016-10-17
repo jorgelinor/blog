@@ -15,14 +15,14 @@ class Newpost(handler.Handler):
         user = self.request.cookies.get('user_id')
         if user:
             user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-        messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+        messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
         if messages:
             messages = list(messages)
             for e in messages:
                 if e.submitter != "Administracion":
                     e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
             if messages:
                 messages = list(messages)
                 for e in messages:
