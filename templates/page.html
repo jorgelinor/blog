@@ -13,6 +13,11 @@
 		{%endif%}
 		<label style="float:right">{{post.created_str}}</label><br>
 		<hr>
+		{%if request%}
+			Razon: <label class="reported-comment" style="color:red;">{{post.razon}}</label>
+			<a href="/admin/post_requests?post={{post.key().id()}}&action=deny_request"><button id="edit-link">Rechazar</button></a>
+			<a href="/admin/post_requests?post={{post.key().id()}}&action=accept_request"><button id="edit-link">Permitir</button></a>
+		{%endif%}
 	{%endfor%}
 {%else%}
 <h1>Esto esta vacio</h1>

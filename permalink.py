@@ -122,7 +122,7 @@ class Comment(handler.Handler):
 
 class EditPost(handler.Handler):
 	def get(self,link):
-		messaes = None
+		messages = None
 		user = self.request.cookies.get('user_id')
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
@@ -144,7 +144,7 @@ class EditPost(handler.Handler):
 				if post.modificable == 'True':
 					self.render('ascii.html',user=user,pagename='Editar post',title=post.title,post=post.post,error='',editable=True,recent_msg=messages)
 				else:
-					self.write("<a href='/"+str(post.key().id())+"'>No tienes permiso para eso!</a>")
+					self.redirect("/"+str(post.key().id())+'/_editrequest')
 			else:
 				self.write("<a href='/"+str(post.key().id())+"'>Este no es tu post!</a>")
 		else:
@@ -199,11 +199,6 @@ class EditComment(handler.Handler):
 											e.submitter = "ti"
 										else:
 											e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-								post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
-								if post.submitter == user.user_id:
-									post.submitter = "ti"
-								else:
-									post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
 								self.render("permalink.html",pagename='Editar comentario',user=user,comments=comments,post=post,editcomment=True,comment=com,recent_msg=messages)
 							else:
 								self.write("Este comentario no pertenece a este Post.")
@@ -275,3 +270,50 @@ class ReportComment(handler.Handler):
 			com.reported = True
 			com.put()
 			self.redirect("/"+link)
+
+class EditRequest(handler.Handler):
+	def get(self,link):
+		user = self.request.cookies.get('user_id')
+		if user:
+			if user.split('|')[0].isdigit():
+				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+					if Post.get_by_id(int(link)).submitter == User.get_by_id(int(user.split('|')[0])).user_id:
+						if Post.get_by_id(int(link)).modificable == 'False':
+							self.render('editrequest.html',user=User.get_by_id(int(user.split('|')[0])),pagename='Permiso para editar',post=Post.get_by_id(int(link)))
+						else:
+							self.redirect('/'+link)
+					else:
+						self.redirect('/'+link)
+				else:
+					self.redirect('/login')
+			else:
+				self.redirect('/login')
+		else:
+			self.redirect('/login')
+	def post(self,link):
+		user = self.request.cookies.get('user_id')
+		if user:
+			if user.split('|')[0].isdigit():
+				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+					if Post.get_by_id(int(link)).submitter == User.get_by_id(int(user.split('|')[0])).user_id:
+						if Post.get_by_id(int(link)).modificable == 'False':
+							razon = self.request.get('razon')
+							if razon:
+								post = Post.get_by_id(int(link))
+								post.modificable = 'pending'
+								post.razon = razon
+								post.put()
+								self.redirect('/'+link)
+							else:
+								self.redirect('/'+link)
+						else:
+							self.redirect('/'+link)
+					else:
+						self.redirect('/'+link)
+				else:
+					self.redirect('/login')
+			else:
+				self.redirect('/login')
+		else:
+			self.redirect('/login')
+

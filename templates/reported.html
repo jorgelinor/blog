@@ -1,17 +1,25 @@
 {%extends 'base.html'%}
 {%block content%}
 	{%if comments%}
+		<h1>Reportes recientes</h1>
+		<br>
 		{%for comment in comments%}
-			<div>
-				<label>{{comment.title}}</label>:<label>{{comment.content}}</label>
+			<div class="post-comment">
+				<label id="post-comment-title">{{comment.title}}: </label>
+				<label class="reported-comment" id="post-comment-content">{{comment.content}}</label>
+				<a href="/{{comment.key().id()}}/_delete"><button id="edit-link">Borrar</button></a>
+				<a href="/{{comment.key().id()}}/_keep"><button id="edit-link">Mantener</button></a>
+				<a href="/{{comment.post}}"><button id="edit-link">Ver post de origen</button></a>
 				<br>
-				<a href="/{{comment.post}}">Ver post de origen</a>
-				<br>
-				Razones:
+				<p id="head-razon">Razones:</p>
+				<ul id="report-razon">
 				{%for razon in comment.razon%}
 					<li>{{razon}}</li>
 				{%endfor%}
+				</ul>
 			</div>
 		{%endfor%}
+	{%else%}
+	<h1>No hay reportes.</h1>
 	{%endif%}
 {%endblock%}
