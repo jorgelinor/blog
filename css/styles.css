@@ -59,8 +59,11 @@
 	font-weight:bold;
 }
 #post-comment-content {
+	background-color: gray;
 	float: left;
 	color: black;
+	word-break: break-word;
+	max-width: 100%;
 }
 #post-comment-submitter {
 	float:left;
