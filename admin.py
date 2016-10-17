@@ -59,7 +59,7 @@ class PostRequest(handler.Handler):
 							for e in messages:
 								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 						posts = list(posts)
-						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages)
+						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
 					else:
 						self.write("No hay posts pendientes por el momento")
 			else:

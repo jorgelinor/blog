@@ -1,9 +1,12 @@
 {%extends 'base.html'%}
 {%block content%}
 	{%if comments%}
+		<h1>Reportes recientes</h1>
+		<br>
 		{%for comment in comments%}
 			<div class="post-comment">
-				<label id="post-comment-title">{{comment.title}}</label>:<label>{{comment.content}}</label>
+				<label id="post-comment-title">{{comment.title}}: </label>
+				<label class="reported-comment" id="post-comment-content">{{comment.content}}</label>
 				<a href="/{{comment.key().id()}}/_delete"><button id="edit-link">Borrar</button></a>
 				<a href="/{{comment.key().id()}}/_keep"><button id="edit-link">Mantener</button></a>
 				<a href="/{{comment.post}}"><button id="edit-link">Ver post de origen</button></a>

@@ -162,3 +162,7 @@
 #head-razon{
 	margin-left: 50%
 }
+.reported-comment{
+    word-wrap: break-word;
+    max-width: 40%;
+}
