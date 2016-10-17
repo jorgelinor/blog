@@ -19,13 +19,15 @@ class Newpost(handler.Handler):
         if messages:
             messages = list(messages)
             for e in messages:
-                e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+                if e.submitter != "Administracion":
+                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
             messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
             if messages:
                 messages = list(messages)
                 for e in messages:
-                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+                    if e.submitter != "Administracion":
+                        e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
             if not user.banned_from_posting:
                 self.render_front(user=user,recent_msg=messages)
             else:
@@ -41,7 +43,8 @@ class Newpost(handler.Handler):
         if messages:
             messages = list(messages)
             for e in messages:
-                e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+                if e.submitter != "Administracion":
+                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
         if title and post:
             a = Post(title=title,post=post,submitter=submitter,modificable="False")
             a.created_str = str(a.created)

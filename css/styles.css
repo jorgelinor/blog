@@ -107,6 +107,7 @@ li-link {
 	border: black solid 1px;
 	float:left;
 	margin:10px;
+	padding:10px;
 }
 .user-chart-link {
 	text-decoration:none;

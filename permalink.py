@@ -43,7 +43,8 @@ class Permalink(handler.Handler):
 				if messages:
 					messages = list(messages)
 					for e in messages:
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						if e.submitter != "Administracion":
+							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 					for e in comments:
 						submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 						submitter = list(submitter)
@@ -93,7 +94,8 @@ class Comment(handler.Handler):
 			if messages:
 				messages = list(messages)
 				for e in messages:
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+					if e.submitter != "Administracion":
+						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			for e in comments:
 				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 				submitter = list(submitter)
@@ -135,7 +137,8 @@ class EditPost(handler.Handler):
 		if messages:
 			messages = list(messages)
 			for e in messages:
-				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+				if e.submitter != "Administracion":
+					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		post = Post.get_by_id(int(link))
 		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
 		submitter = list(submitter)
@@ -163,6 +166,7 @@ class EditPost(handler.Handler):
 		if title and post:
 			post.title = title
 			post.post = content
+			post.modificable = "False"
 			post.put()
 			self.redirect('/'+str(post.key().id()))
 		else:
@@ -180,7 +184,8 @@ class EditComment(handler.Handler):
 			if messages:
 				messages = list(messages)
 				for e in messages:
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+					if e.submitter != "Administracion":
+						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			if post:
 				if self.request.get("c"):
 					if comment.Comment.get_by_id(int(self.request.get("c"))):
@@ -273,47 +278,35 @@ class ReportComment(handler.Handler):
 
 class EditRequest(handler.Handler):
 	def get(self,link):
+		messages = None
 		user = self.request.cookies.get('user_id')
-		if user:
-			if user.split('|')[0].isdigit():
-				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-					if Post.get_by_id(int(link)).submitter == User.get_by_id(int(user.split('|')[0])).user_id:
-						if Post.get_by_id(int(link)).modificable == 'False':
-							self.render('editrequest.html',user=User.get_by_id(int(user.split('|')[0])),pagename='Permiso para editar',post=Post.get_by_id(int(link)))
-						else:
-							self.redirect('/'+link)
+		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1] and User.get_by_id(int(user.split('|')[0])):
+			user = User.get_by_id(int(user.split('|')[0]))
+			post = Post.get_by_id(int(link))
+			if post:
+				if post.submitter == user.user_id:
+					if Post.get_by_id(int(link)).modificable == 'False':
+						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+						if messages:
+							messages = list(messages)
+							for e in messages:
+								if e.submitter != "Administracion":
+									e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						self.render('editrequest.html',user=user,pagename='Permiso para editar',post=post,recent_msg=messages)
 					else:
 						self.redirect('/'+link)
 				else:
-					self.redirect('/login')
+					self.redirect('/'+link)
 			else:
-				self.redirect('/login')
+				self.redirect('/')
 		else:
 			self.redirect('/login')
 	def post(self,link):
-		user = self.request.cookies.get('user_id')
-		if user:
-			if user.split('|')[0].isdigit():
-				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-					if Post.get_by_id(int(link)).submitter == User.get_by_id(int(user.split('|')[0])).user_id:
-						if Post.get_by_id(int(link)).modificable == 'False':
-							razon = self.request.get('razon')
-							if razon:
-								post = Post.get_by_id(int(link))
-								post.modificable = 'pending'
-								post.razon = razon
-								post.put()
-								self.redirect('/'+link)
-							else:
-								self.redirect('/'+link)
-						else:
-							self.redirect('/'+link)
-					else:
-						self.redirect('/'+link)
-				else:
-					self.redirect('/login')
-			else:
-				self.redirect('/login')
-		else:
-			self.redirect('/login')
+		razon = self.request.get('razon')
+		if razon:
+			post = Post.get_by_id(int(link))
+			post.modificable = 'pending'
+			post.razon = razon
+			post.put()
+		self.redirect('/'+link)
 

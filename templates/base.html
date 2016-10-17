@@ -55,12 +55,16 @@
 		{%if recent_msg%}
 			{%for msg in recent_msg%}
 				<center>
-					{{msg.subject}}
+					{{msg.subject|safe}}
 				</center>
 				<br>
-				De: <a href="/profile?u={{msg.submitter}}">{{msg.submitter}}</a><br>
+				{%if msg.submitter != "Administracion"%}
+					De: <a href="/profile?u={{msg.submitter}}">{{msg.submitter}}</a><br>
+				{%else%}
+					De: {{msg.submitter}}<br>
+				{%endif%}
 				<center>
-					{{msg.content}}
+					{{msg.content|safe}}
 				</center>
 				<hr>
 			{%endfor%}
