@@ -155,3 +155,14 @@
 	border: groove 3px darkgray;
 	overflow:scroll;
 }
+#report-razon{
+	color:red;
+	margin-left: 60%;
+}
+#head-razon{
+	margin-left: 50%
+}
+.reported-comment{
+    word-wrap: break-word;
+    max-width: 40%;
+}

@@ -59,7 +59,7 @@ class PostRequest(handler.Handler):
 							for e in messages:
 								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 						posts = list(posts)
-						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages)
+						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
 					else:
 						self.write("No hay posts pendientes por el momento")
 			else:
@@ -161,3 +161,25 @@ class DeleteComment(handler.Handler):
 		else:
 			self.redirect('/login')
 
+class KeepComment(handler.Handler):
+	def get(self,link):
+		comment = Comment.get_by_id(int(link))
+		user = self.request.cookies.get('user_id')
+		if user:
+			if user.split('|')[0].isdigit():
+				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+					user = User.get_by_id(int(user.split('|')[0]))
+					if user.user_type == 'admin':
+						comment.razon = []
+						comment.reported = False
+						comment.put()
+						time.sleep(2)
+						self.redirect('/admin/reports')
+					else:
+						self.redirect('/')
+				else:
+					self.redirect('/login')
+			else:
+				self.redirect('/login')
+		else:
+			self.redirect('/login')

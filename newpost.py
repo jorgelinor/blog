@@ -31,7 +31,7 @@ class Newpost(handler.Handler):
         post = self.request.get('content')
         submitter = self.request.cookies.get('user_id').split('|')[0]
         submitter = User.get_by_id(int(submitter)).user_id
-        messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+        messages = db.GqlQuery("select * from Message where destination='"+submitter+"'")
         if messages:
             messages = list(messages)
             for e in messages:

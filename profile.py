@@ -195,11 +195,12 @@ class ViewPosts(handler.Handler):
 				user = User.get_by_id(int(user))
 				if not user:
 					user = None
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
-			if messages:
-				messages = list(messages)
-				for e in messages:
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+				if user:
+					messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+					if messages:
+						messages = list(messages)
+						for e in messages:
+							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
 			if len(profile) == 1:
 				posts = db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc")
@@ -210,6 +211,9 @@ class ViewPosts(handler.Handler):
 							e.submitter = "ti"
 						else:
 							e.submitter = self.request.get("u")+"|True"
+				else:
+					for e in posts:
+						e.submitter = self.request.get("u")+"|True"
 				self.render('page.html',pagename='Ver posts',posts=posts,user=user)
 			else:
 				self.write("Perfil no encontrado")
@@ -242,13 +246,14 @@ class ViewComments(handler.Handler):
 			user = User.get_by_id(int(user))
 			if not user:
 				self.redirect("/login")
+			if user:
+				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+				if messages:
+					messages = list(messages)
+					for e in messages:
+						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		else:
 			self.redirect("/login")
-		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
-		if messages:
-			messages = list(messages)
-			for e in messages:
-				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 		if self.request.get("u"):
 			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
 			if len(profile) == 1:
