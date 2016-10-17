@@ -8,16 +8,21 @@ import time
 from google.appengine.ext import db
 
 class Newpost(handler.Handler):
-    def render_front(self,title = '',post = '',error = '',user=''):
-        messages = None
-        self.render('ascii.html',user=user,title=title,post=post,error=error,pagename='Postear',recent_msg=messages)
+    def render_front(self,title = '',post = '',error = '',user='',recent_msg=None):
+        self.render('ascii.html',user=user,title=title,post=post,error=error,pagename='Postear',recent_msg=recent_msg)
     def get(self):
+        messages = None
         user = self.request.cookies.get('user_id')
         if user:
             user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
+            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"'")
+            if messages:
+                messages = list(messages)
+                for e in messages:
+                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
             if not user.banned_from_posting:
-                self.render_front(user=user)
+                self.render_front(user=user,recent_msg=messages)
             else:
                 self.redirect('/')
         else:

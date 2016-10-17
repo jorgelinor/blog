@@ -36,7 +36,7 @@ class Profile(handler.Handler):
 					if str(user_db[0].key().id()) == str(self.request.cookies.get("user_id").split("|")[0]):
 						self.redirect("/profile")
 					else:
-						self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc)
+						self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc,recent_msg=messages)
 				else:
 					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db[0],desc=user_db[0].user_desc,recent_msg=messages)
 			else:
