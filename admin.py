@@ -10,11 +10,11 @@ from comment import Comment
 
 class Admin(handler.Handler):
 	def get(self):
-		user = self.request.cookies.get("user_id")
-		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
-			user = User.get_by_id(int(user.split("|")[0]))
+		user = None
+		if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+			user = self.get_data('user_id',self.get_cookie_user(self.request.cookies.get('user_id'))[1])
 			if user.user_type == "admin":
-				messages = self.GetMessage(actualizar=False,persona=user.user_id)
+				messages = self.GetMessagess(actualizar=False,persona=user.user_id)
 				self.render("admin.html", pagename="Administracion",user=user,recent_msg=messages)
 			else:
 				self.redirect("/")
@@ -53,7 +53,7 @@ class PostRequest(handler.Handler):
 						self.redirect("/admin/post_requests")
 				else:
 					if posts:
-						messages = self.GetMessage(actualizar=False,persona=user.user_id)
+						messages = self.GetMessages(actualizar=False,persona=user.user_id)
 						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
 					else:
 						self.write("No hay posts pendientes por el momento")
@@ -67,9 +67,9 @@ class Users(handler.Handler):
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
-				users = memcache.get("users")
+				users = self.get_data("users_admin",db.GqlQuery("select * from User"))
 				if self.request.get("u"):
-					profile = self.get_data(self.request.get("u"),db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'"))
+					profile = self.get_data(self.request.get("u"),db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'").fetch(1)[0])
 					if profile:
 						changed = False
 						if self.request.get("action"):
@@ -99,7 +99,7 @@ class Users(handler.Handler):
 					else:
 						self.redirect("/admin/users")
 				else:
-					messages = self.GetMessage(actualizar=False,persona=user.user_id)
+					messages = self.GetMessages(actualizar=False,persona=user.user_id)
 					self.render("users.html",users=users,pagename="Panel de usuarios", user=user,recent_msg=messages)
 			else:
 				self.redirect("/")
@@ -112,56 +112,56 @@ class Reports(handler.Handler):
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
-				messages = self.GetMessage(actualizar=False,persona=user.user_id)
-				reported_comments = self.get_data(db.GqlQuery("reported_comments",'select * from Comment where reported=True'))
+				messages = self.GetMessages(actualizar=False,persona=user.user_id)
+				reported_comments = self.get_data("reported_comments",db.GqlQuery('select * from Comment where reported=True'))
 				self.render('reported.html',user=user,pagename='Reportes',comments=reported_comments,recent_msg=messages)
 			else:
 				self.redirect('/')
 		else:
 			self.redirect('/login')
 class DeleteComment(handler.Handler):
-	def get(self,link):
-		comment = Comment.get_by_id(int(link))
-		user = self.request.cookies.get('user_id')
-		if user:
-			if user.split('|')[0].isdigit():
-				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-					user = User.get_by_id(int(user.split('|')[0]))
-					if user.user_type == 'admin':
-						post = Post.get_by_id(int(comment.post))
-						post.comments -= 1
-						post.put()
-						db.delete(comment)
-						time.sleep(2)
-						self.redirect('/admin/reports')
-					else:
-						self.redirect('/')
-				else:
-					self.redirect('/login')
-			else:
-				self.redirect('/login')
-		else:
-			self.redirect('/login')
+    def get(self,link):
+        comment = Comment.get_by_id(int(link))
+        user = self.request.cookies.get('user_id')
+        if user:
+            if user.split('|')[0].isdigit():
+                if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+                    user = User.get_by_id(int(user.split('|')[0]))
+                    if user.user_type == 'admin':
+                        post = Post.get_by_id(int(comment.post))
+                        post.comments -= 1
+                        post.put()
+                        db.delete(comment)
+                        time.sleep(2)
+                        self.redirect('/admin/reports')
+                    else:
+                        self.redirect('/')
+                else:
+                    self.redirect('/login')
+            else:
+                self.redirect('/login')
+        else:
+            self.redirect('/login')
 
 class KeepComment(handler.Handler):
-	def get(self,link):
-		comment = Comment.get_by_id(int(link))
-		user = self.request.cookies.get('user_id')
-		if user:
-			if user.split('|')[0].isdigit():
-				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-					user = User.get_by_id(int(user.split('|')[0]))
-					if user.user_type == 'admin':
-						comment.razon = []
-						comment.reported = False
-						comment.put()
-						time.sleep(2)
-						self.redirect('/admin/reports')
-					else:
-						self.redirect('/')
-				else:
-					self.redirect('/login')
-			else:
-				self.redirect('/login')
-		else:
-			self.redirect('/login')
+    def get(self,link):
+        comment = Comment.get_by_id(int(link))
+        user = self.request.cookies.get('user_id')
+        if user:
+            if user.split('|')[0].isdigit():
+                if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
+                    user = User.get_by_id(int(user.split('|')[0]))
+                    if user.user_type == 'admin':
+                        comment.razon = []
+                        comment.reported = False
+                        comment.put()
+                        time.sleep(2)
+                        self.redirect('/admin/reports')
+                    else:
+                        self.redirect('/')
+                else:
+                    self.redirect('/login')
+            else:
+                self.redirect('/login')
+        else:
+            self.redirect('/login')
