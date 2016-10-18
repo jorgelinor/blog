@@ -4,24 +4,23 @@ import newpost
 from user import User
 import hashlib
 from google.appengine.ext import db
+from google.appengine.api import memcache
+from handler import Handler
+
 
 class Page(newpost.Newpost):
     def get(self):
+        user = None
         messages = None
-        user = self.request.cookies.get('user_id')
-        online = False
-        if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-            user = user.split('|')[0]
-            user = User.get_by_id(int(user))
-        else:
-        	user = None
-        posts = db.GqlQuery('select * from Post order by created desc')
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_id',self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+        posts = self.get_data('posts',db.GqlQuery('select * from Post order by created desc'))
         posts = list(posts)
         for e in posts:
             if user != None and e.submitter == user.user_id:
                 e.submitter = "ti"
             else:
-                submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
+                submitter = self.get_data('submitter',db.GqlQuery("select * from User where user_id='"+e.submitter+"'"))
                 submitter = list(submitter)
                 if len(submitter) < 1:
                     e.submitter = e.submitter+"|False"
