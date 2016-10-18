@@ -25,7 +25,7 @@ class Profile(handler.Handler):
 				else:
 					self.redirect("/login")
 		else:
-			user_db = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
+			user_db = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'")
 			if user_db:
 				if self.request.cookies.get("user_id"):
 					if str(user_db[0].key().id()) == str(self.request.cookies.get("user_id").split("|")[0]):

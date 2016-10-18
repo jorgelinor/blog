@@ -29,3 +29,10 @@ class Handler(webapp2.RequestHandler):
 		if e.submitter != "Administracion":
                     e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
 	return list(messages)
+	def GetUsers(self,actualizar):
+		usuarios = memcache.get("users")	
+		if actualizar == True or usuarios == None:
+			usuarios = db.GqlQuery("select * from User")
+			memcache.set("users",usuarios)
+		return list(usuarios)
+

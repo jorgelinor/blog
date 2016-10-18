@@ -27,7 +27,7 @@ class PostRequest(handler.Handler):
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
-				posts = db.GqlQuery("select * from Post where modificable='pending'")
+				posts = self.get_data("pending_posts",db.GqlQuery("select * from Post where modificable='pending'"))
 				if self.request.get("post"):
 					post = Post.get_by_id(int(self.request.get("post")))
 					if post:
@@ -54,7 +54,6 @@ class PostRequest(handler.Handler):
 				else:
 					if posts:
 						messages = self.GetMessage(actualizar=False,persona=user.user_id)
-						posts = list(posts)
 						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
 					else:
 						self.write("No hay posts pendientes por el momento")
@@ -68,9 +67,9 @@ class Users(handler.Handler):
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
-				users = db.GqlQuery("select * from User")
+				users = memcache.get("users")
 				if self.request.get("u"):
-					profile = db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'").fetch(1)[0]
+					profile = self.get_data(self.request.get("u"),db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'"))
 					if profile:
 						changed = False
 						if self.request.get("action"):
@@ -100,10 +99,8 @@ class Users(handler.Handler):
 					else:
 						self.redirect("/admin/users")
 				else:
-					if users:
-						users = list(users)
-						messages = self.GetMessage(actualizar=False,persona=user.user_id)
-						self.render("users.html",users=users,pagename="Panel de usuarios", user=user,recent_msg=messages)
+					messages = self.GetMessage(actualizar=False,persona=user.user_id)
+					self.render("users.html",users=users,pagename="Panel de usuarios", user=user,recent_msg=messages)
 			else:
 				self.redirect("/")
 		else:
@@ -116,8 +113,7 @@ class Reports(handler.Handler):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
 				messages = self.GetMessage(actualizar=False,persona=user.user_id)
-				reported_comments = db.GqlQuery('select * from Comment where reported=True')
-				reported_comments = list(reported_comments)
+				reported_comments = self.get_data(db.GqlQuery("reported_comments",'select * from Comment where reported=True'))
 				self.render('reported.html',user=user,pagename='Reportes',comments=reported_comments,recent_msg=messages)
 			else:
 				self.redirect('/')
