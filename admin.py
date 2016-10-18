@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+from google.appengine.api import memcache
 import handler
 import hashlib
 from user import User
@@ -9,17 +10,11 @@ from comment import Comment
 
 class Admin(handler.Handler):
 	def get(self):
-		messages = None
 		user = self.request.cookies.get("user_id")
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
-				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-				if messages:
-					messages = list(messages)
-					for e in messages:
-						if e.submitter != "Administracion":
-							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+				messages = self.GetMessage(actualizar=False,persona=user.user_id)
 				self.render("admin.html", pagename="Administracion",user=user,recent_msg=messages)
 			else:
 				self.redirect("/")
@@ -28,7 +23,6 @@ class Admin(handler.Handler):
 
 class PostRequest(handler.Handler):
 	def get(self):
-		messages = None
 		user = self.request.cookies.get("user_id")
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
@@ -59,12 +53,7 @@ class PostRequest(handler.Handler):
 						self.redirect("/admin/post_requests")
 				else:
 					if posts:
-						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-						if messages:
-							messages = list(messages)
-							for e in messages:
-								if e.submitter != "Administracion":
-									e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						messages = self.GetMessage(actualizar=False,persona=user.user_id)
 						posts = list(posts)
 						self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
 					else:
@@ -75,7 +64,6 @@ class PostRequest(handler.Handler):
 			self.redirect("/login")
 class Users(handler.Handler):
 	def get(self):
-		messages = None
 		user = self.request.cookies.get("user_id")
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
@@ -114,12 +102,7 @@ class Users(handler.Handler):
 				else:
 					if users:
 						users = list(users)
-						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-						if messages:
-							messages = list(messages)
-							for e in messages:
-								if e.submitter != "Administracion":
-									e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						messages = self.GetMessage(actualizar=False,persona=user.user_id)
 						self.render("users.html",users=users,pagename="Panel de usuarios", user=user,recent_msg=messages)
 			else:
 				self.redirect("/")
@@ -128,19 +111,11 @@ class Users(handler.Handler):
 
 class Reports(handler.Handler):
 	def get(self):
-		messages=None
 		user = self.request.cookies.get("user_id")
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			if user.user_type == "admin":
-				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-				if messages:
-					messages = list(messages)
-					for e in messages:
-						if e.submitter != "Administracion":
-							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
-				else:
-					messages = None
+				messages = self.GetMessage(actualizar=False,persona=user.user_id)
 				reported_comments = db.GqlQuery('select * from Comment where reported=True')
 				reported_comments = list(reported_comments)
 				self.render('reported.html',user=user,pagename='Reportes',comments=reported_comments,recent_msg=messages)
