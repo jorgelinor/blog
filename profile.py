@@ -3,35 +3,31 @@ import hashlib
 import re
 import time
 from message import Message
+from google.appengine.api import memcache
 from google.appengine.ext import db
 from user import User
 
 class Profile(handler.Handler):
+	#Handler que presenta la pagina del perfil propio, con toda la informacion para ver y cambiar
 	def get(self):
 		user = self.request.cookies.get('user_id')
-		messages = None
 		if user:
 			if user.split('|')[0].isdigit():
 				if hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 					user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 				user_db = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user:
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-			if messages:
-				messages = list(messages)
-				for e in messages:
-					if e.submitter != "Administracion":
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
-		if not self.request.get("u"):
-			if not self.request.cookies.get("user_id"):
-				self.redirect("/login")
+			messages = self.GetMessages(actualizar=False,persona=user.user_id)#Los mensajes para mandarlos a la bandeja
+		if not self.request.get("u"):#Si no se va a ver el perfil de otra persona
+			if not self.request.cookies.get("user_id"):#Y no hay cookie
+				self.redirect("/login")#para el login
 			else:
 				if user_db:
 					self.render("profile.html",pagename='Perfil',user=user, user_ob=user_db,desc=user_db.user_desc,modificable=True,recent_msg=messages)
 				else:
 					self.redirect("/login")
 		else:
-			user_db = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
+			user_db = self.get_data(self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#Obtener el objeto y a la vez ponlo en el cache
 			if user_db:
 				if self.request.cookies.get("user_id"):
 					if str(user_db[0].key().id()) == str(self.request.cookies.get("user_id").split("|")[0]):
@@ -67,41 +63,30 @@ def valid_tel(tel):
 	return (False,tel)
 
 class EditProfile(handler.Handler):
+	#Presenta la pagina para edicion de perfil
 	def get(self):
-		messages = None
 		user = self.request.cookies.get('user_id')
 		if user:
 			if user.split('|')[0].isdigit():
 				user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
 			date_pre = create_date()
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-			if messages:
-				messages = list(messages)
-				for e in messages:
-					if e.submitter != "Administracion":
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+			messages = self.GetMessages(actualizar=False,persona=user.user_id)#Los mensajes para la bandeja
 			self.render("editprofile.html",pagename='Editar Perfil', user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],recent_msg=messages)
 		else:
 			self.write("Usuario no encontrado")
 	def post(self):
-		messages = None
 		nickname = valid_username(self.request.get('nickname'))
 		actual_password = self.request.get('actualpassword')
 		tel = valid_tel(self.request.get('tel'))
 		date = self.request.get('date1')+'-'+self.request.get('date2')+'-'+self.request.get('date3')
 		description = self.request.get('description')
 		erroruser,errortel,errordesc,errordate,passerror='','','','',''
-		actualnick = [False]
-		if db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1):
-			actualnick[0] = db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1)
+		actualnick = [False]#Con esta variable empiezo el chequeo del nickname, si esta en uso o no
+		if self.get_data(nickname[1], db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1)):
+			actualnick[0] = self.get_data(nickname[1],db.GqlQuery("select * from User where displayName='"+nickname[1]+"'").fetch(1))
 		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-		if messages:
-			messages = list(messages)
-			for e in messages:
-				if e.submitter != "Administracion":
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+		messages = self.GetMessages(actualizar=False,persona=user.user_id)
 		check_pass = False
 		check_nick = True
 		if hashlib.sha256(actual_password).hexdigest()==user.user_pw:
@@ -145,22 +130,15 @@ def create_date():
 
 class EditPass(handler.Handler):
 	def get(self):
-		messages = None
 		user = self.request.cookies.get('user_id')
 		if user:
 			user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-			if messages:
-				messages = list(messages)
-				for e in messages:
-					if e.submitter != "Administracion":
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+			messages = self.GetMessages(actualizar=False,persona=user.user_id)
 			self.render("editpass.html",pagename='Editar contrasenia', user=user,recent_msg=messages)
 		else:
 			self.write("Not found")
 	def post(self):
-		messages = None
 		user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
 		oldpass = valid_pass(self.request.get('oldpass'))
 		newpass = valid_pass(self.request.get('newpass'))
@@ -182,7 +160,7 @@ class EditPass(handler.Handler):
 				errorpass = 'Incorrect password'
 		else:
 			errorpass = 'Invalid password'
-		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
+		messages = self.GetMessages(actualizar=False,persona=user.user_id)
 		if messages:
 			messages = list(messages)
 			for e in messages:
@@ -192,7 +170,6 @@ class EditPass(handler.Handler):
 
 class ViewPosts(handler.Handler):
 	def get(self):
-		messages = None
 		if self.request.get("u"):
 			user = self.request.cookies.get('user_id')
 			if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
@@ -201,45 +178,35 @@ class ViewPosts(handler.Handler):
 				if not user:
 					user = None
 				if user:
-					messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-					if messages:
-						messages = list(messages)
-						for e in messages:
-							if e.submitter != "Administracion":
-								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
-			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
-			if len(profile) == 1:
-				posts = db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc")
+					messages = self.GetMessages(actualizar=False,persona=user.user_id)#los mensajes para la bandeja
+			profile = self.get_data("users_by_nick",db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#la informacion del perfil que estoy viendo
+			profile = list(profile)
+			if len(profile) == 1:#si se encontro
+				posts = self.get_data("posts_by_user",db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc"))#me enlista sus posts
 				posts = list(posts)
 				if user:
 					for e in posts:
-						if e.submitter == user.user_id:
+						if e.submitter == user.user_id:#si es mi post
 							e.submitter = "ti"
 						else:
-							e.submitter = self.request.get("u")+"|True"
+							e.submitter = self.request.get("u")+"|True"#camuflaje de nombre
 				else:
 					for e in posts:
-						e.submitter = self.request.get("u")+"|True"
+						e.submitter = self.request.get("u")+"|True"#puedo ver los posts de otros sin estar logueado
 				self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages)
 			else:
 				self.write("Perfil no encontrado")
 		else:
-			messages = None
 			user = self.request.cookies.get('user_id')
 			if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 				user = user.split('|')[0]
 				user = User.get_by_id(int(user))
 				if user:
-					messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-					if messages:
-						messages = list(messages)
-						for e in messages:
-							if e.submitter != "Administracion":
-								e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
-					posts = db.GqlQuery("select * from Post where submitter='"+user.user_id+"' order by created desc")
+					messages = self.GetMessages(actualizar=False,persona=user.user_id)
+					posts = self.get_data("posts_by_user",db.GqlQuery("select * from Post where submitter='"+user.user_id+"' order by created desc"))
 					posts = list(posts)
 					for e in posts:
-						e.submitter = "ti"
+						e.submitter = "ti"#solo son mios
 					self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages) 
 				else:
 					self.redirect("/login")
@@ -247,32 +214,25 @@ class ViewPosts(handler.Handler):
 class ViewComments(handler.Handler):
 	def get(self):
 		user = self.request.cookies.get("user_id")
-		messages = None
 		if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
 			user = user.split("|")[0]
 			user = User.get_by_id(int(user))
 			if not user:
 				self.redirect("/login")
 			if user:
-				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-				if messages:
-					messages = list(messages)
-					for e in messages:
-						if e.submitter != "Administracion":
-							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+				messages = self.GetMessages(actualizar=False,persona=user.user_id)
 		else:
 			self.redirect("/login")
 		if self.request.get("u"):
-			profile = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
-			if len(profile) == 1:
-				comments = db.GqlQuery("select * from Comment where submitter='"+profile[0].user_id+"' order by created desc")
-				comments = list(comments)
-				if user:
+			profile = self.get_data("users_by_nick",db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#busca el dueno de los comentarios
+			if len(profile) == 1:#y si existe
+				comments = self.get_data("comments_by_user",db.GqlQuery("select * from Comment where submitter='"+profile[0].user_id+"' order by created desc"))#enlista sus comentarios
+				if user:#si estoy logueado
 					for e in comments:
-						if e.submitter == user.user_id:
-							e.submitter = "ti"
+						if e.submitter == user.user_id:#y son mios
+							e.submitter = "ti"#que aparezca 'ti'
 						else:
-							e.submitter = self.request.get("u")+"|True"
+							e.submitter = self.request.get("u")+"|True"#si no, el nick del dueno
 					if user.displayName == self.request.get("u"):
 						self.render('just_comments.html',pagename='Ver comentarios',user=user,comments=comments, mios=True,recent_msg=messages)
 					else:
@@ -282,31 +242,24 @@ class ViewComments(handler.Handler):
 			else:
 				self.write("Perfil no encontrado")
 		else:	
-			comments = db.GqlQuery("select * from Comment where submitter='"+user.user_id+"' order by created desc")
-			comments = list(comments)
+			comments = self.get_data("comments_by_user",db.GqlQuery("select * from Comment where submitter='"+user.user_id+"' order by created desc"))#busca solo mis comentarios
 			for e in comments:
-				e.submitter = "ti"
+				e.submitter = "ti"#como son mios, que aparezca 'ti'
 			self.render("just_comments.html",pagename='Ver comentarios',user=user,comments=comments,mios=True,recent_msg=messages)
 
 class SendPm(handler.Handler):
 	def get(self):
-		messages = None
 		user = self.request.cookies.get("user_id")
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
-			if self.request.get("u"):
-				destination = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)
-				if len(destination) == 1:
-					target = destination[0]
-					if target.user_id == user.user_id:
+			if self.request.get("u"):#si hay a quien mandar mensaje
+				destination = self.get_data(self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#Busca el destino
+				if len(destination) == 1:#si existe
+					target = destination[0]#sera target ahora
+					if target.user_id == user.user_id:#Si soy yo mismo
 						self.write("No puedes enviarte un mensaje a ti mismo")
 					else:
-						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-						if messages:
-							messages = list(messages)
-							for e in messages:
-								if e.submitter != "Administracion":
-									e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						messages = self.GetMessages(actualizar=False,persona=user.user_id)
 						self.render("sendpm.html",user=user,target=target,pagename="Mensaje Privado",recent_msg=messages)
 				else:
 					self.write("Persona no encontrada")
@@ -315,23 +268,18 @@ class SendPm(handler.Handler):
 		else:
 			self.redirect('/login')
 	def post(self):
-		messages = None
 		user = User.get_by_id(int(self.request.cookies.get("user_id").split("|")[0]))
 		subject = self.request.get("pmtitle")
 		if not subject:
 			subject = "Sin asunto"
 		content = self.request.get("pmcontent")
-		destination = db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1)[0].user_id
+		destination = destination = self.get_data(self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))[0].user_id#El ID del usuario sera el destino
 		submitter = user.user_id
 		if not content:
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-			if messages:
-				messages = list(messages)
-				for e in messages:
-					if e.submitter != "Administracion":
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+			messages = self.GetMessages(actualizar=False,persona=user.user_id)
 			self.render("sendpm.html",user=user,target=destination,pagename="Mensaje Privado",error="Mensaje requerido",recent_msg=messages)
 		else:
+			self.GetMessages(actualizar=True,persona=destination)
 			msg = Message(submitter=submitter,destination=destination,subject=subject,content=content)
 			msg.put()
 			self.redirect("/profile?u="+self.request.get("u"))
