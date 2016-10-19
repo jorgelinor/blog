@@ -8,7 +8,6 @@ from google.appengine.ext import db
 
 class Permalink(handler.Handler):
 	def get(self,link):
-		messages = None
 		user = self.request.cookies.get('user_id')
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
@@ -43,19 +42,13 @@ class Permalink(handler.Handler):
 						if len(submitter) < 1:
 							e.submitter = e.submitter+"|False"
 						else:
-							if e.submitter == user.user_id:
-								e.submitter = "ti"
-							else:
-								e.submitter = list(db.GqlQuery("select * from User where user_id='"+e.submitter+"'"))[0].displayName+"|True"
-					self.render('permalink.html',pagename='Post',post=post,user=user,comments=comments,recent_msg=messages)
-				else:
-					self.redirect('/')
+							e.submitter = list(db.GqlQuery("select * from User where user_id='"+e.submitter+"'"))[0].displayName+"|True"
+				self.render('permalink.html',pagename='Post',post=post,user=user,comments=comments,recent_msg=messages)
 			else:
 				self.redirect("/login")
 
 class Comment(handler.Handler):
 	def get(self,link):
-		messages = None
 		user = self.request.cookies.get('user_id')
 		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
 			user = user.split('|')[0]
@@ -82,12 +75,7 @@ class Comment(handler.Handler):
 			user = self.request.cookies.get("user_id").split("|")[0]
 			if user:
 				user = User.get_by_id(int(user))
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-			if messages:
-				messages = list(messages)
-				for e in messages:
-					if e.submitter != "Administracion":
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+			messages = self.GetMessages(actualizar=False,persona=user.user_id)
 			for e in comments:
 				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
 				submitter = list(submitter)
@@ -128,12 +116,7 @@ class EditPost(handler.Handler):
 				user = user
 		else:
 			self.redirect("/login")
-		messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-		if messages:
-			messages = list(messages)
-			for e in messages:
-				if e.submitter != "Administracion":
-					e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+		messages = self.GetMessages(actualizar=False,persona=user.user_id)
 		post = Post.get_by_id(int(link))
 		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
 		submitter = list(submitter)
@@ -175,12 +158,7 @@ class EditComment(handler.Handler):
 		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
 			user = User.get_by_id(int(user.split("|")[0]))
 			post = Post.get_by_id(int(link))
-			messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-			if messages:
-				messages = list(messages)
-				for e in messages:
-					if e.submitter != "Administracion":
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+			messages = self.GetMessages(actualizar=False,persona=user.user_id)
 			if post:
 				if self.request.get("c"):
 					if comment.Comment.get_by_id(int(self.request.get("c"))):
@@ -282,12 +260,7 @@ class EditRequest(handler.Handler):
 			if post:
 				if post.submitter == user.user_id:
 					if Post.get_by_id(int(link)).modificable == 'False':
-						messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-						if messages:
-							messages = list(messages)
-							for e in messages:
-								if e.submitter != "Administracion":
-									e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+						messages = self.GetMessages(actualizar=False,persona=user.user_id)
 						self.render('editrequest.html',user=user,pagename='Permiso para editar',post=post,recent_msg=messages)
 					else:
 						self.redirect('/'+link)

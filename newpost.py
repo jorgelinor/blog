@@ -11,23 +11,12 @@ class Newpost(handler.Handler):
     def render_front(self,title = '',post = '',error = '',user='',recent_msg=None):
         self.render('ascii.html',user=user,title=title,post=post,error=error,pagename='Postear',recent_msg=recent_msg)
     def get(self):
-        messages = None
         user = self.request.cookies.get('user_id')
         if user:
             user = User.get_by_id(int(self.request.cookies.get('user_id').split('|')[0]))
-        messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-        if messages:
-            messages = list(messages)
-            for e in messages:
-                if e.submitter != "Administracion":
-                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+        messages = self.GetMessages(actualizar=False,persona=user.user_id)
         if user and hashlib.sha256(self.request.cookies.get('user_id').split('|')[0]).hexdigest() == self.request.cookies.get('user_id').split('|')[1]:
-            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-            if messages:
-                messages = list(messages)
-                for e in messages:
-                    if e.submitter != "Administracion":
-                        e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+            messages = self.GetMessages(actualizar=False,persona=user.user_id)
             if not user.banned_from_posting:
                 self.render_front(user=user,recent_msg=messages)
             else:
@@ -39,12 +28,7 @@ class Newpost(handler.Handler):
         post = self.request.get('content')
         submitter = self.request.cookies.get('user_id').split('|')[0]
         submitter = User.get_by_id(int(submitter)).user_id
-        messages = db.GqlQuery("select * from Message where destination='"+submitter+"'")
-        if messages:
-            messages = list(messages)
-            for e in messages:
-                if e.submitter != "Administracion":
-                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+        messages = self.GetMessages(actualizar=False,persona=submitter)
         if title and post:
             a = Post(title=title,post=post,submitter=submitter,modificable="False",comments=0)
             a.created_str = str(a.created)

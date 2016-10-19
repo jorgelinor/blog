@@ -25,12 +25,7 @@ class Page(newpost.Newpost):
                 if len(submitter) < 1:
                     e.submitter = e.submitter+"|False"
                 else:
-                    e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
+                    e.submitter = submitter[0].displayName
         if user != None:
-            messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-            if messages:
-                messages = list(messages)
-                for e in messages:
-                    if e.submitter != "Administracion":
-                        e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName          
+            messages = self.GetMessages(actualizar=False,persona=user.user_id)
         self.render('page.html',pagename='Pagina principal',posts=posts,user=user,recent_msg=messages) 
