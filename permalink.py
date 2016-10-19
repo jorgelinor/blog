@@ -18,7 +18,7 @@ class Permalink(handler.Handler):
 		if not user or user == '' or user == None:
 			self.redirect("/login")
 		else:
-			post = Post.get_by_id(int(link[:]))
+			post = Post.get_by_id(int(link))
 			if post:
 				submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
 				submitter = list(submitter)
@@ -31,14 +31,6 @@ class Permalink(handler.Handler):
 						post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
 				comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
 				comments = list(comments)
-				user = self.request.cookies.get("user_id") #aqui habia error
-				if user and hashlib.sha256(user.split("|")[0]).hexdigest() == user.split("|")[1]:
-					user = user.split("|")[0]
-					user = User.get_by_id(int(user))
-					if not user:
-						self.redirect("/login")
-				else:
-					self.redirect("/login")
 				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
 				if messages:
 					messages = list(messages)
