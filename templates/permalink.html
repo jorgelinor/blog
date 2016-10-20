@@ -10,10 +10,12 @@
 			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
 		{%endif%}
 		<label style="float:right">{{post.created_str}}</label><br>
-		<button><a class="button" href="/{{post.key().id()}}/_reply">Deja tu comentario</a></button>
-		{%if post.modificable%}
-			{%if post.submitter.split("|")[0] == 'ti'%}
-			<a style="float:right" href="/{{post.key().id()}}/_editpost">Editar post</a>
+		<button><a class="button" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a></button>
+		{%if post.submitter == 'ti'%}
+			{%if post.modificable == 'pending'%}
+				<b style="color: red;float:right">Tu peticion esta en proceso</b>
+			{%else%}
+				<a style="float:right" href="/{{post.key().id()}}/_editpost">Editar post</a>
 			{%endif%}
 		{%endif%}
 		<hr>
@@ -22,10 +24,10 @@
 				<div class="post-comment">
 					<div id="post-comment-title">{{comment.title}}: </div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div><br>
 					{%if comment.submitter.split("|")[1] != "False"%}
-						{%if comment.submitter=="ti"%}
-							<a id="edit-link" href="/{{post.key().id()}}/_editcomment?c={{comment.key().id()}}">Modificar</a>
+						{%if comment.submitter.split('|')[0]=='ti'%}
+							<a id="edit-link" href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a>
 						{%else%}
-							<a id="edit-link" href="/{{post.key().id()}}/_reportcomment?c={{comment.key().id()}}">Reportar</a>
+							<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
 						{%endif%}
 						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
 					{%else%}

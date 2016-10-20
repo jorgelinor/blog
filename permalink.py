@@ -5,277 +5,125 @@ from user import User
 import comment
 from google.appengine.ext import db
 
-
 class Permalink(handler.Handler):
-	def get(self,link):
-		user = self.request.cookies.get('user_id')
-		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-			user = user.split('|')[0]
-			user = User.get_by_id(int(user))
-			if not user:
-				self.redirect("/login")
-		if not user or user == '' or user == None:
-			self.redirect("/login")
-		else:
-			post = Post.get_by_id(int(link))
-			if post:
-				submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
-				submitter = list(submitter)
-				if len(submitter) < 1:
-					post.submitter = post.submitter+"|False"
-				else:
-					if post.submitter == user.user_id:
-						post.submitter = "ti"
-					else:
-						post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
-				comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
-				comments = list(comments)
-				messages = db.GqlQuery("select * from Message where destination='"+user.user_id+"' order by date desc")
-				if messages:
-					messages = list(messages)
-					for e in messages:
-						if e.submitter != "Administracion":
-							e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
-					for e in comments:
-						submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
-						submitter = list(submitter)
-						if len(submitter) < 1:
-							e.submitter = e.submitter+"|False"
-						else:
-							e.submitter = list(db.GqlQuery("select * from User where user_id='"+e.submitter+"'"))[0].displayName+"|True"
-				self.render('permalink.html',pagename='Post',post=post,user=user,comments=comments,recent_msg=messages)
-			else:
-				self.redirect("/login")
-
-class Comment(handler.Handler):
-	def get(self,link):
-		user = self.request.cookies.get('user_id')
-		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-			user = user.split('|')[0]
-			user = User.get_by_id(int(user))
-			if user:
-				user = user
-			if user.banned_from_comments == True:
-				self.redirect("/")
-		else:
-			self.redirect("/login")
-		post = Post.get_by_id(int(link))
-		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
-		submitter = list(submitter)
-		if len(submitter) < 1:
-			post.submitter = post.submitter+"|False"
-		else:
-			if post.submitter == user.user_id:
-				post.submitter = "ti"
-			else:
-				post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName+"|True"
-		if post:
-			comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
-			comments = list(comments)
-			user = self.request.cookies.get("user_id").split("|")[0]
-			if user:
-				user = User.get_by_id(int(user))
-			messages = self.GetMessages(actualizar=False,persona=user.user_id)
-			for e in comments:
-				submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
-				submitter = list(submitter)
-				if len(submitter) < 1:
-					e.submitter = e.submitter+"|False"
-				else:
-					if e.submitter == user.user_id:
-						e.submitter = "ti"
-					else:
-						e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-			self.render('permalink.html',pagename='Comentar',post=post,user=user,newcomment=True,comments=comments,recent_msg=messages)
-		else:
-			self.redirect('/')
-	def post(self,link):
-		submitter = self.request.cookies.get('user_id').split('|')[0]
-		submitter = User.get_by_id(int(submitter))
-		content = self.request.get("content")
-		comments = db.GqlQuery("select * from Comment where post='"+link+"'")
-		post = Post.get_by_id(int(link))
-		post_title = post.title
-		if len(content) < 1:
-			self.redirect('/'+link)
-		else:
-			com = comment.Comment(submitter=submitter.user_id,content=content,post=link,reported=False,title="Comentario #"+str(len(list(comments))+1)+" en "+post_title)
-			com.put()
-			post.comments += 1
-			post.put()
-			self.redirect("/"+link)
+    #para ver la pagina de un post en particular
+    def get(self,link,newcomment=False,editcomment=False,reportcomment=False,messages=None,com=None):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:#verificacion de la cookie
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])#si todo esta bien asigna el valor del objeto logueado como user
+            messages = self.GetMessages(actualizar=False,persona=user)#para la bandeja
+        else:#si no 
+            self.redirect('/login')#pal login
+        post = self.get_data("post_"+link,Post.get_by_id(int(link)))#obtiene el post
+        if post:#si existe
+            if self.request.get("action") == "newcomment": #query para verificar si se agrega un nuevo comentario
+                newcomment = True# si es asi, manda algo al render para un espacio de comentario
+            elif self.request.get('action') == 'editcomment':#query para editar un comentario
+                com = self.get_data(self.request.get('c')+'_eComment',comment.Comment.get_by_id(int(self.request.get("c"))))# si el comentario existe con el query
+                if com and int(com.post) == post.key().id():#y tiene relacion con el post
+                    editcomment = True#manda algo al render para editar
+                else:#si no existe el comentario o no tiene relacion con el post
+                    self.redirect("/error?e=comment-notfound")#se redirecciona a la pagina de error
+            elif self.request.get('action') == 'reportcomment':
+                com = self.get_data(self.request.get('c')+'_eComment',comment.Comment.get_by_id(int(self.request.get("c"))))# si el comentario existe con el query
+                if com and int(com.post) == post.key().id():#y tiene relacion con el post
+                    reportcomment = True
+                else:
+                    self.redirect("/error?e=comment-notfound")#se redirecciona a la pagina de error
+            post = self.display_names(user,[post])#camufla el usuario que lo envio
+            comments = self.get_data(link+'_comments',db.GqlQuery("select * from Comment where post='"+link+"' order by created desc"))#enlista los comentarios que tiene
+            comments = self.display_names(user,list(comments))#camufla los usuarios de los comentarios
+            self.render('permalink.html',pagename='Post',reportcomment=reportcomment,editcomment=editcomment,post=post[0],user=user,comments=comments,comment=com,recent_msg=messages,newcomment=newcomment)
+        else:
+            self.redirect("/error?e=post-notfound")#error
+    def post(self,link):
+        if self.request.get("action") == "newcomment":#para saber si la accion post o el metodo post es para nuevo comentario
+            submitter = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])#si todo esta bien asigna el valor del objeto logueado como user
+            content = self.request.get("content")
+            comments = self.get_data(link+'_comments',db.GqlQuery("select * from Comment where post='"+link+"' order by created desc"))#enlista los comentarios que tiene
+            comments = self.display_names(submitter,list(comments))#camufla los usuarios de los comentarios
+            post = self.get_data("post_"+link,Post.get_by_id(int(link)))#obtiene el post
+            if len(content) < 1:
+                self.redirect('/'+link)
+            else:
+                com = comment.Comment(submitter=submitter.user_id,content=content,post=link,reported=False,title="Comentario #"+str(len(list(comments))+1)+" en "+post.title)
+                com.put()
+                self.delete_data(link+'_comments')
+                post.comments += 1
+                post.put()
+                self.redirect("/"+link)
+        elif self.request.get('action') == 'editcomment':#para saber si la accion post o el metodo post es para editar un comentario
+            content = self.request.get("content")
+            if len(content) < 1:
+                self.redirect("/"+link)
+            else:
+                com = comment.Comment.get_by_id(int(self.request.get("c")))
+                com.content = content
+                com.put()
+                self.redirect("/"+link)
+        elif self.request.get('action') == 'reportcomment':
+            razon = self.request.get("razon")
+            if len(razon) < 1:
+                self.redirect("/"+link)
+            else:
+                com = comment.Comment.get_by_id(int(self.request.get("c")))
+                com.razon = com.razon+[razon]
+                com.reported = True
+                com.put()
+                self.redirect("/"+link)
 
 class EditPost(handler.Handler):
-	def get(self,link):
-		messages = None
-		user = self.request.cookies.get('user_id')
-		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-			user = user.split('|')[0]
-			user = User.get_by_id(int(user))
-			if user:
-				user = user
-		else:
-			self.redirect("/login")
-		messages = self.GetMessages(actualizar=False,persona=user.user_id)
-		post = Post.get_by_id(int(link))
-		submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'")
-		submitter = list(submitter)
-		if len(submitter) > 0:
-			if post.submitter == user.user_id:
-				if post.modificable == 'True':
-					self.render('ascii.html',user=user,pagename='Editar post',title=post.title,post=post.post,error='',editable=True,recent_msg=messages)
-				else:
-					self.redirect("/"+str(post.key().id())+'/_editrequest')
-			else:
-				self.write("<a href='/"+str(post.key().id())+"'>Este no es tu post!</a>")
-		else:
-			self.write("<a href='/"+str(post.key().id())+"'>Este post no tiene duenio</a>")
+    def get(self,link,messages=None):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:#verificacion de la cookie
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])#si todo esta bien asigna el valor del objeto logueado como user
+            messages = self.GetMessages(actualizar=False,persona=user)#para la bandeja
+        else:
+            self.redirect("/login")
+        post = Post.get_by_id(int(link))
+        if post.submitter == user.user_id:#si el post pertenece al usuario
+            if post.modificable == 'True':#y si es modificable se renderiza la edicion
+                self.render('ascii.html',user=user,pagename='Editar post',title=post.title,post=post.post,error='',editable=True,recent_msg=messages)
+            else:#si no es editable
+                self.redirect("/"+str(post.key().id())+'/_editrequest')#se manda una peticion para editar
+        else:#si el post no le pertenece al usuario
+            self.redirect('/error?e=not-yourpost')#error
 
-	def post(self,link):
-		user = self.request.cookies.get('user_id')
-		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1]:
-			user = user.split('|')[0]
-			user = User.get_by_id(int(user))
-			if user:
-				user = user
-		post = Post.get_by_id(int(link))
-		content = self.request.get('content')
-		title = self.request.get('subject')
-		if title and post:
-			post.title = title
-			post.post = content
-			post.modificable = "False"
-			post.put()
-			self.redirect('/'+str(post.key().id()))
-		else:
-			error = 'we need more...'
-			self.render('ascii.html',pagename='Editar post',user=user,title=title,post=content,error=error,editable=True)
-
-class EditComment(handler.Handler):
-	def get(self, link):
-		messages = None
-		user = self.request.cookies.get("user_id")
-		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
-			user = User.get_by_id(int(user.split("|")[0]))
-			post = Post.get_by_id(int(link))
-			messages = self.GetMessages(actualizar=False,persona=user.user_id)
-			if post:
-				if self.request.get("c"):
-					if comment.Comment.get_by_id(int(self.request.get("c"))):
-						com = comment.Comment.get_by_id(int(self.request.get("c")))
-						if com:
-							if int(com.post) == post.key().id():
-								comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
-								comments = list(comments)
-								for e in comments:
-									submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
-									submitter = list(submitter)
-									if len(submitter) < 1:
-										e.submitter = e.submitter+"|False"
-									else:
-										if e.submitter == user.user_id:
-											e.submitter = "ti"
-										else:
-											e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-								post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
-								self.render("permalink.html",pagename='Editar comentario',user=user,comments=comments,post=post,editcomment=True,comment=com,recent_msg=messages)
-							else:
-								self.write("Este comentario no pertenece a este Post.")
-						else:
-							self.write("Comentario no encontrado.")
-					else:
-						self.redirect("/"+link)
-				else:
-					self.redirect("/"+link)
-			else:
-				self.redirect("/")
-		else:
-			self.redirect("/login")
-	def post(self,link):
-		content = self.request.get("content")
-		if len(content) < 1:
-			self.redirect("/"+link)
-		else:
-			com = comment.Comment.get_by_id(int(self.request.get("c")))
-			com.content = content
-			com.put()
-			self.redirect("/"+link)
-
-class ReportComment(handler.Handler):
-	def get(self, link):
-		user = self.request.cookies.get("user_id")
-		if user and user.split("|")[1] == hashlib.sha256(user.split("|")[0]).hexdigest() and User.get_by_id(int(user.split("|")[0])):
-			user = User.get_by_id(int(user.split("|")[0]))
-			post = Post.get_by_id(int(link))
-			if post:
-				if self.request.get("c"):
-					if comment.Comment.get_by_id(int(self.request.get("c"))):
-						com = comment.Comment.get_by_id(int(self.request.get("c")))
-						if com:
-							if int(com.post) == post.key().id():
-								comments = db.GqlQuery("select * from Comment where post='"+link+"' order by created desc")
-								comments = list(comments)
-								for e in comments:
-									submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'")
-									submitter = list(submitter)
-									if len(submitter) < 1:
-										e.submitter = e.submitter+"|False"
-									else:
-										if e.submitter == user.user_id:
-											e.submitter = "ti"
-										else:
-											e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName+"|True"
-								post.submitter = db.GqlQuery("select * from User where user_id='"+post.submitter+"'").fetch(1)[0].displayName
-								self.render("permalink.html",pagename='Reportar comentario',user=user,comments=comments,post=post,reportcomment=True,comment=com)
-							else:
-								self.write("Este comentario no pertenece a este Post.")
-						else:
-							self.write("Comentario no encontrado.")
-					else:
-						self.redirect("/"+link)
-				else:
-					self.redirect("/"+link)
-			else:
-				self.redirect("/")
-		else:
-			self.redirect("/login")
-	def post(self,link):
-		razon = self.request.get("razon")
-		if len(razon) < 1:
-			self.redirect("/"+link)
-		else:
-			com = comment.Comment.get_by_id(int(self.request.get("c")))
-			com.razon = com.razon+[razon]
-			com.reported = True
-			com.put()
-			self.redirect("/"+link)
+    def post(self,link):
+        post = self.get_data('post_'+link,Post.get_by_id(int(link)))
+        content = self.request.get('content')
+        if post and content:
+            post.post = content
+            post.modificable = "False"
+            self.delete_data('post_'+link)
+            post.put()
+            self.redirect('/'+link)
+        else:
+            self.redirect('/'+link)
 
 class EditRequest(handler.Handler):
-	def get(self,link):
-		messages = None
-		user = self.request.cookies.get('user_id')
-		if user and hashlib.sha256(user.split('|')[0]).hexdigest() == user.split('|')[1] and User.get_by_id(int(user.split('|')[0])):
-			user = User.get_by_id(int(user.split('|')[0]))
-			post = Post.get_by_id(int(link))
-			if post:
-				if post.submitter == user.user_id:
-					if Post.get_by_id(int(link)).modificable == 'False':
-						messages = self.GetMessages(actualizar=False,persona=user.user_id)
-						self.render('editrequest.html',user=user,pagename='Permiso para editar',post=post,recent_msg=messages)
-					else:
-						self.redirect('/'+link)
-				else:
-					self.redirect('/'+link)
-			else:
-				self.redirect('/')
-		else:
-			self.redirect('/login')
-	def post(self,link):
-		razon = self.request.get('razon')
-		if razon:
-			post = Post.get_by_id(int(link))
-			post.modificable = 'pending'
-			post.razon = razon
-			post.put()
-		self.redirect('/'+link)
+    def get(self,link,messages=None):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:#verificacion de la cookie
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])#si todo esta bien asigna el valor del objeto logueado como user
+            messages = self.GetMessages(actualizar=False,persona=user)#para la bandeja
+        else:
+            self.redirect("/login")
+        post = self.get_data('post_'+link,Post.get_by_id(int(link)))
+        if post:#si hay post
+            if post.submitter == user.user_id and post.modificable == 'False':#y si pertenece al usuario, y si no es modificable
+                self.render('editrequest.html',user=user,pagename='Permiso para editar',post=post,recent_msg=messages)#se renderiza una peticion
+            else:#de lo contrario
+                self.redirect('/'+link)#pal post
+        else:#si no existe el post
+            self.redirect('/error?e=post-notfound')#error
 
+    def post(self,link):
+        razon = self.request.get('razon')
+        if razon:
+            post = self.get_data('post_'+link,Post.get_by_id(int(link)))
+            post.modificable = 'pending'
+            self.delete_data('post_'+str(post.key().id()))
+            post.razon = razon
+            post.put()
+        self.redirect('/'+link)
