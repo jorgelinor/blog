@@ -1,17 +1,17 @@
 {%extends 'base.html'%}
 {%block content%}
 	<div id="user-holder">
-		<div><b id="nickname">{{user_ob.displayName}}</b></div><br><br>
+		<div><b id="nickname">{{profile.displayName}}</b></div><br><br>
 		<div id="profile-picture">Pic</div>
 		<div id="user-info">
 			{%if modificable == True%}
-				<b>Nombre de usuario:</b> {{user_ob.user_id}}<br>
+				<b>Nombre de usuario:</b> {{profile.user_id}}<br>
 			{%endif%}
-			<b>Fecha de nacimiento</b>: {{user_ob.user_date}}<br>
-			<b>Numero de telefono</b>: {{user_ob.user_tel}}<br>
-			<b>E-Mail</b>: {{user_ob.user_mail}}<br>
-			{%if desc%}
-				<b>Descripcion</b>: {{desc}}
+			<b>Fecha de nacimiento</b>: {{profile.user_date}}<br>
+			<b>Numero de telefono</b>: {{profile.user_tel}}<br>
+			<b>E-Mail</b>: {{profile.user_mail}}<br>
+			{%if profile.user_desc%}
+				<b>Descripcion</b>: {{profile.user_desc}}
 			{%endif%}<br><br>
 			{%if modificable == True%}
 				<button><a href="/profile/_edit">Modificar informacion</a></button>
@@ -20,9 +20,9 @@
 		</div>
 	</div>
 	<br>
-	<a href="/profile/_viewposts?u={{user_ob.displayName}}">Publicaciones/topicos</a><br>
-	<a href="/profile/_viewcomments?u={{user_ob.displayName}}">Comentarios</a><br>
+	<a href="/profile/_viewposts?u={{profile.displayName}}">Publicaciones/topicos</a><br>
+	<a href="/profile/_viewcomments?u={{profile.displayName}}">Comentarios</a><br>
 	{%if modificable!=True%}
-		<a href="/profile/_sendpm?u={{user_ob.displayName}}">Enviar un Mensaje</a><br>
+		<a href="/profile/_sendpm?u={{profile.displayName}}">Enviar un Mensaje</a><br>
 	{%endif%}
 {%endblock%}

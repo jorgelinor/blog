@@ -1,6 +1,6 @@
 #Esta es la clase principal, la cual hereda a la mayoria de las demas.
 
-import webapp2
+import webapp2 
 import os
 import jinja2
 from google.appengine.api import memcache
@@ -21,16 +21,21 @@ class Handler(webapp2.RequestHandler):
         return y.render(params)
     def render(self,template,**kw):
         self.write(self.render_str(template,**kw))
+
+    #Actualizar solo sera True, y correra el query, cuando alguien manda un nuevo mensaje
     def GetMessages(self,actualizar,persona):
-    	messages = memcache.get(persona)
-    	if actualizar == True or messages == None:
-    		messages = db.GqlQuery("select * from Message where destination='"+persona+"' order by date desc")
-    		memcache.set(persona,messages)
-    		messages = list(messages)
-    		for e in messages:
-    			if e.submitter != "Administracion":
-    				e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
-    	return list(messages)
+        messages = memcache.get(persona.user_id+"_mensajes")
+        if actualizar == True or messages == None:
+            messages = db.GqlQuery("select * from Message where destination='"+persona.user_id+"' order by date desc")
+            memcache.add(persona.user_id+"_mensajes",messages)
+        messages = list(messages)
+        for e in messages:
+            if e.submitter != "Administracion":
+                e.submitter = db.GqlQuery("select * from User where user_id='"+e.submitter+"'").fetch(1)[0].displayName
+        return messages
+
+    #este metodo es super util a la hora de obtener cache, toma dos parametros (key,funcion) donde si la key no existe en el cache, se ejecuta
+    #la funcion y se hace cache para la proxima peticion
     def get_data(self,key,query):
         data = memcache.get(key)
         if data is not None:
@@ -40,12 +45,109 @@ class Handler(webapp2.RequestHandler):
             self.write('algo')
             memcache.add(key, data)
         return data
+
+    #Este es el metodo de limpiado de cache con una key especifica. Sirve de complemento para get_data
     def delete_data(self,key):
-    	memcache.delete(key)
+        memcache.delete(key)
+
+    #Este es el metodo de verificacion de cookie que toma una cookie y si es completamente valida, retorna una tupla (True,objeto)
     def get_cookie_user(self,cookie):
-    	if cookie:
-    		if cookie.split("|")[0].isdigit():
-    			if hashlib.sha256(cookie.split("|")[0]).hexdigest() == cookie.split("|")[1]:
-    				if User.get_by_id(int(cookie.split("|")[0])):
-    					return (True,User.get_by_id(int(cookie.split("|")[0])))
-    	return (False,None)
+        if cookie:
+            if cookie.split("|")[0].isdigit():
+                if hashlib.sha256(cookie.split("|")[0]).hexdigest() == cookie.split("|")[1]:
+                    if User.get_by_id(int(cookie.split("|")[0])):
+                        return (True,User.get_by_id(int(cookie.split("|")[0])))
+        return (False,None)
+
+    #Metodo de verificacion en login, toma todas las condicionales como parametros y si cumplen se manda (True,error de contrasenia,error de usuario) para saber si es valido
+    def verify_login(self,user=None,pw=None,query=[]):
+        erroruser,errorpass='',''
+        if not(user[0] and pw[0] and len(query)>0 and query[0].user_pw == hashlib.sha256(pw[1]).hexdigest()):
+            if not user[0]:
+                erroruser = 'Usuario invalido'
+            if len(query)<1:
+                erroruser = "Este usuario no existe"
+            if not pw[0]:
+                errorpass = 'Contrasenia incorrecta'
+            if len(query)>0 and query[0].user_pw != hashlib.sha256(pw[1]).hexdigest():
+                errorpass = "Contrasenia invalida"
+            return (False,errorpass,erroruser)
+        return (True,errorpass,erroruser)
+
+    def verify_edition(self,user=None,nick=None,tel=[],date='',actual_pw=''):
+        erroruser,errortel,errordesc,errordate,passerror='','','','',''
+        actualnick = self.get_data("displayName_"+nick[1],db.GqlQuery("select * from User where displayName='"+nick[1]+"'").fetch(1))
+        check_pw = False
+        check_nick = True
+        if hashlib.sha256(actual_pw).hexdigest()==user.user_pw:
+            check_pw = True
+        if len(actualnick) == 1:
+            if actualnick[0].displayName != user.displayName:
+                check_nick = False
+        if (not nick[0]) or (not tel[0]) or (len(date)<7) or (check_pw == False) or (check_nick == False):
+            if not nick[0]:
+                erroruser = 'Nombre invalido'
+            if not tel[0]:
+                errortel = 'Numero invalido'
+            if not len(date)>7:
+                errordate = 'Fecha invalida'
+            if check_pw ==False:
+                passerror = 'Contrasena erronea'
+            if check_nick == False:
+                erroruser = 'Nombre tomado'
+            return (False,erroruser,errortel,errordesc,errordate,passerror)
+        return (True,erroruser,errortel,errordesc,errordate,passerror)
+
+    def display_names(self,user=None,lista=[]):
+        for e in lista:
+            if user != None and e.submitter == user.user_id:
+                e.submitter = "ti"
+            else:
+                submitter = self.get_data('submitter_'+e.submitter,db.GqlQuery("select * from User where user_id='"+e.submitter+"'"))
+                submitter = list(submitter)
+                if len(submitter) < 1:
+                    e.submitter = e.submitter+"|False"
+                else:
+                    e.submitter = submitter[0].displayName
+        return lista
+
+    def password_edition(self,user,oldpass,newpass,verify):
+        errorpass,errornew,errorverify = '','',''
+        if oldpass[0]:
+            if user.user_pw == hashlib.sha256(oldpass[1]).hexdigest():
+                if newpass[0]:
+                    if verify:
+                        return (True,errorpass,errornew,errorverify)
+                    else:
+                        errorverify = "Passwords doesn't match"
+                else:
+                    errornew = 'Invalid password'
+            else:
+                errorpass = 'Incorrect password'
+        else:
+            errorpass = 'Invalid password'
+        return (False,errorpass,errornew,errorverify)
+
+class ErrorHandler(Handler):
+    def get(self,error='',messages=None):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+        	user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+        	messages = self.GetMessages(actualizar=False,persona=user)
+        query = self.request.get('e')
+        if query == "profile-notfound":
+            error = 'Perfil no encontrado.'
+        if query == 'already-logged':
+            error = 'Ya estas logueado.'
+        if query == 'already-registered':
+            error = 'Ya estas registrado.'
+        if query == 'self-messaging':
+        	error = 'No puedes enviarte un mensaje a ti mismo.'
+        if query == 'post-notfound':
+            error = 'Este post no existe.'
+        if query == 'comment-notfound':
+            error = 'Este comentario no existe o no pertenece a este post.'
+        if query == 'not-yourpost':
+            error = 'Este post no te pertenece.'
+        self.render('error.html',user=user,pagename='Error',error=error, recent_msg=messages)
+
