@@ -26,21 +26,22 @@ class PostRequest(handler.Handler):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            messages = self.GetMessages(actualizar=False,persona=user)
             if user.user_type == "admin":
-                posts = self.get_data("pending_posts",db.GqlQuery("select * from Post where modificable='pending'"))
+                posts = self.get_data("pending_posts",list(db.GqlQuery("select * from Post where modificable='pending'")))
                 if self.request.get("post"):
                     post = Post.get_by_id(int(self.request.get("post")))
                     if post:
                         if self.request.get("action") == "accept_request":
                             post.modificable = 'True'
-                            self.delete_data('post_'+str(post.key().id()))
+                            self.get_data('post_'+str(post.key().id()),post,actualizar=True)
                             message = Message(submitter="Administracion", destination=post.submitter, subject="<div style='color:green'><b>PEDIDO ACEPTADO</b></div>", content="Se ha aceptado su pedido para cambiar <a href='/"+self.request.get("post")+"'>este post.</a>")
                             message.put()
                             post.put()
                             self.redirect("/admin/post_requests")
                         elif self.request.get("action") == "deny_request":
                             post.modificable = "False"
-                            self.delete_data('post_'+str(post.key().id()))
+                            self.get_data('post_'+str(post.key().id()),post,actualizar=True)
                             message = Message(submitter="Administracion", destination=post.submitter, subject="<div style='color:red'><b>PEDIDO DENEGADO</b></div>", content="Se ha denegado su pedido para cambiar <a href='/"+self.request.get("post")+"'>este post.</a>")
                             message.put()
                             post.put()
@@ -49,15 +50,13 @@ class PostRequest(handler.Handler):
                             self.redirect("/admin/post_requests")
                     else:
                         self.redirect("/admin/post_requests")
-                elif posts:
-                    messages = self.GetMessages(actualizar=False,persona=user)
-                    self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
-                else:
-                    self.write("No hay posts pendientes por el momento")
+                elif len(posts)<1:
+                    posts = None
             else:
                 self.redirect("/")
         else:
             self.redirect("/login")
+        self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
 
 
 class Users(handler.Handler):
@@ -91,6 +90,7 @@ class Users(handler.Handler):
                             profile.banned_from_comments = False
                             changed = True
                         if changed == True:
+                            self.get_data(self.request.get("u"),db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'"),actualizar=True)
                             profile.put()
                         self.redirect("/admin/users")
                     else:
@@ -128,7 +128,7 @@ class DeleteComment(handler.Handler):
                 post = Post.get_by_id(int(comment.post))
                 post.comments -= 1
                 post.put()
-                self.delete_data('post_'+str(post.key().id()))
+                self.get_data('post_'+str(post.key().id()),post,actualizar=True)
                 db.delete(comment)
                 time.sleep(2)
                 self.redirect('/admin/reports')

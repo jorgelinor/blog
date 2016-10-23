@@ -48,8 +48,8 @@ class Permalink(handler.Handler):
             else:
                 com = comment.Comment(submitter=submitter.user_id,content=content,post=link,reported=False,title="Comentario #"+str(len(list(comments))+1)+" en "+post.title)
                 com.put()
-                self.delete_data(link+'_comments')
                 post.comments += 1
+                self.get_data(link+'_comments',db.GqlQuery("select * from Comment where post='"+link+"' order by created desc"),actualizar=True)
                 post.put()
                 self.redirect("/"+link)
         elif self.request.get('action') == 'editcomment':#para saber si la accion post o el metodo post es para editar un comentario
@@ -95,7 +95,7 @@ class EditPost(handler.Handler):
         if post and content:
             post.post = content
             post.modificable = "False"
-            self.delete_data('post_'+link)
+            self.get_data('post_'+link,post,actualizar=True)
             post.put()
             self.redirect('/'+link)
         else:
@@ -123,7 +123,7 @@ class EditRequest(handler.Handler):
         if razon:
             post = self.get_data('post_'+link,Post.get_by_id(int(link)))
             post.modificable = 'pending'
-            self.delete_data('post_'+str(post.key().id()))
             post.razon = razon
+            self.get_data('post_'+str(post.key().id()),post,actualizar=True)
             post.put()
         self.redirect('/'+link)

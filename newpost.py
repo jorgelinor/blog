@@ -31,7 +31,7 @@ class Newpost(handler.Handler):
             a = Post(title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0)
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
-            self.delete_data('posts')
+            self.get_data('posts',db.GqlQuery('select * from Post order by created desc'),actualizar=True)
             a.put()           
             self.redirect('/'+str(a.key().id()))
         else:
