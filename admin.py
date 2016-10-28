@@ -191,17 +191,40 @@ class Admin_info(handler.Handler):
 # convierte el objeto de la base de datos a una diccionario lejible para json  
 def diccionarisarcache(info,cual):
     #info es la cache creada solo con la informacion de echa
-    for partes in info:
-            informacion={info[partes].submitter:{'title':info[partes].title,
-                                                  'content':info[partes].content,
-                                                  'post':info[partes].post,
-                                                  'submitter':info[partes].submitter,
-                                                  'created':info[partes].created.strftime('%y/%m/%d'),
-                                                  'created_str':info[partes].created_str,
-                                                  'reported':info[partes].reported,
-                                                  'razon':info[partes].razon
-                                                }
-                        }
+    if cual == 'comments_reported_cache':
+        for partes in info:
+                informacion={info[partes].submitter:{'title':info[partes].title,
+                                                      'content':info[partes].content,
+                                                      'post':info[partes].post,
+                                                      'submitter':info[partes].submitter,
+                                                      'created':info[partes].created.strftime('%y/%m/%d'),
+                                                      'created_str':info[partes].created_str,
+                                                      'reported':info[partes].reported,
+                                                      'razon':info[partes].razon
+                                                    }
+                            }
+    elif cual == 'post_modificable_cache':
+        for partes in info:
+                informacion={info[partes].submitter:{'topic':info[partes].topic,
+                                                      'title':info[partes].title,
+                                                      'content':info[partes].content,
+                                                      'post':info[partes].post,
+                                                      'submitter':info[partes].submitter,
+                                                      'created':info[partes].created.strftime('%y/%m/%d'),
+                                                      'created_str':info[partes].created_str,
+                                                      'modificable':info[partes].modificable,
+                                                      'razon':info[partes].razon
+                                                    }}
+    elif cual == 'user_permisos_cache':
+        for partes in info:
+                informacion={info[partes].displayName:{"user_type":info[partes].user_type,
+                                            "user_id":info[partes].user_type,
+                                            "displayName":info[partes].displayName,
+                                            "solicitud_cambio":info[partes].solicitud_cambio,
+                                            "rason_solicitud_cambio":info[partes].rason_solicitud_cambio,
+                                            "banned_from_comments":info[partes].banned_from_comments,
+                                            "banned_from_posting":info[partes].banned_from_posting
+                                                    }}
     return informacion                    
 # crea el query deacuerdo ala info pedidad por el admin
 def createquerty(content):
@@ -239,15 +262,15 @@ def createquerty(content):
 # Form_html="""
 #     {% for content in action %}
 #     <form>
-#         <h1>coment submete by: {{action[content].submitter}}</h1>
-#         <b> crado: {{action[content].created_str}}</b>
-#         <br>
-#         <h4>post <a href="{{action[content].post}}">Post del mensaje</a></h4>
-#         <div>
-#             {{action[content].content}}
-#         </div>
-#         <h3>Reportado</h3><br>
-#         <b>{{action[content].razon}}</b>
+        # <h1>coment submete by: {{action[content].submitter}}</h1>
+        # <b> crado: {{action[content].created_str}}</b>
+        # <br>
+        # <h4>post <a href="{{action[content].post}}">Post del mensaje</a></h4>
+        # <div>
+        #     {{action[content].content}}
+        # </div>
+        # <h3>Reportado</h3><br>
+        # <b>{{action[content].razon}}</b>
 #     </form>
 #     <br>
 #     {% endfor %}
