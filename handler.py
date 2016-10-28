@@ -36,19 +36,13 @@ class Handler(webapp2.RequestHandler):
 
     #este metodo es super util a la hora de obtener cache, toma dos parametros (key,funcion) donde si la key no existe en el cache, se ejecuta
     #la funcion y se hace cache para la proxima peticion
-    def get_data(self,key,query):
+    def get_data(self,key,query,actualizar=False):
         data = memcache.get(key)
-        if data is not None:
-            return data
-        else:
+        if data == None or actualizar:
             data = query
             self.write('algo')
             memcache.add(key, data)
         return data
-
-    #Este es el metodo de limpiado de cache con una key especifica. Sirve de complemento para get_data
-    def delete_data(self,key):
-        memcache.delete(key)
 
     #Este es el metodo de verificacion de cookie que toma una cookie y si es completamente valida, retorna una tupla (True,objeto)
     def get_cookie_user(self,cookie):
@@ -99,8 +93,10 @@ class Handler(webapp2.RequestHandler):
         return (True,erroruser,errortel,errordesc,errordate,passerror)
 
     def display_names(self,user=None,lista=[]):
+        if not user:
+            return lista
         for e in lista:
-            if user != None and e.submitter == user.user_id:
+            if e.submitter == user.user_id:
                 e.submitter = "ti"
             else:
                 submitter = self.get_data('submitter_'+e.submitter,db.GqlQuery("select * from User where user_id='"+e.submitter+"'"))

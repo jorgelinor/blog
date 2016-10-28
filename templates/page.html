@@ -12,7 +12,8 @@
 			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
 		{%endif%}
 		<label style="float:right">{{post.created_str}}</label>
-		<label style="float:right;color:gray;font-style:italic">{%if post.comments > 1%}{{post.comments}} comentarios&nbsp;&nbsp;
+		<label style="float:right;color:gray;font-style:italic">
+				{%if post.comments > 1%}{{post.comments}} comentarios&nbsp;&nbsp;
 				{%elif post.comments == 1%}{{post.comments}} comentario&nbsp;&nbsp;
 				{%else%}
 				{%endif%}</label><br>

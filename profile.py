@@ -87,7 +87,8 @@ class EditProfile(handler.Handler):
             user.user_date=date
             user.user_desc=description
             user.put()
-            self.delete_data('user_'+self.request.cookies.get('user_id').split('|')[0])
+            self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1],actualizar=True)            
+            self.get_data('displayName_'+user.displayName,db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1),actualizar=True)
             time.sleep(2)
             self.redirect('/profile')
 
@@ -119,7 +120,7 @@ class EditPass(handler.Handler):
         if self.password_edition(user,oldpass,newpass,verify)[0]:
             user.user_pw = hashlib.sha256(newpass[1]).hexdigest()
             user.put()
-            self.delete_data('user_'+self.request.cookies.get('user_id').split('|')[0])
+            self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1],actualizar=True)
             time.sleep(2)
             self.redirect('/profile')
         else:        
@@ -137,12 +138,12 @@ class ViewPosts(handler.Handler):
                 messages = self.GetMessages(actualizar=False,persona=user)#los mensajes para la bandeja
             profile = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#la informacion del perfil que estoy viendo
             profile = list(profile)
-            if len(profile) == 1:#si se encontro
+            if len(profile) > 0:#si se encontro
                 posts = self.get_data("posts_by_"+profile[0].user_id,db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc"))#me enlista sus posts
                 posts = self.display_names(user,list(posts))
                 self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages)
             else:
-                self.write("Perfil no encontrado")
+                self.redirect("/error?e=profile-notfound")
         else:
             if user:
                 messages = self.GetMessages(actualizar=False,persona=user)
@@ -178,7 +179,7 @@ class ViewComments(handler.Handler):
             self.redirect("/login")
 
 class SendPm(handler.Handler):#para enviar mensajes
-    def get(self,messages=None):
+    def get(self,messages=None,target=None):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
