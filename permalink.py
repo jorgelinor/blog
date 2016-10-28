@@ -47,6 +47,8 @@ class Permalink(handler.Handler):
                 self.redirect('/'+link)
             else:
                 com = comment.Comment(submitter=submitter.user_id,content=content,post=link,reported=False,title="Comentario #"+str(len(list(comments))+1)+" en "+post.title)
+                com.created_str = str(com.created)
+                com.created_str = com.created_str[0:16]
                 com.put()
                 self.delete_data(link+'_comments')
                 post.comments += 1
@@ -59,6 +61,8 @@ class Permalink(handler.Handler):
             else:
                 com = comment.Comment.get_by_id(int(self.request.get("c")))
                 com.content = content
+                com.created_str = str(com.created)
+                com.created_str = com.created_str[0:16]
                 com.put()
                 self.redirect("/"+link)
         elif self.request.get('action') == 'reportcomment':
