@@ -1,0 +1,25 @@
+{%extends 'base.html'%}
+{%block content%}
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+<script type='text/javascript'>
+	google.load('visualization', '1.0', {'packages':['corechart']});
+	google.setOnLoadCallback(dibujar);
+	function dibujar() {
+		var data = new google.visualization.DataTable();
+		data.addColumn('string','Tematica');
+		data.addColumn('number','cantidad de publicaciones');		
+		data.addRows([['Animales',{{t1}}],['Tecnologia',{{t2}}],['Preguntas',{{t3}}],['Musica',{{t4}}],['Programacion',{{t5}}]]);
+		var opciones = {'title': 'Publicaciones por tematica','width': 500,'height': 300};
+		var grafica = new google.visualization.PieChart(document.getElementById('chart'));
+		grafica.draw(data,opciones);
+		var data2 = new google.visualization.DataTable();
+		data2.addColumn('string', 'Tematica');
+		data2.addColumn('number', 'cantidad de publicaciones');
+		data2.addRows([['Animales',{{t1}}],['Tecnologia',{{t2}}],['Preguntas',{{t3}}],['Musica',{{t4}}],['Programacion',{{t5}}]]);
+		var grafica2 = new google.visualization.BarChart(document.getElementById('chart2'));
+		grafica2.draw(data2,opciones);
+	}
+</script>
+<div id="chart" style="float:left;border:black solid 1px"></div>
+<div id='chart2' style="float:left;border:black solid 1px"></div>
+{%endblock%}
