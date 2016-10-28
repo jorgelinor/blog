@@ -6,6 +6,7 @@ from message import Message
 from google.appengine.api import memcache
 from google.appengine.ext import db
 from user import User
+import logging
 
 class Profile(handler.Handler):
     #Handler que presenta la pagina del perfil propio, con toda la informacion para ver y cambiar
@@ -72,6 +73,9 @@ class EditProfile(handler.Handler):
         tel = valid_tel(self.request.get('tel'))
         date = self.request.get('date1')+'-'+self.request.get('date2')+'-'+self.request.get('date3')
         description = self.request.get('description')
+        permisos_cambio = self.request.get('solicitar')
+        rason_de_solicitud = self.request.get('rason')
+        
 
         #y aqui empieza la verificacion
         user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
@@ -86,6 +90,10 @@ class EditProfile(handler.Handler):
             user.user_tel=tel[1]
             user.user_date=date
             user.user_desc=description
+            if permisos_cambio == 'True':
+                logging.error('entar', permisos_cambio)
+                user.solicitud_cambio = True
+            user.rason_solicitud_cambio = rason_de_solicitud
             user.put()
             self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1],actualizar=True)            
             self.get_data('displayName_'+user.displayName,db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1),actualizar=True)

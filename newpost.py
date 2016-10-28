@@ -23,19 +23,20 @@ class Newpost(handler.Handler):
             self.redirect('/signup')
     
     def post(self,error=''):
+        topic = self.request.get('topic')
         title = self.request.get('subject')
         post = self.request.get('content')
         submitter = self.get_cookie_user(self.request.cookies.get('user_id'))[1]
         messages = self.GetMessages(actualizar=False,persona=submitter)
-        if title and post:
-            a = Post(title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0)
+        if title and post and topic:
+            a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0)
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
             self.get_data('posts',db.GqlQuery('select * from Post order by created desc'),actualizar=True)
             a.put()           
             self.redirect('/'+str(a.key().id()))
         else:
-            error = 'Titulo y contenido requeridos'
+            error = 'Titulo y contenido y tema requeridos'
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])

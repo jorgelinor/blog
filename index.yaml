@@ -18,6 +18,12 @@ indexes:
 
 - kind: Comment
   properties:
+  - name: reported
+  - name: created
+    direction: desc
+
+- kind: Comment
+  properties:
   - name: submitter
   - name: created
     direction: desc
@@ -31,6 +37,12 @@ indexes:
   properties:
   - name: destination
   - name: date
+    direction: desc
+
+- kind: Post
+  properties:
+  - name: Post.modificable
+  - name: created
     direction: desc
 
 - kind: Post
