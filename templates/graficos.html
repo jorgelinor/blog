@@ -9,7 +9,8 @@
 		data.addColumn('string','Tematica');
 		data.addColumn('number','cantidad de publicaciones');		
 		data.addRows([['Animales',{{t1}}],['Tecnologia',{{t2}}],['Preguntas',{{t3}}],['Musica',{{t4}}],['Programacion',{{t5}}]]);
-		var opciones = {'title': 'Publicaciones por tematica','width': 500,'height': 300};
+		var opciones = {'is3D':true,'title':'Porcentage de posts por tematica'};
+		var opciones2 = {'title':"Cantidad de posts por tematica"}
 		var grafica = new google.visualization.PieChart(document.getElementById('chart'));
 		grafica.draw(data,opciones);
 		var data2 = new google.visualization.DataTable();
@@ -17,9 +18,11 @@
 		data2.addColumn('number', 'cantidad de publicaciones');
 		data2.addRows([['Animales',{{t1}}],['Tecnologia',{{t2}}],['Preguntas',{{t3}}],['Musica',{{t4}}],['Programacion',{{t5}}]]);
 		var grafica2 = new google.visualization.BarChart(document.getElementById('chart2'));
-		grafica2.draw(data2,opciones);
+		grafica2.draw(data2,opciones2);
 	}
 </script>
-<div id="chart" style="float:left;border:black solid 1px"></div>
-<div id='chart2' style="float:left;border:black solid 1px"></div>
+<center>
+<span id="chart" style="border:black solid 1px"></span>
+<span id='chart2' style="border:black solid 1px"></span>
+</center>
 {%endblock%}
