@@ -25,6 +25,9 @@
 					<div id="post-comment-title">{{comment.title}}: </div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div>
 					<div>{{comment.created_str}}</div>
 					<br>
+					{%if post.submitter == 'ti'%}
+						<a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}" id="edit-link">Borrar</a>
+					{%endif%}
 					{%if comment.submitter.split("|")[1] != "False"%}
 						{%if comment.submitter.split('|')[0]=='ti'%}
 							<a id="edit-link" href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a>
