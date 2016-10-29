@@ -3,6 +3,7 @@ from post import Post
 import hashlib
 from user import User
 import comment
+import time
 from google.appengine.ext import db
 
 class Permalink(handler.Handler):
@@ -16,8 +17,18 @@ class Permalink(handler.Handler):
             self.redirect('/login')#pal login
         post = self.get_data("post_"+link,Post.get_by_id(int(link)))#obtiene el post
         if post:#si existe
+            if self.request.get('action') == 'deletecomment':
+                com = self.get_data(self.request.get('c')+'_eComment',comment.Comment.get_by_id(int(self.request.get("c"))))# si el comentario existe con el query
+                if com and int(com.post) == post.key().id() and post.submitter == user.user_id:
+                    db.delete(com)
+                    post.comments -= 1
+                    post.put()
+                    time.sleep(1)
             if self.request.get("action") == "newcomment": #query para verificar si se agrega un nuevo comentario
-                newcomment = True# si es asi, manda algo al render para un espacio de comentario
+                if not user.banned_from_comments:
+                    newcomment = True# si es asi, manda algo al render para un espacio de comentario
+                else:
+                    self.redirect('/'+link)
             elif self.request.get('action') == 'editcomment':#query para editar un comentario
                 com = self.get_data(self.request.get('c')+'_eComment',comment.Comment.get_by_id(int(self.request.get("c"))))# si el comentario existe con el query
                 if com and int(com.post) == post.key().id():#y tiene relacion con el post

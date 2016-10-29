@@ -10,7 +10,7 @@ class Login(handler.Handler):
     def get(self):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            self.write("<a href='/'>Already logged</a>")
+            self.redirect("/error?e=already-logged")
         else:
             self.render('login.html',pagename='Iniciar sesion',url='Login',link='/')
 

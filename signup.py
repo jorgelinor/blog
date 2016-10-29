@@ -14,7 +14,7 @@ class Signup(handler.Handler):
         if not self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             self.render('signup.html',pagename='Registrar',url='Signup',link='/',years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2])
         else:
-            self.write("<a href='/'>Already registered</a>")
+            self.redirect("error?e=already-registered")
         
     def post(self):
         randomStr = ''.join(random.choice(string.letters) for _ in xrange(5))
