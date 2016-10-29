@@ -154,6 +154,7 @@ li-link {
 	width:98%;
 	top:0px;
 	margin-left: 1%;
+	z-index:9999999999;
 }
 #banned-error{
 	text-align:center;
@@ -165,13 +166,14 @@ li-link {
 }
 #bandeja {
 	position:fixed;
-	bottom: 280px;
+	bottom: 380px;
 	right:3%;
 	width:40%;
-	height:315px;
+	height:215px;
 	display:none;
 	border: groove 3px darkgray;
 	overflow:scroll;
+	z-index:9999999999;
 }
 ul, ol {
 	list-style: none;
@@ -202,6 +204,7 @@ ul, ol {
 }
 .menu li:hover > ul{
 	display: block;
+	z-index:999999999999999;
 }
 .admin-link {
 	margin:2%;
@@ -221,4 +224,26 @@ ul, ol {
 .reported-comment{
     word-wrap: break-word;
     max-width: 40%;
+}
+#chart {
+	width:40%;
+	height:300px;
+	float:left;
+	margin:25px;
+
+}
+#chart2 {
+	width:40%;
+	height:300px;
+	float:left;
+	margin:25px;
+}
+
+/* Hora de empezar la responsividad*/
+
+@media screen and (max-width: 800px) {
+	#chart,#chart2 {
+		float:none;
+		border:none;
+	}
 }
