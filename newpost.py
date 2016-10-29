@@ -30,7 +30,7 @@ class Newpost(handler.Handler):
         submitter = self.get_cookie_user(self.request.cookies.get('user_id'))[1]
         messages = self.GetMessages(actualizar=False,persona=submitter)
         if title and post and topic:
-            a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0)
+            a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,visible=True)
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
             self.get_data('posts',db.GqlQuery('select * from Post order by created desc'),actualizar=True)

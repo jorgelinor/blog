@@ -7,6 +7,7 @@ from google.appengine.api import memcache
 from google.appengine.ext import db
 from user import User
 import logging
+from post import Post
 
 class Profile(handler.Handler):
     #Handler que presenta la pagina del perfil propio, con toda la informacion para ver y cambiar
@@ -137,19 +138,28 @@ class EditPass(handler.Handler):
             self.render('editpass.html',pagename='Editar contrasenia',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify,recent_msg=messages)
 
 class ViewPosts(handler.Handler):
-    def get(self):
+    def get(self,messages=None,mios=False):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            messages = self.GetMessages(actualizar=False,persona=user)
+        if self.request.get('post').isdigit():
+            post = Post.get_by_id(int(self.request.get('post')))
+            if post:
+                if self.request.get('visible') == '0':
+                    post.visible = False
+                elif self.request.get('visible') == '1':
+                    post.visible = True
+                post.put()
         if self.request.get("u"):
-            if user:
-                messages = self.GetMessages(actualizar=False,persona=user)#los mensajes para la bandeja
             profile = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#la informacion del perfil que estoy viendo
             profile = list(profile)
             if len(profile) > 0:#si se encontro
                 posts = self.get_data("posts_by_"+profile[0].user_id,db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc"))#me enlista sus posts
                 posts = self.display_names(user,list(posts))
-                self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages)
+                if user.user_id == profile[0].user_id:
+                    mios = True
+                self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages,mios=mios)
             else:
                 self.redirect("/error?e=profile-notfound")
         else:
@@ -157,7 +167,7 @@ class ViewPosts(handler.Handler):
                 messages = self.GetMessages(actualizar=False,persona=user)
                 posts = self.get_data("posts_by_"+user.user_id,db.GqlQuery("select * from Post where submitter='"+user.user_id+"' order by created desc"))
                 posts = self.display_names(user,list(posts))
-                self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages) 
+                self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages,mios=True) 
             else:
                 self.redirect("/login")
 

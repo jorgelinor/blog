@@ -11,3 +11,4 @@ class Post(db.Model):
 	modificable = db.StringProperty(required=True)
 	razon = db.TextProperty(required=False)
 	comments = db.IntegerProperty(required=True)
+	visible = db.BooleanProperty(required=False)
