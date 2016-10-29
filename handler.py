@@ -38,7 +38,7 @@ class Handler(webapp2.RequestHandler):
     #la funcion y se hace cache para la proxima peticion
     def get_data(self,key,query,actualizar=False):
         data = memcache.get(key)
-        if data == None or actualizar:
+        if data == None or actualizar==True:
             data = query
             self.write('algo')
             memcache.add(key, data)
@@ -93,10 +93,8 @@ class Handler(webapp2.RequestHandler):
         return (True,erroruser,errortel,errordesc,errordate,passerror)
 
     def display_names(self,user=None,lista=[]):
-        if not user:
-            return lista
         for e in lista:
-            if e.submitter == user.user_id:
+            if user and e.submitter == user.user_id:
                 e.submitter = "ti"
             else:
                 submitter = self.get_data('submitter_'+e.submitter,db.GqlQuery("select * from User where user_id='"+e.submitter+"'"))

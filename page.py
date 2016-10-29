@@ -15,5 +15,5 @@ class Page(newpost.Newpost):
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
             messages = self.GetMessages(actualizar=False,persona=user)
-            posts = self.display_names(user,list(posts))
+        posts = self.display_names(user,list(posts))
         self.render('page.html',pagename='Pagina principal',posts=posts,user=user,recent_msg=messages) 

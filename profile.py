@@ -87,9 +87,9 @@ class EditProfile(handler.Handler):
             user.user_date=date
             user.user_desc=description
             user.put()
-            self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1],actualizar=True)            
-            self.get_data('displayName_'+user.displayName,db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1),actualizar=True)
             time.sleep(2)
+            memcache.delete('user_'+self.request.cookies.get('user_id').split('|')[0])            
+            memcache.delete('displayName_'+user.displayName)
             self.redirect('/profile')
 
 

@@ -90,11 +90,9 @@ class Users(handler.Handler):
                             profile.banned_from_comments = False
                             changed = True
                         if changed == True:
-                            self.get_data(self.request.get("u"),db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'"),actualizar=True)
+                            memcache.delete('user_'+str(profile.key().id()))
                             profile.put()
-                        self.redirect("/admin/users")
-                    else:
-                        self.redirect("/admin/users")
+                    self.redirect("/admin/users")
                 else:
                     messages = self.GetMessages(actualizar=False,persona=user)
                     self.render("users.html",users=users,pagename="Panel de usuarios", user=user,recent_msg=messages)
