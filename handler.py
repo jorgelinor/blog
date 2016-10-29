@@ -147,3 +147,15 @@ class ErrorHandler(Handler):
             error = 'Este post no te pertenece.'
         self.render('error.html',user=user,pagename='Error',error=error, recent_msg=messages)
 
+class Stats(Handler):
+    def get(self,messages=None):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            messages = self.GetMessages(actualizar=False,persona=user)
+        animales = self.get_data("cantidad_Animales",len(list(db.GqlQuery("select * from Post where topic='Animales'"))))
+        tecnologia = self.get_data("cantidad_Tecnologia", len(list(db.GqlQuery("select * from Post where topic='Tecnologia'"))))
+        preguntas = self.get_data("cantidad_Preguntas", len(list(db.GqlQuery("select * from Post where topic='Preguntas'"))))
+        musica = self.get_data("cantidad_Musica", len(list(db.GqlQuery("select * from Post where topic='Musica'"))))
+        programacion = self.get_data("cantidad_Programacion", len(list(db.GqlQuery("select * from Post where topic='Programacion'"))))
+        self.render("graficos.html",pagename="Stats de la pagina", t1=animales,t2=tecnologia,t3=preguntas,t4=musica,t5=programacion,user=user,recent_msg=messages)
