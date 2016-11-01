@@ -122,21 +122,22 @@ class Handler(webapp2.RequestHandler):
         else:
             errorpass = 'Invalid password'
         return (False,errorpass,errornew,errorverify)
-    def make_json_data(self,posts=None):
+    def make_json_data(self,posts=None,mios=None):
         index = {}
         for e in posts:
-            obj = {}
-            obj["id"] = e.key().id()
-            obj["title"] = e.title
-            obj["post"] = e.post
-            obj["submitter"] = e.submitter
-            obj["created"] = str(e.created)
-            obj["created_str"] = e.created_str
-            obj["modificable"] = e.modificable
-            obj["razon"] = e.razon
-            obj["comments"] = e.comments
-            obj["visible"] = e.visible
-            index[len(index)] = obj
+            if e.visible != False or e.visible==False and mios==True: #antes de mandar el json, revisa si los posts son visibles o no, para luego reenderizarlos correctamente
+                obj = {}
+                obj["id"] = e.key().id()
+                obj["title"] = e.title
+                obj["post"] = e.post
+                obj["submitter"] = e.submitter
+                obj["created"] = str(e.created)
+                obj["created_str"] = e.created_str
+                obj["modificable"] = e.modificable
+                obj["razon"] = e.razon
+                obj["comments"] = e.comments
+                obj["visible"] = e.visible
+                index[len(index)] = obj
         return json.dumps(index)
 
     def load_data(self,messages=None,lim=None,mios=None,pagename=None,posts=None):
@@ -145,7 +146,7 @@ class Handler(webapp2.RequestHandler):
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
             messages = self.GetMessages(actualizar=False,persona=user)
         posts = self.display_names(user,list(posts))
-        self.render('page.html',pagename=pagename,posts=posts,user=user,recent_msg=messages,limit=lim,data=self.make_json_data(posts=posts),mios=mios)
+        self.render('page.html',pagename=pagename,posts=posts,user=user,recent_msg=messages,limit=lim,data=self.make_json_data(posts=posts,mios=mios),mios=mios)
 
 class ErrorHandler(Handler):
     def get(self,error='',messages=None):

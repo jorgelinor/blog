@@ -18,7 +18,7 @@ function load_data(posts,mios,request,limit) {
 	for (post in posts.slice(0,limit)) {
 		if (posts[post].visible == false){
 			if (mios=="True") {
-				$(".page-content").append('<center><h2 style="margin-left:20%;margin-right:20%;margin-bottom:70px"><a id="post-title" style="color:red" href="/'+post+'">'+posts[post].title+'</a></h2><a href="/profile/_viewposts?post='+post+'&visible=1"><button id="edit-link">Mostrar</button></a><div style="max-width:500px;word-wrap:break-word"><pre>'+posts[post].post+'</pre></div>')
+				$(".page-content").append('<center><h2 style="margin-left:20%;margin-right:20%;margin-bottom:70px"><a id="post-title" style="color:red" href="/'+posts[post].id+'">'+posts[post].title+'</a></h2><a href="/profile/_viewposts?post='+posts[post].id+'&visible=1"><button id="edit-link">Mostrar</button></a><div style="max-width:500px;word-wrap:break-word"><pre>'+posts[post].post+'</pre></div>')
 				if (posts[post].submitter.split("|")[1] != "False") {
 					$(".page-content").append('<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u='+posts[post].submitter.split("|")[0]+'">'+posts[post].submitter.split("|")[0]+'</a></label>')
 				} else {
@@ -33,14 +33,14 @@ function load_data(posts,mios,request,limit) {
 					}
 				}
 				if (request) {
-					$(".page-content").append('Razon: <label class="reported-comment" style="color:red;">'+posts[post].razon+'</label><a href="/admin/post_requests?post='+post+'&action=deny_request"><button id="edit-link">Rechazar</button></a><a href="/admin/post_requests?post='+post+'&action=accept_request"><button id="edit-link">Permitir</button></a>')
+					$(".page-content").append('Razon: <label class="reported-comment" style="color:red;">'+posts[post].razon+'</label><a href="/admin/post_requests?post='+posts[post].id+'&action=deny_request"><button id="edit-link">Rechazar</button></a><a href="/admin/post_requests?post='+posts[post].id+'&action=accept_request"><button id="edit-link">Permitir</button></a>')
 				}
 				
 			}
 		} else {
-			$(".page-content").append('<center><h2 style="margin-left:20%;margin-right:20%;margin-bottom:70px"><a id="post-title" href="/'+post+'">'+posts[post].title+'</a></h2>')
+			$(".page-content").append('<center><h2 style="margin-left:20%;margin-right:20%;margin-bottom:70px"><a id="post-title" href="/'+posts[post].id+'">'+posts[post].title+'</a></h2>')
 			if (mios=="True") {
-				$(".page-content").append('<a href="/profile/_viewposts?post='+post+'&visible=0"><button id="edit-link">Ocultar</button></a>')
+				$(".page-content").append('<a href="/profile/_viewposts?post='+posts[post].id+'&visible=0"><button id="edit-link">Ocultar</button></a>')
 			}
 			$('.page-content').append('<center><div style="max-width:500px;word-wrap:break-word"><pre>'+posts[post].post+'</pre></div></center>')
 			if (posts[post].submitter.split("|")[1] != "False") {
@@ -57,10 +57,18 @@ function load_data(posts,mios,request,limit) {
 				}
 			}
 			if (request) {
-				$(".page-content").append('Razon: <label class="reported-comment" style="color:red;">'+posts[post].razon+'</label><a href="/admin/post_requests?post='+post+'&action=deny_request"><button id="edit-link">Rechazar</button></a><a href="/admin/post_requests?post='+post+'&action=accept_request"><button id="edit-link">Permitir</button></a>')
+				$(".page-content").append('Razon: <label class="reported-comment" style="color:red;">'+posts[post].razon+'</label><a href="/admin/post_requests?post='+posts[post].id+'&action=deny_request"><button id="edit-link">Rechazar</button></a><a href="/admin/post_requests?post='+posts[post].id+'&action=accept_request"><button id="edit-link">Permitir</button></a>')
 			}
 		}
-		$('.page-content').append("<br><hr>")
+		if (posts[post].visible == true){
+			$('.page-content').append("<br><hr>")
+		} else {
+			if (posts[post].visible == false) {
+				if (mios=="True"){
+					$('.page-content').append("<br><hr>")
+				}
+			}
+		}
 	}
 	$(window).scroll(function() {
 		if($(window).scrollTop() == $(document).height() - $(window).height()) {

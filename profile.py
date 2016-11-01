@@ -151,6 +151,7 @@ class ViewPosts(handler.Handler):
                 elif self.request.get('visible') == '1':
                     post.visible = True
                 post.put()
+                self.redirect('/profile/_viewposts')
         if self.request.get("u"):
             profile = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#la informacion del perfil que estoy viendo
             profile = list(profile)
