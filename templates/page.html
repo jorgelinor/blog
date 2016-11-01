@@ -3,55 +3,17 @@
 <center>
 <div class="banned-error">{{errorbanned}}</div>
 {%if posts%}
-	{%for post in posts%}
-		{%if post.visible == False%}
-			{%if mios%}
-				<h2 style="margin-left:20%;margin-right:20%;margin-bottom:70px"><a id="post-title" style="color:red" href="/{{post.key().id()}}">{{post.title}}</a></h2>
-				<a href="/profile/_viewposts?post={{post.key().id()}}&visible=1"><button id="edit-link">Mostrar</button></a>
-				<div style="max-width:500px;word-wrap:break-word"><pre>{{post.post}}</pre></div>
-				{%if post.submitter.split("|")[1] != "False"%}
-					<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter.split('|')[0]}}">{{post.submitter.split("|")[0]}}</a></label>
-				{%else%}
-					<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
-				{%endif%}
-				<label style="float:right">{{post.created_str}}</label>
-				<label style="float:right;color:gray;font-style:italic">
-						{%if post.comments > 1%}{{post.comments}} comentarios&nbsp;&nbsp;
-						{%elif post.comments == 1%}{{post.comments}} comentario&nbsp;&nbsp;
-						{%else%}
-						{%endif%}</label><br>
-				<hr>
-				{%if request%}
-					Razon: <label class="reported-comment" style="color:red;">{{post.razon}}</label>
-					<a href="/admin/post_requests?post={{post.key().id()}}&action=deny_request"><button id="edit-link">Rechazar</button></a>
-					<a href="/admin/post_requests?post={{post.key().id()}}&action=accept_request"><button id="edit-link">Permitir</button></a>
-				{%endif%}
-			{%endif%}
-		{%else%}
-				<h2 style="margin-left:20%;margin-right:20%;margin-bottom:70px"><a id="post-title" href="/{{post.key().id()}}">{{post.title}}</a></h2>
-				{%if mios%}
-					<a href="/profile/_viewposts?post={{post.key().id()}}&visible=0"><button id="edit-link">Ocultar</button></a>
-				{%endif%}
-				<div style="max-width:500px;word-wrap:break-word"><pre>{{post.post}}</pre></div>
-				{%if post.submitter.split("|")[1] != "False"%}
-					<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter.split('|')[0]}}">{{post.submitter.split("|")[0]}}</a></label>
-				{%else%}
-					<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
-				{%endif%}
-				<label style="float:right">{{post.created_str}}</label>
-				<label style="float:right;color:gray;font-style:italic">
-						{%if post.comments > 1%}{{post.comments}} comentarios&nbsp;&nbsp;
-						{%elif post.comments == 1%}{{post.comments}} comentario&nbsp;&nbsp;
-						{%else%}
-						{%endif%}</label><br>
-				<hr>
-				{%if request%}
-					Razon: <label class="reported-comment" style="color:red;">{{post.razon}}</label>
-					<a href="/admin/post_requests?post={{post.key().id()}}&action=deny_request"><button id="edit-link">Rechazar</button></a>
-					<a href="/admin/post_requests?post={{post.key().id()}}&action=accept_request"><button id="edit-link">Permitir</button></a>
-				{%endif%}
-		{%endif%}
-	{%endfor%}
+<script type="text/javascript" src="/js/javascript.js"></script>
+<script type="text/javascript">
+	var posts = []
+	for (el in {{data|safe}}){
+		posts.push({{data|safe}}[el])
+	}
+	var mios = String("{{mios}}")
+	var request = String("{{request}}")
+	var limit = {{limit}}
+	load_data(posts=posts,mios=mios,request=request,limit=limit)
+</script>
 {%else%}
 <h1>Esto esta vacio</h1>
 <FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>

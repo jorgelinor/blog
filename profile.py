@@ -159,7 +159,7 @@ class ViewPosts(handler.Handler):
                 posts = self.display_names(user,list(posts))
                 if user.user_id == profile[0].user_id:
                     mios = True
-                self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages,mios=mios)
+                self.load_data(lim=5,mios=mios,pagename="Ver posts",posts=posts)
             else:
                 self.redirect("/error?e=profile-notfound")
         else:
@@ -167,7 +167,7 @@ class ViewPosts(handler.Handler):
                 messages = self.GetMessages(actualizar=False,persona=user)
                 posts = self.get_data("posts_by_"+user.user_id,db.GqlQuery("select * from Post where submitter='"+user.user_id+"' order by created desc"))
                 posts = self.display_names(user,list(posts))
-                self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages,mios=True) 
+                self.load_data(lim=5,mios=True,pagename="Ver posts",posts=posts) 
             else:
                 self.redirect("/login")
 
