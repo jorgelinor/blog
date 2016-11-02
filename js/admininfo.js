@@ -30,9 +30,9 @@ $("#modificacion").click(function() {
         url: '/admin/Admin_info',
         type: 'GET',
         dataType: 'json',
-        data: { 'action': 'post_modificable_cache'},
+        data: { 'action': 'post_modificable_cache'}
     }).done(function(data) {
-        // $('#contenido').empty();
+        $('#contenido').empty();
         $('#error').hide();
         $.each(data, function(index, el) {
             console.log(el.submitter);
@@ -58,7 +58,7 @@ $("#administracion_user").click(function() {
         url: '/admin/Admin_info',
         type: 'GET',
         dataType: 'json',
-        data: { 'action': 'user_permisos_cache'},
+        data: { 'action': 'user_permisos_cache'}
     })
     .done(function(data) {
         $('#contenido').empty();

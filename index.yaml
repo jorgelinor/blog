@@ -47,6 +47,12 @@ indexes:
 
 - kind: Post
   properties:
+  - name: modificable
+  - name: created
+    direction: desc
+
+- kind: Post
+  properties:
   - name: submitter
   - name: created
     direction: desc
@@ -54,5 +60,11 @@ indexes:
 - kind: User
   properties:
   - name: User.solicitud_cambio
+  - name: created
+    direction: desc
+
+- kind: User
+  properties:
+  - name: solicitud_cambio
   - name: created
     direction: desc

@@ -169,8 +169,9 @@ class Admin_info(handler.Handler):
         if info is None:
             createquerty(action)
             info = memcache.get(action)
+        logging.error(info)
         informacion = diccionarisarcache(info,action)
-        logging.error(informacion)
+        logging.error(action)
         self.write(json.dumps(informacion))
 
 
@@ -204,28 +205,28 @@ def diccionarisarcache(info,cual):
                                                       'post':info[partes].post,
                                                       'submitter':info[partes].submitter,
                                                       'created':info[partes].created.strftime('%y/%m/%d'),
-                                                      'created_str':info[partes].created_str,
                                                       'reported':info[partes].reported,
                                                       'razon':info[partes].razon
                                                     }
-                
     elif cual == 'post_modificable_cache':
+        logging.error(cual)
         for partes in info:
-                informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
+            logging.error('test')
+            logging.error(info[partes])
+            logging.error(str(info[partes].key().id()))
+            informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
                                                       'topic':info[partes].topic,
                                                       'title':info[partes].title,
-                                                      'content':info[partes].content,
+                                                      'content':info[partes].post,
                                                       'post':info[partes].post,
                                                       'submitter':info[partes].submitter,
                                                       'created':info[partes].created.strftime('%y/%m/%d'),
-                                                      'created_str':info[partes].created_str,
                                                       'modificable':info[partes].modificable,
                                                       'razon':info[partes].razon
                                                     }
-                                                    
     elif cual == 'user_permisos_cache':
         for partes in info:
-                informacion[str(info[partes].key().id())]={"user_type":info[partes].user_type,
+            informacion[str(info[partes].key().id())]={"user_type":info[partes].user_type,
                                             "user_id":info[partes].user_id,
                                             "displayName":info[partes].displayName,
                                             "solicitud_cambio":info[partes].solicitud_cambio,
@@ -249,7 +250,7 @@ def createquerty(content):
     #solicitud de modiicar un post post
     elif content == 'post_modificable_cache':
         post ={}
-        post_modificables =  db.GqlQuery("SELECT * FROM Post WHERE  Post.modificable = 'pending' ORDER BY created desc")
+        post_modificables =  db.GqlQuery("SELECT * FROM Post WHERE  modificable = 'pending' ORDER BY created desc")
         for p in post_modificables:
             post[p.title] = p
         memcache.set("post_modificable_cache", post)
@@ -258,16 +259,16 @@ def createquerty(content):
     # permisos para usuarios
     elif content == 'user_permisos_cache':
         users ={}
-        users_modificables =  db.GqlQuery("SELECT * FROM User WHERE User.solicitud_cambio = True ORDER BY created desc")
+        users_modificables =  db.GqlQuery("SELECT * FROM User WHERE solicitud_cambio = True ORDER BY created desc")
         for p in users_modificables:
             users[p.subject] = p
         memcache.set("user_permisos_cache", users)
         return users
 
     #post reportados
-    elif content == 'post_reposrted_cache':
+    elif content == 'post_reported_cache':
         post_repo ={}
-        post_reported =  db.GqlQuery("SELECT * FROM Post WHERE Post.repost = True ORDER BY created desc")
+        post_reported =  db.GqlQuery("SELECT * FROM Post WHERE report = True ORDER BY created desc")
         for p in post_reported:
             post_repo[p.subject] = p
         memcache.set("post_reposrted_cache", post)
