@@ -50,3 +50,9 @@ indexes:
   - name: submitter
   - name: created
     direction: desc
+
+- kind: User
+  properties:
+  - name: User.solicitud_cambio
+  - name: created
+    direction: desc

@@ -170,8 +170,10 @@ class Admin_info(handler.Handler):
             createquerty(action)
             info = memcache.get(action)
         informacion = diccionarisarcache(info,action)
-        logging.error(action,info)
+        logging.error(informacion)
         self.write(json.dumps(informacion))
+
+
     def post(self, query):
         if query == 'comments_reported_cache':
             pass
@@ -190,10 +192,14 @@ class Admin_info(handler.Handler):
 
 # convierte el objeto de la base de datos a una diccionario lejible para json  
 def diccionarisarcache(info,cual):
+    informacion={}
     #info es la cache creada solo con la informacion de echa
     if cual == 'comments_reported_cache':
+        logging.error(info)
         for partes in info:
-                informacion={info[partes].submitter:{'title':info[partes].title,
+                logging.error(info[partes].submitter)
+                informacion[str(info[partes].key().id())]={'comment_id':str(info[partes].key().id()),
+                                                      'title':info[partes].title,
                                                       'content':info[partes].content,
                                                       'post':info[partes].post,
                                                       'submitter':info[partes].submitter,
@@ -202,10 +208,11 @@ def diccionarisarcache(info,cual):
                                                       'reported':info[partes].reported,
                                                       'razon':info[partes].razon
                                                     }
-                            }
+                
     elif cual == 'post_modificable_cache':
         for partes in info:
-                informacion={info[partes].submitter:{'topic':info[partes].topic,
+                informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
+                                                      'topic':info[partes].topic,
                                                       'title':info[partes].title,
                                                       'content':info[partes].content,
                                                       'post':info[partes].post,
@@ -214,43 +221,51 @@ def diccionarisarcache(info,cual):
                                                       'created_str':info[partes].created_str,
                                                       'modificable':info[partes].modificable,
                                                       'razon':info[partes].razon
-                                                    }}
+                                                    }
+                                                    
     elif cual == 'user_permisos_cache':
         for partes in info:
-                informacion={info[partes].displayName:{"user_type":info[partes].user_type,
-                                            "user_id":info[partes].user_type,
+                informacion[str(info[partes].key().id())]={"user_type":info[partes].user_type,
+                                            "user_id":info[partes].user_id,
                                             "displayName":info[partes].displayName,
                                             "solicitud_cambio":info[partes].solicitud_cambio,
                                             "rason_solicitud_cambio":info[partes].rason_solicitud_cambio,
                                             "banned_from_comments":info[partes].banned_from_comments,
                                             "banned_from_posting":info[partes].banned_from_posting
-                                                    }}
+                                                    }
     return informacion                    
 # crea el query deacuerdo ala info pedidad por el admin
 def createquerty(content):
-    if content == "comments_reported_cache":# comentario reportados
+    # comentario reportados
+    if content == "comments_reported_cache":
         comments = {}
         banned_comments = db.GqlQuery("SELECT * FROM Comment WHERE reported = True ORDER BY created desc")
         for p in banned_comments:
             comments[p.title] = p
         memcache.set("comments_reported_cache", comments)
-        logging.error(comments)
+        # logging.error(comments)
         return comments
-    elif content == 'post_modificable_cache':#solicitud de modiicar un post post
+
+    #solicitud de modiicar un post post
+    elif content == 'post_modificable_cache':
         post ={}
         post_modificables =  db.GqlQuery("SELECT * FROM Post WHERE  Post.modificable = 'pending' ORDER BY created desc")
         for p in post_modificables:
             post[p.title] = p
         memcache.set("post_modificable_cache", post)
         return post
-    elif content == 'user_permisos_cache':# permisos para usuarios
+
+    # permisos para usuarios
+    elif content == 'user_permisos_cache':
         users ={}
         users_modificables =  db.GqlQuery("SELECT * FROM User WHERE User.solicitud_cambio = True ORDER BY created desc")
-        for p in post_modificables:
+        for p in users_modificables:
             users[p.subject] = p
         memcache.set("user_permisos_cache", users)
         return users
-    elif content == 'post_reposrted_cache':#post reportados
+
+    #post reportados
+    elif content == 'post_reposrted_cache':
         post_repo ={}
         post_reported =  db.GqlQuery("SELECT * FROM Post WHERE Post.repost = True ORDER BY created desc")
         for p in post_reported:

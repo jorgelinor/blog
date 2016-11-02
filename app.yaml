@@ -11,6 +11,10 @@ handlers:
 - url: /css
   static_dir: css
 
+- url: /img
+  static_dir: img
+
+
 - url: /favicon\.png
   static_files: favicon.png
   upload: favicon\.png
