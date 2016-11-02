@@ -10,8 +10,9 @@
 	<div id="header">
 	<br>
 		<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" style="float:left;width: 24px; height: 24px;"></a>
-		<form style="float:left" action="/profile">
-			<input type="text" name="u" placeholder="Buscar usuario por nombre">
+		<form style="float:left" action="/search">
+			<input type="text" name="q" placeholder="Buscar usuario por nombre">
+			<input type="hidden" name="filter" value="User">
 			<button>Buscar</button>
 		</form>
 		{%if user%}
@@ -73,8 +74,16 @@
 			{%endfor%}
 		{%endif%}
 	</div>
-		<div class="page-content">
 		<br><br><br><br>
+		<div class="menu-left">
+			{%if menu == 'filter'%}
+				<h3>Que buscas?</h3>
+				<a href="/search?q={{search}}&filter=User">Personas</a><br>
+				<a href="/search?q={{search}}&filter=Post">Posts</a><br>
+				<a href="/search?q={{search}}&filter=Comment">Comentarios</a><br>
+			{%endif%}
+		</div>
+		<div class="page-content">
 			{%block content%}
 			{%endblock%}
 		</div>

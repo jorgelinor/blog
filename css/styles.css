@@ -114,6 +114,13 @@ li-link {
 	margin-right: 10%;
 	overflow-y: auto;
 }
+.menu-left{
+	position: fixed;
+    left: 0px;
+    margin-left: 1%;
+    max-width: 8%;
+    margin-right: 0%;
+}
 #user-chart {
 	display:block;
 	width: 15%;
@@ -149,7 +156,6 @@ li-link {
 	font-family: "Courier New", monospace;
 	overflow:none;
 	background-color: gray;
-	width:100%;
 	position: fixed;
 	width:98%;
 	top:0px;
