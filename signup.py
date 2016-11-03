@@ -48,11 +48,11 @@ class Signup(handler.Handler):
                 errormail = 'Invalid e-mail'
             date_pre = create_date()
             self.render('signup.html',pagename='Registrar',username=username[1],email=email[1],erroruser=erroruser,errormail=errormail,errorpass=errorpass,errorverify=errorverify,
-                        errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description,years=list(reversed(date_pre[0])),
+                        errortel=errortel,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description, years=list(reversed(date_pre[0])),
                         months=date_pre[1],days=date_pre[2])
         else: #si el registro es valido
             user_ob = User(user_id=username[1],user_pw=hashlib.sha256(password[1]).hexdigest(),user_mail=email[1],
-                            user_tel=tel[1],user_date=date,user_desc=description,user_type='user',displayName=username[1]+randomStr) #se crea un objeto usuario con los datos
+                            user_tel=tel[1],user_date=date,user_desc=description,user_type='user',solicitud_cambio=False, displayName=username[1]+randomStr) #se crea un objeto usuario con los datos
             user_ob.put() #se sube a la base de datos
             self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.key().id())+'|'+hashlib.sha256(str(user_ob.key().id())).hexdigest()+';Path=/') #y se crea la cookie
             self.redirect('/profile')

@@ -66,5 +66,10 @@ indexes:
 - kind: User
   properties:
   - name: solicitud_cambio
+  - name: user_id
+
+- kind: User
+  properties:
+  - name: solicitud_cambio
   - name: created
     direction: desc

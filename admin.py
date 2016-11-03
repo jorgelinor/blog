@@ -175,11 +175,30 @@ class Admin_info(handler.Handler):
         self.write(json.dumps(informacion))
 
 
-    def post(self, query):
+    def post(self):
+        query= self.request.POST.get('query')
         if query == 'comments_reported_cache':
-            pass
+            coment_id = self.request.POST.get('id')
+            comments_reported = self.request.POST.get('estado')
+            cache = buscar(coment_id,query)
+            if cache and comments_reported == 'true':
+                cache.show = False
+                cache.state = True
+                cache.put()
+                self.write(json.dumps('True'))
+            # else:
+            #     self.write('no en contrado')
+
         elif query == 'post_modificable_cache':
-            pass
+            post_id = self.request.POST.get('id')
+            modificable = self.request.POST.get('estado')
+            cache = buscar(post_id,query)
+            if cache and modificable:
+                cache.modificable= modificable
+                cache.put()
+                self.write(json.dumps('True'))
+            else:
+                self.write('no en contrado')
         elif query == 'user_permisos_cache':
             pass
         elif query == 'post_reposrted_cache':
@@ -191,6 +210,18 @@ class Admin_info(handler.Handler):
 # de terminar si u post reportado tiene un contenido que se puede mostrar
 
 
+
+
+#encuentra los pos o usuario y comentario por el id
+def buscar(id_elemento, elemento):
+    cache = memcache.get(elemento)
+    if id_elemento in cache:
+        return cache[id_elemento]
+    else:
+        return
+
+
+
 # convierte el objeto de la base de datos a una diccionario lejible para json  
 def diccionarisarcache(info,cual):
     informacion={}
@@ -198,7 +229,6 @@ def diccionarisarcache(info,cual):
     if cual == 'comments_reported_cache':
         logging.error(info)
         for partes in info:
-                logging.error(info[partes].submitter)
                 informacion[str(info[partes].key().id())]={'comment_id':str(info[partes].key().id()),
                                                       'title':info[partes].title,
                                                       'content':info[partes].content,
@@ -206,14 +236,11 @@ def diccionarisarcache(info,cual):
                                                       'submitter':info[partes].submitter,
                                                       'created':info[partes].created.strftime('%y/%m/%d'),
                                                       'reported':info[partes].reported,
-                                                      'razon':info[partes].razon
+                                                      'razon':info[partes].razon,
+                                                      'state':info[partes].state
                                                     }
     elif cual == 'post_modificable_cache':
-        logging.error(cual)
         for partes in info:
-            logging.error('test')
-            logging.error(info[partes])
-            logging.error(str(info[partes].key().id()))
             informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
                                                       'topic':info[partes].topic,
                                                       'title':info[partes].title,
@@ -225,8 +252,11 @@ def diccionarisarcache(info,cual):
                                                       'razon':info[partes].razon
                                                     }
     elif cual == 'user_permisos_cache':
+        logging.error('success')
         for partes in info:
-            informacion[str(info[partes].key().id())]={"user_type":info[partes].user_type,
+            logging.error(cual)
+            informacion[str(info[partes].key().id())]={"userid":str(info[partes].key().id()),
+                                            "user_type":info[partes].user_type,
                                             "user_id":info[partes].user_id,
                                             "displayName":info[partes].displayName,
                                             "solicitud_cambio":info[partes].solicitud_cambio,
@@ -240,9 +270,9 @@ def createquerty(content):
     # comentario reportados
     if content == "comments_reported_cache":
         comments = {}
-        banned_comments = db.GqlQuery("SELECT * FROM Comment WHERE reported = True ORDER BY created desc")
+        banned_comments = db.GqlQuery("SELECT * FROM Comment WHERE reported = True , state = False ORDER BY created desc")
         for p in banned_comments:
-            comments[p.title] = p
+            comments[str(p.key().id())] = p
         memcache.set("comments_reported_cache", comments)
         # logging.error(comments)
         return comments
@@ -252,16 +282,22 @@ def createquerty(content):
         post ={}
         post_modificables =  db.GqlQuery("SELECT * FROM Post WHERE  modificable = 'pending' ORDER BY created desc")
         for p in post_modificables:
-            post[p.title] = p
+            post[str(p.key().id())] = p
         memcache.set("post_modificable_cache", post)
         return post
 
     # permisos para usuarios
     elif content == 'user_permisos_cache':
+    
         users ={}
-        users_modificables =  db.GqlQuery("SELECT * FROM User WHERE solicitud_cambio = True ORDER BY created desc")
+        logging.error('parausuarios')
+        users_modificables =  db.GqlQuery("SELECT * FROM User WHERE solicitud_cambio = True ORDER by user_id")
+        logging.error(users_modificables)
+        logging.error('permiso parausuarios')
+
         for p in users_modificables:
-            users[p.subject] = p
+            logging.error(p.user_type)
+            users[str(p.key().id())] = p
         memcache.set("user_permisos_cache", users)
         return users
 
@@ -270,7 +306,7 @@ def createquerty(content):
         post_repo ={}
         post_reported =  db.GqlQuery("SELECT * FROM Post WHERE report = True ORDER BY created desc")
         for p in post_reported:
-            post_repo[p.subject] = p
+            post_repo[str(p.key().id())] = p
         memcache.set("post_reposrted_cache", post)
         return post_repo
 
