@@ -12,12 +12,12 @@ $("#asd").click(function() {
             
             $('#contenido').append(
                 "<div id='"+el.comment_id+"'style=''>"
-                    +"<h1>coment submete by:"+el.submitter+"</h1>"
-                    +"<b> creado: "+el.created+" </b><br><h4>post <a href="+el.post+">Post del mensaje</a></h4>"
-                +"<div>"+el.content+"</div>"
-                +"<h3>Reportado</h3><br><b>"+el.razon+"</b>"
+                +"<h3>coment submete by:"+el.submitter+"</h3>"
+                +"<b> creado: "+el.created+"</b><h4><a href="+el.post+">Post</a></h4>"
+                +"<h4>"+el.content+"</h4>"
+                +"<h5>Reportado</h5><b>"+el.razon+"</b><br>"
                 +"<input type='checkbox' name='report'>Quitar comentario</input><br>"
-                +"<button class='submit'>enviar</button></div>");
+                +"<button class='submit'>enviar</button></div><br>");
         });
     }).fail(function() {
         $('#error').show();
@@ -42,11 +42,10 @@ $("#modificacion").click(function() {
                 +"<h3>"+el.topic+"</h3>"
                 +"<b> creado: "+el.post+" </b>"
                 +"<br>"
-                +"<h3 ><input>"+el.modificable+"</input></h3><br>"
-                +"<b>"+el.razon+"</b>"
+                +"<b>"+el.razon+"</b><br>"
                 +"<input type='text' value='"+el.modificable+"'></input>"
-                +"<button class='submit'></button>"
-                +"</div>");
+                +"<button class='submit'>enviar</button>"
+                +"</div><br>");
         });
     }).fail(function() {
         $('#contenido').empty();
@@ -73,7 +72,7 @@ $("#administracion_user").click(function() {
                                     +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"
                                     +"<p>cambio de permiso para usuario </p>"
                                     +"<input type='text'></input>"
-                                    +"<buton type='submit' class='submit'></button>"
+                                    +"<button type='submit' class='submit'>enviar</button>"
                                     +"</div>");
         });
     })
@@ -101,7 +100,8 @@ $("#administracion_user").click(function() {
 //         console.log("complete");
 //     });
     
-$(".submit").click(function(){
+$(".submit").click(function(event){
+    event.preventDefault();
     var id = $(this).parent().attr("id");
     var estado = $(this).siblings('input').prop('checked');
     $.ajax({
@@ -110,7 +110,7 @@ $(".submit").click(function(){
         dataType : "json",
         data : {"query":'comments_reported_cache' ,"id": id, "estado":estado}
     }).success( function(data) {
-            if(data == 'True'){ 
+            if(data == 'true'){ 
                 // $(this).css("border": "#00ff00");
                 $(this).parent().css({'display':'none'});
             };
@@ -118,7 +118,8 @@ $(".submit").click(function(){
 
 });
 
-$(".submit").click(function(){
+$(".submit").click(function(event){
+    event.preventDefault();
     var id = $(this).parent().attr("id");
     var estado = $(this).siblings('input').prop('text');
     $.ajax({
@@ -127,7 +128,7 @@ $(".submit").click(function(){
         dataType : "json",
         data : {"query":'post_modificable_cache' ,"id": id, "estado":estado}
     }).success( function(data) {
-            if(data == 'True'){ 
+            if(data == 'true'){ 
                 // $(this).css("border": "#00ff00");
                 $(this).parent().css({'display':'none'});
             };

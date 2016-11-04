@@ -160,7 +160,6 @@ class KeepComment(handler.Handler):
 # 
 class Admin_info(handler.Handler):
     def get(self):
-        logging.error('entro')
         # los querys deben ser comments_reported_cache o 
         # post_modificable_cache o user_permisos_cache o post_reposrted_cache
         action = self.request.GET.get('action')
@@ -169,25 +168,26 @@ class Admin_info(handler.Handler):
         if info is None:
             createquerty(action)
             info = memcache.get(action)
-        logging.error(info)
         informacion = diccionarisarcache(info,action)
-        logging.error(action)
         self.write(json.dumps(informacion))
 
 
     def post(self):
         query= self.request.POST.get('query')
+        logging.error(query)
         if query == 'comments_reported_cache':
             coment_id = self.request.POST.get('id')
+            logging.error(comment_id)
             comments_reported = self.request.POST.get('estado')
+            logging.error(comments_reported)
             cache = buscar(coment_id,query)
             if cache and comments_reported == 'true':
                 cache.show = False
                 cache.state = True
                 cache.put()
                 self.write(json.dumps('True'))
-            # else:
-            #     self.write('no en contrado')
+            else:
+                self.write('no en contrado')
 
         elif query == 'post_modificable_cache':
             post_id = self.request.POST.get('id')
@@ -227,7 +227,6 @@ def diccionarisarcache(info,cual):
     informacion={}
     #info es la cache creada solo con la informacion de echa
     if cual == 'comments_reported_cache':
-        logging.error(info)
         for partes in info:
                 informacion[str(info[partes].key().id())]={'comment_id':str(info[partes].key().id()),
                                                       'title':info[partes].title,
@@ -237,7 +236,6 @@ def diccionarisarcache(info,cual):
                                                       'created':info[partes].created.strftime('%y/%m/%d'),
                                                       'reported':info[partes].reported,
                                                       'razon':info[partes].razon,
-                                                      'state':info[partes].state
                                                     }
     elif cual == 'post_modificable_cache':
         for partes in info:
@@ -252,9 +250,7 @@ def diccionarisarcache(info,cual):
                                                       'razon':info[partes].razon
                                                     }
     elif cual == 'user_permisos_cache':
-        logging.error('success')
         for partes in info:
-            logging.error(cual)
             informacion[str(info[partes].key().id())]={"userid":str(info[partes].key().id()),
                                             "user_type":info[partes].user_type,
                                             "user_id":info[partes].user_id,
@@ -270,7 +266,7 @@ def createquerty(content):
     # comentario reportados
     if content == "comments_reported_cache":
         comments = {}
-        banned_comments = db.GqlQuery("SELECT * FROM Comment WHERE reported = True , state = False ORDER BY created desc")
+        banned_comments = db.GqlQuery("SELECT * FROM Comment WHERE reported = True ORDER BY created desc")
         for p in banned_comments:
             comments[str(p.key().id())] = p
         memcache.set("comments_reported_cache", comments)
@@ -290,13 +286,10 @@ def createquerty(content):
     elif content == 'user_permisos_cache':
     
         users ={}
-        logging.error('parausuarios')
+
         users_modificables =  db.GqlQuery("SELECT * FROM User WHERE solicitud_cambio = True ORDER by user_id")
-        logging.error(users_modificables)
-        logging.error('permiso parausuarios')
 
         for p in users_modificables:
-            logging.error(p.user_type)
             users[str(p.key().id())] = p
         memcache.set("user_permisos_cache", users)
         return users
