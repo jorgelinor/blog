@@ -24,6 +24,31 @@
 					<a href="/{{ob.post}}"><div>{{ob.title}}</div></a>
 				{%endfor%}
 
+		{%elif data_type == 'All'%}			
+			<div style="width: 33%;float: left">
+			<h4 style="color:gray">Comentarios</h4>
+			<br>
+				{%for ob in data[2]%}
+					<a href="/{{ob.post}}"><div>{{ob.title}}</div></a>
+				{%endfor%}
+			</div>	
+
+			<div style="width: 33%;float: left">
+			<h4 style="color:gray">Posts</h4>
+			<br>
+				{%for ob in data[1]%}
+					<a href="/{{ob.key().id()}}"><div>{{ob.title}}</div></a>
+				{%endfor%}
+			</div>
+
+			<div style="width: 33%;float: left">
+			<h4 style="color:gray">Personas</h4>
+			<br>
+				{%for ob in data[0]%}
+					<a href="/profile?u={{ob.displayName}}"><div>{{ob.displayName}}</div></a>
+				{%endfor%}
+			</div>
+
 		{%endif%}
 
 	{%else%}
