@@ -74,8 +74,11 @@ function load_data(posts,mios,request,limit) {
 		if($(window).scrollTop() == $(document).height() - $(window).height()) {
 		    if (posts.length > lim){
 			    lim = limit + 5
+			    $("#loading").empty()
+				$("#loading").append("<img src='http://i.stack.imgur.com/h6viz.gif' alt='loading'></img>")
 			    setTimeout(function(){
 			 	 	load_data(posts=posts,mios=mios,request=request,limit=lim)
+			 	 	$("#loading").empty()
 			    },2000)
 		    }
 	    }
