@@ -11,12 +11,12 @@ class Search(Handler):
         query = None
         query_all = None
         if filter_search == 'User' or filter_search == 'Post' or filter_search == 'Comment':
-            query = self.get_data('search_'+filter_search+'_'+search,list(db.GqlQuery('select * from %s' % str(filter_search))))
+            query = list(db.GqlQuery('select * from %s' % str(filter_search)))
         elif filter_search == 'All':
             query_all = []
-            query_all.append(self.get_data('search_User_'+search,list(db.GqlQuery('select * from User'))))
-            query_all.append(self.get_data('search_Post_'+search,list(db.GqlQuery('select * from Post'))))
-            query_all.append(self.get_data('search_Comment_'+search,list(db.GqlQuery('select * from Comment'))))
+            query_all.append(list(db.GqlQuery('select * from User')))
+            query_all.append(list(db.GqlQuery('select * from Post')))
+            query_all.append(list(db.GqlQuery('select * from Comment')))
         if query:
             html = []
             for ob in query:

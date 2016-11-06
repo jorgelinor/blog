@@ -121,6 +121,17 @@ li-link {
     margin-left: 1%;
     max-width: 8%;
     margin-right: 0%;
+    top: 67px
+}
+.people-container{
+	text-decoration: none; 
+}
+.search-container{
+
+    width: 30%;
+    float: left;
+    overflow: hidden;
+    margin-right:3%;
 }
 #user-chart {
 	display:block;
@@ -171,9 +182,13 @@ li-link {
 	margin-right: 15px;
 }
 #banned-error{
-	text-align:center;
-	color: red;
-	background-color: white
+    text-align: center;
+    color: red;
+    background-color: white;
+    position: fixed;
+    top: 45px;
+    right: 10%;
+    left: 10%;
 }
 #inbox-link {
 	cursor:pointer;

@@ -85,3 +85,8 @@ $('.img').click(function(){
 $('#img-viewer-close').click(function(){
 	$('.img-viewer').css('display','none')
 })
+$('.people-container').hover(function(){
+	$(this).css('background-color','#ffff66')
+},function(){
+	$(this).css('background-color','#ffffff')
+})

@@ -3,15 +3,22 @@
 	{%if data%}
 		<h1>Resultados de busqueda</h1>
 		<br>
-		<div style="width: 33%;float: left">
+		<div class="search-container">
 		{%if data_type == 'User'%}
 			<h4 style="color:gray">Personas</h4>
 			<br>
 				{%for ob in data%}
-					<a href="/profile?u={{ob.displayName}}"><div><img class="logo" src="/view_photo/{{ob.img}}">{{ob.displayName}}</div></a>
+					<a href="/profile?u={{ob.displayName}}"><div class='people-container'>
 					<br>
-					<hr>
+					{%if ob.img%}
+						<img class="logo" src="/view_photo/{{ob.img}}">
+					{%else%}
+						<img class="logo" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg">
+					{%endif%}
+					{{ob.displayName}}
 					<br>
+					<br>
+					<hr></div></a>
 				{%endfor%}
 		</div>
 
@@ -44,7 +51,7 @@
 			{%endif%}
 			</div>	
 
-			<div style="width: 33%;float: left">
+			<div class="search-container">
 			<h4 style="color:gray">Posts</h4>
 			<br>
 			{%if data[1]%}
@@ -57,15 +64,22 @@
 			{%endif%}
 			</div>
 
-			<div style="width: 33%;float: left">
+			<div class="search-container">
 			<h4 style="color:gray">Personas</h4>
 			<br>
 			{%if data[0]%}
 				{%for ob in data[0]%}
-					<a href="/profile?u={{ob.displayName}}"><div><img class="logo" src="/view_photo/{{ob.img}}">{{ob.displayName}}</div></a>
+					<a href="/profile?u={{ob.displayName}}"><div class='people-container'>
 					<br>
-					<hr>
+					{%if ob.img%}
+						<img class="logo" src="/view_photo/{{ob.img}}">
+					{%else%}
+						<img class="logo" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg">
+					{%endif%}
+					{{ob.displayName}}
 					<br>
+					<br>
+					<hr></div></a>
 				{%endfor%}
 			{%else%}
 				<label style="color:gray;font-style:italic">No hay personas</label>
