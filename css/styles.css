@@ -178,15 +178,19 @@ li-link {
 	float: left;
 	width: 24px;
 	height: 24px;
-	margin-left: 15px;
-	margin-right: 15px;
+	margin: 15px;
+}
+.profile-pic{
+	float: left;
+	width: 24px;
+	height: 24px;
 }
 #banned-error{
     text-align: center;
     color: red;
     background-color: white;
     position: fixed;
-    top: 45px;
+    top: 54px;
     right: 10%;
     left: 10%;
 }
@@ -224,6 +228,7 @@ ul, ol {
 .menu > li {
 	margin-left:5%;
 	float:left;
+	margin-top: 15px
 }
 .menu li ul {
 	display: none;

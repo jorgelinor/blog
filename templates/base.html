@@ -8,9 +8,8 @@
 </head>
 <body>
 	<div id="header">
-	<br>
 		<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" class="logo"></a>
-		<form style="float:left;margin-right: 10%" action="/search">
+		<form style="margin-top: 15px;float:left;margin-right: 10%" action="/search">
 			<input type="text" name="q" placeholder="Buscar" required>
 			<input type="hidden" name="filter" value="All">
 			<button>Buscar</button>
@@ -19,18 +18,17 @@
 			<ul class="menu">
 				<li>
 					{%if user.img%}
-						<a href="/profile"><img src='/view_photo/{{user.img}}' class="logo"></li>
+						<a style="height: 24px" href="/profile"><img src='/view_photo/{{user.img}}' class="profile-pic">
 					{%else%}
-						<a href="/profile"><img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg' class="logo"></li>
-					{%endif%}
-					<li class="username">{{user.user_id}}</a>
+						<a style="height: 24px" href="/profile"><img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg' class="profile-pic">
+					{%endif%}</a>
 					<ul>
 						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
 						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
 						<li><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
 						<li><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
 					</ul>
-				<li>
+				</li>
 				{%if user.user_type == "admin"%}
 					<li>
 						<a href="/admin">Admin Panel</a>
