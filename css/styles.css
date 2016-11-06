@@ -154,14 +154,21 @@ li-link {
 	background-color: darkgray;
 }
 #header {
-	font-family: "Courier New", monospace;
-	overflow:none;
-	background-color: gray;
-	position: fixed;
-	width:98%;
-	top:0px;
-	margin-left: 1%;
-	z-index:9999999999;
+    font-family: "Courier New", monospace;
+    overflow: none;
+    background-color: gray;
+    position: fixed;
+    width: 100%;
+    top: 0px;
+    margin-left: 0;
+    z-index: 9999999999;
+}
+.logo{
+	float: left;
+	width: 24px;
+	height: 24px;
+	margin-left: 15px;
+	margin-right: 15px;
 }
 #banned-error{
 	text-align:center;
@@ -289,4 +296,8 @@ ul, ol {
     right: -7%;
     max-width: 25%;
     cursor: pointer;
+}
+
+li.username{
+	margin-left: 0px
 }

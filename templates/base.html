@@ -9,8 +9,8 @@
 <body>
 	<div id="header">
 	<br>
-		<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" style="float:left;width: 24px; height: 24px;"></a>
-		<form style="float:left" action="/search">
+		<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" class="logo"></a>
+		<form style="float:left;margin-right: 10%" action="/search">
 			<input type="text" name="q" placeholder="Buscar" required>
 			<input type="hidden" name="filter" value="All">
 			<button>Buscar</button>
@@ -25,7 +25,7 @@
 					<div id="banned-error">Atencion: No puedes comentar porque se te han quitado los derechos.</div>
 				{%endif%}
 				<li>
-					<a href="/profile">{{user.user_id}}</a>
+					<a href="/profile"><img src='/view_photo/{{user.img}}' class="logo"></li><li class="username">{{user.user_id}}</a>
 					<ul>
 						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
 						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
