@@ -84,3 +84,10 @@ function load_data(posts,mios,request,limit) {
 	    }
 	})
 }
+
+$('.img').click(function(){
+	$('.img-viewer').css("display","block")
+})
+$('#img-viewer-close').click(function(){
+	$('.img-viewer').css('display','none')
+})

@@ -28,25 +28,40 @@
 			<div style="width: 33%;float: left">
 			<h4 style="color:gray">Comentarios</h4>
 			<br>
+			{%if data[2]%}
 				{%for ob in data[2]%}
 					<a href="/{{ob.post}}"><div>{{ob.title}}</div></a>
 				{%endfor%}
+			{%else%}
+				<label style="color:gray;font-style:italic">No hay comentarios</label>
+
+			{%endif%}
 			</div>	
 
 			<div style="width: 33%;float: left">
 			<h4 style="color:gray">Posts</h4>
 			<br>
+			{%if data[1]%}
 				{%for ob in data[1]%}
 					<a href="/{{ob.key().id()}}"><div>{{ob.title}}</div></a>
 				{%endfor%}
+			{%else%}
+				<label style="color:gray;font-style:italic">No hay posts</label>
+
+			{%endif%}
 			</div>
 
 			<div style="width: 33%;float: left">
 			<h4 style="color:gray">Personas</h4>
 			<br>
+			{%if data[0]%}
 				{%for ob in data[0]%}
 					<a href="/profile?u={{ob.displayName}}"><div>{{ob.displayName}}</div></a>
 				{%endfor%}
+			{%else%}
+				<label style="color:gray;font-style:italic">No hay personas</label>
+
+			{%endif%}
 			</div>
 
 		{%endif%}

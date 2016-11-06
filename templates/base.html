@@ -11,8 +11,8 @@
 	<br>
 		<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" style="float:left;width: 24px; height: 24px;"></a>
 		<form style="float:left" action="/search">
-			<input type="text" name="q" placeholder="Buscar">
-			<input type="hidden" name="filter" value="User">
+			<input type="text" name="q" placeholder="Buscar" required>
+			<input type="hidden" name="filter" value="All">
 			<button>Buscar</button>
 		</form>
 		{%if user%}
@@ -74,7 +74,6 @@
 			{%endfor%}
 		{%endif%}
 	</div>
-		<br><br><br><br>
 		<div class="menu-left">
 			{%if menu == 'filter'%}
 				<h3>Que buscas?</h3>
@@ -89,6 +88,21 @@
 			{%endblock%}
 		</div>
 		<div id="loading" style="position:fixed;bottom:-120px;left:520px;color:blue;font-weight:bold;"></div>
+	{%if profile%}
+		{%if profile.img%}
+			<div class="img-viewer"><img class="img-viewer-img" src='/view_photo/{{profile.img}}'>
+		{%else%}
+			<div class="img-viewer"><img class="img-viewer-img" src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg'>
+		{%endif%}
+			<label id="img-viewer-close">Cerrar</label>
+		{%if modificable == True%}
+	        <form action="{{upload_url}}" method="POST" enctype="multipart/form-data" class="change-pic"> 
+	          Cambiar foto: <input type="file" name="file"><br> 
+	          <input type="submit" name="submit" value="Guardar"> 
+	        </form> </div>
+	    {%endif%}
+
+    {%endif%}
 	<script src="/js/jquery.js"></script>
 	<script src="/js/javascript.js"></script>
 

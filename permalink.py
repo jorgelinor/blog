@@ -5,6 +5,7 @@ from user import User
 import comment
 import time
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 class Permalink(handler.Handler):
     #para ver la pagina de un post en particular
@@ -62,7 +63,8 @@ class Permalink(handler.Handler):
                 com.created_str = com.created_str[0:16]
                 com.put()
                 post.comments += 1
-                self.get_data(link+'_comments',db.GqlQuery("select * from Comment where post='"+link+"' order by created desc"),actualizar=True)
+                memcache.delete(link+'_comments')
+                memcache.delete("post_"+link)
                 post.put()
                 self.redirect("/"+link)
         elif self.request.get('action') == 'editcomment':#para saber si la accion post o el metodo post es para editar un comentario

@@ -113,6 +113,7 @@ li-link {
 	margin-left: 10%;
 	margin-right: 10%;
 	overflow-y: auto;
+	margin-top: 67px;
 }
 .menu-left{
 	position: fixed;
@@ -252,4 +253,40 @@ ul, ol {
 		float:none;
 		border:none;
 	}
+}
+
+.img-viewer-img{
+
+    width: 70%;
+    float: left;
+    height: 600px;
+    margin: 3%;
+    margin-top: 4.5%;
+    opacity: 1;
+}
+
+.img-viewer{
+
+    display: none;
+    position: fixed;
+    width: 100%;
+    z-index: 99;
+    top: 0px;
+    background-color: rgba(0, 0, 0, 0.721569);
+}
+
+.change-pic{    
+	top: 25%;
+    position: absolute;
+    right: 0px;
+    max-width: 25%;
+}
+
+#img-viewer-close{
+    margin: 136.5px;
+    top: -77.2px;
+    position: absolute;
+    right: -7%;
+    max-width: 25%;
+    cursor: pointer;
 }

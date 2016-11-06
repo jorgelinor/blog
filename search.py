@@ -11,12 +11,12 @@ class Search(Handler):
         query = None
         query_all = None
         if filter_search == 'User' or filter_search == 'Post' or filter_search == 'Comment':
-            query = list(db.GqlQuery('select * from %s' % str(filter_search)))
+            query = self.get_data('search_'+filter_search+'_'+search,list(db.GqlQuery('select * from %s' % str(filter_search))))
         elif filter_search == 'All':
             query_all = []
-            query_all.append(list(db.GqlQuery('select * from User')))
-            query_all.append(list(db.GqlQuery('select * from Post')))
-            query_all.append(list(db.GqlQuery('select * from Comment')))
+            query_all.append(self.get_data('search_User_'+search,list(db.GqlQuery('select * from User'))))
+            query_all.append(self.get_data('search_Post_'+search,list(db.GqlQuery('select * from Post'))))
+            query_all.append(self.get_data('search_Comment_'+search,list(db.GqlQuery('select * from Comment'))))
         if query:
             html = []
             for ob in query:
@@ -30,16 +30,22 @@ class Search(Handler):
                     if ob.content.lower().find(search.lower()) > -1:
                         html = html + [ob]
         elif query_all:
-            html,html1,html2,html3 = [],[],[],[]
-            for ob in query_all[0]:
-                if ob.displayName.lower().find(search.lower()) > -1:
-                    html1 = html1 + [ob]
-            for ob in query_all[1]:
-                if ob.title.lower().find(search.lower()) > -1:
-                    html2 = html2 + [ob]
-            for ob in query_all[2]:
-                if ob.content.lower().find(search.lower()) > -1:
-                    html3 = html3 + [ob]
+            html,html1,html2,html3 = [],None,None,None
+            if len(query_all[0]) > 0:
+                html1 = []
+                for ob in query_all[0]:
+                    if ob.displayName.lower().find(search.lower()) > -1:
+                        html1 = html1 + [ob]
+            if len(query_all[1]) > 0:
+                html2 = []
+                for ob in query_all[1]:
+                    if ob.title.lower().find(search.lower()) > -1:
+                        html2 = html2 + [ob]
+            if len(query_all[2]) > 0:
+                html3 = []
+                for ob in query_all[2]:
+                    if ob.content.lower().find(search.lower()) > -1:
+                        html3 = html3 + [ob]
             html.append(html1)
             html.append(html2)
             html.append(html3)
