@@ -181,7 +181,7 @@ class Admin_info(handler.Handler):
 class Admin_submit(handler.Handler):
     def get(self, id_obj):
         logging.error(id_obj)
-        ins, id_object = id_obj.split('_')[0],id_obj.split('_')[1]
+        ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
         query=''
         if ins == '/com':
             query='comments_reported_cache'
@@ -189,6 +189,7 @@ class Admin_submit(handler.Handler):
             query='post_modificable_cache'
         elif ins == '/user':
             query='user_permisos_cache'
+
         info = buscar(id_object , query)
         self.render('upload.html',info=info, query=query)
 
@@ -240,6 +241,7 @@ class Admin_submit(handler.Handler):
 
 #encuentra los post o usuario y comentario por el id
 def buscar(id_elemento, elemento):
+    logging.error(id_elemento)
     cache = memcache.get(elemento)
     if id_elemento in cache:
         return cache[id_elemento]

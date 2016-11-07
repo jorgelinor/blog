@@ -33,7 +33,7 @@ app = webapp2.WSGIApplication([
     ('/([0-9]+)'+'/_editpost/?', permalink.EditPost),
     ('/([0-9]+)'+'/_editrequest/?', permalink.EditRequest),
     ("/admin/?", admin.Admin),
-    ("/admin"+PAGE_RE, admin.Admin_submit),
+    ("/admin"PAGE_RE, admin.Admin_submit),
     ("/admin/Admin_info", admin.Admin_info),
     ("/([0-9]+)"+"/_delete", admin.DeleteComment),
     ("/([0-9]+)"+"/_keep", admin.KeepComment),
