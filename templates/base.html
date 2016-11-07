@@ -16,19 +16,6 @@
 		</form>
 		{%if user%}
 			<ul class="menu">
-				<li>
-					{%if user.img%}
-						<a style="height: 24px" href="/profile"><img src='/view_photo/{{user.img}}' class="profile-pic">
-					{%else%}
-						<a style="height: 24px" href="/profile"><img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg' class="profile-pic">
-					{%endif%}</a>
-					<ul>
-						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
-						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
-						<li><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
-						<li><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
-					</ul>
-				</li>
 				{%if user.user_type == "admin"%}
 					<li>
 						<a href="/admin">Admin Panel</a>
@@ -44,7 +31,21 @@
 				<li><a href="/newpost">Postear</a></li>
 				<li><a href="/logout">Salir</a></li>
 				<li><a id="inbox-link" onclick="activate()">Bandeja de entrada</a></li>
+				<li>
+					{%if user.img%}
+						<a style="height: 35px" href="/profile"><img src='/view_photo/{{user.img}}' class="profile-pic">
+					{%else%}
+						<a style="height: 35px" href="/profile"><img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg' class="profile-pic">
+					{%endif%}</a>
+					<ul>
+						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
+						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
+						<li><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
+						<li><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
+					</ul>
+				</li>
 			</ul>
+	</div>
 			{%if user.banned_from_posting and user.banned_from_comments%}
 				<div id="banned-error">Atencion: No puedes postear ni comentar porque se te han quitado los derechos.</div>
 			{%elif user.banned_from_posting%}
@@ -57,8 +58,8 @@
 				<li><a href="/signup">Registrar</a></li>   
 				<li><a href="/login">Iniciar sesion</a></li>
 			</ul>
-		{%endif%}
 	</div>
+		{%endif%}
 	<div id='bandeja'>
 		{%if recent_msg%}
 			{%for msg in recent_msg%}

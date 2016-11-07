@@ -65,14 +65,11 @@ class Profile(handler.Handler):
 
 
 class ViewPhotoHandler(handler.Handler,blobstore_handlers.BlobstoreDownloadHandler): 
-    def get(self, photo_key): 
-        if str(photo_key) == 'None':
-            self.write("<img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg'>")
-        else:
-            if not blobstore.get(photo_key): 
-                self.error(404) 
-            else: 
-                self.send_blob(photo_key) 
+    def get(self, photo_key):
+        if not blobstore.get(photo_key): 
+            self.error(404) 
+        else: 
+            self.send_blob(photo_key) 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):

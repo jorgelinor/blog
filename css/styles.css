@@ -172,7 +172,7 @@ li-link {
     width: 100%;
     top: 0px;
     margin-left: 0;
-    z-index: 9999999999;
+    z-index: 2147483647;
 }
 .logo{
 	float: left;
@@ -182,8 +182,10 @@ li-link {
 }
 .profile-pic{
 	float: left;
-	width: 24px;
-	height: 24px;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	margin-top: -13px;
 }
 #banned-error{
     text-align: center;
@@ -199,14 +201,14 @@ li-link {
 }
 #bandeja {
 	position:fixed;
-	bottom: 380px;
+	bottom: 338px;
 	right:3%;
 	width:40%;
 	height:215px;
 	display:none;
 	border: groove 3px darkgray;
 	overflow:scroll;
-	z-index:9999999999;
+	z-index:2147483646;
 }
 ul, ol {
 	list-style: none;

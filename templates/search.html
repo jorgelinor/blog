@@ -8,14 +8,14 @@
 			<h4 style="color:gray">Personas</h4>
 			<br>
 				{%for ob in data%}
-					<a href="/profile?u={{ob.displayName}}"><div class='people-container'>
+					<a style="text-decoration: none;" href="/profile?u={{ob.displayName}}"><div class='people-container'>
 					<br>
 					{%if ob.img%}
-						<img class="logo" src="/view_photo/{{ob.img}}">
+						<img class="profile-pic" src="/view_photo/{{ob.img}}">
 					{%else%}
-						<img class="logo" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg">
+						<img class="profile-pic" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg">
 					{%endif%}
-					{{ob.displayName}}
+					<label style="margin-left: 15px">{{ob.displayName}}</label>
 					<br>
 					<br>
 					<hr></div></a>
@@ -69,14 +69,14 @@
 			<br>
 			{%if data[0]%}
 				{%for ob in data[0]%}
-					<a href="/profile?u={{ob.displayName}}"><div class='people-container'>
+					<a style="text-decoration: none;" href="/profile?u={{ob.displayName}}"><div class='people-container'>
 					<br>
 					{%if ob.img%}
-						<img class="logo" src="/view_photo/{{ob.img}}">
+						<img class="profile-pic" src="/view_photo/{{ob.img}}">
 					{%else%}
-						<img class="logo" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg">
+						<img class="profile-pic" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg">
 					{%endif%}
-					{{ob.displayName}}
+					<label style="margin-left: 15px">{{ob.displayName}}</label>
 					<br>
 					<br>
 					<hr></div></a>
