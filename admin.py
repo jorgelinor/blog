@@ -171,38 +171,6 @@ class Admin_info(handler.Handler):
         informacion = diccionarisarcache(info,action)
         self.write(json.dumps(informacion))
 
-
-    def post(self):
-        query= self.request.POST.get('query')
-        logging.error(query)
-        if query == 'comments_reported_cache':
-            coment_id = self.request.POST.get('id')
-            logging.error(comment_id)
-            comments_reported = self.request.POST.get('estado')
-            logging.error(comments_reported)
-            cache = buscar(coment_id,query)
-            if cache and comments_reported == 'true':
-                cache.show = False
-                cache.state = True
-                cache.put()
-                self.write(json.dumps('True'))
-            else:
-                self.write('no en contrado')
-
-        elif query == 'post_modificable_cache':
-            post_id = self.request.POST.get('id')
-            modificable = self.request.POST.get('estado')
-            cache = buscar(post_id,query)
-            if cache and modificable:
-                cache.modificable= modificable
-                cache.put()
-                self.write(json.dumps('True'))
-            else:
-                self.write('no en contrado')
-        elif query == 'user_permisos_cache':
-            pass
-        elif query == 'post_reposrted_cache':
-            pass
 # clase de admind para manejar los reportes de los comentario reportados para determinar si son validos de mostar o no 
 # muestra los post de los cuales los creadores desean modifcar o actualizar con informacion
 # les cambia el atributo al post para ser modificado solo por el creador 
@@ -210,9 +178,67 @@ class Admin_info(handler.Handler):
 # de terminar si u post reportado tiene un contenido que se puede mostrar
 
 
+class Admin_submit(handler.Handler):
+    def get(self, id_obj):
+        logging.error(id_obj)
+        ins, id_object = id_obj.split('_')[0],id_obj.split('_')[1]
+        query=''
+        if ins == '/com':
+            query='comments_reported_cache'
+        elif ins == '/post':
+            query='post_modificable_cache'
+        elif ins == '/user':
+            query='user_permisos_cache'
+        info = buscar(id_object , query)
+        self.render('upload.html',info=info, query=query)
 
+    def post(self):
+        query= self.request.get('query')
+        if query == 'comments_reported_cache':
+            coment_id = self.request.get('comment_id')
+            comments_reported = self.request.get('report')
 
-#encuentra los pos o usuario y comentario por el id
+            cache = buscar(coment_id,query)
+            if cache and comments_reported == 'True':
+                cache.show = False
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+            else:
+                self.write('no en contrado')
+
+        elif query == 'post_modificable_cache':
+
+            post_id = self.request.get('post_id')
+            modificable = self.request.get('permiso')
+
+            cache = buscar(post_id,query)
+            if cache and modificable:
+                cache.modificable = modificable
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+            else:
+                self.write('no en contrado')
+
+        elif query == 'user_permisos_cache':
+
+            user_id = self.request.get('userid')
+            user_type = self.request.get('user_type')
+
+            cache = buscar(post_id,query)
+            if cache and user_type:
+                cache.user_type = user_type
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+            else:
+                self.write('no en contrado')
+    #     elif query == 'post_reposrted_cache':
+    #         pass
+        
+
+#encuentra los post o usuario y comentario por el id
 def buscar(id_elemento, elemento):
     cache = memcache.get(elemento)
     if id_elemento in cache:
@@ -228,6 +254,7 @@ def diccionarisarcache(info,cual):
     #info es la cache creada solo con la informacion de echa
     if cual == 'comments_reported_cache':
         for partes in info:
+            if info[partes].state==False:
                 informacion[str(info[partes].key().id())]={'comment_id':str(info[partes].key().id()),
                                                       'title':info[partes].title,
                                                       'content':info[partes].content,
@@ -239,7 +266,8 @@ def diccionarisarcache(info,cual):
                                                     }
     elif cual == 'post_modificable_cache':
         for partes in info:
-            informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
+            if info[partes].state==False:
+                informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
                                                       'topic':info[partes].topic,
                                                       'title':info[partes].title,
                                                       'content':info[partes].post,
@@ -251,7 +279,8 @@ def diccionarisarcache(info,cual):
                                                     }
     elif cual == 'user_permisos_cache':
         for partes in info:
-            informacion[str(info[partes].key().id())]={"userid":str(info[partes].key().id()),
+            if info[partes].state==False:
+                informacion[str(info[partes].key().id())]={"userid":str(info[partes].key().id()),
                                             "user_type":info[partes].user_type,
                                             "user_id":info[partes].user_id,
                                             "displayName":info[partes].displayName,

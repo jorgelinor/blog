@@ -11,9 +11,11 @@ import permalink
 import admin
 import test
 import handler
+import re
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
 
+PAGE_RE = r'(/(?:[a-zA-Z0-9_-]+/?)*)'
 
 app = webapp2.WSGIApplication([
     ('/newpost', newpost.Newpost),
@@ -31,9 +33,7 @@ app = webapp2.WSGIApplication([
     ('/([0-9]+)'+'/_editpost/?', permalink.EditPost),
     ('/([0-9]+)'+'/_editrequest/?', permalink.EditRequest),
     ("/admin/?", admin.Admin),
-    # ("/admin/post_requests/?", admin.PostRequest),
-    # ("/admin/users/?", admin.Users),
-    # ("/admin/reports/?", admin.Reports),
+    ("/admin"+PAGE_RE, admin.Admin_submit),
     ("/admin/Admin_info", admin.Admin_info),
     ("/([0-9]+)"+"/_delete", admin.DeleteComment),
     ("/([0-9]+)"+"/_keep", admin.KeepComment),

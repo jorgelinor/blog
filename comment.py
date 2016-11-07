@@ -10,3 +10,4 @@ class Comment(db.Model):
 	reported = db.BooleanProperty(required=True)
 	razon = db.ListProperty(str,required=True)
 	show = db.BooleanProperty(True)
+	state= db.BooleanProperty(False)

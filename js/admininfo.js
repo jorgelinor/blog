@@ -11,13 +11,13 @@ $("#asd").click(function() {
         $.each(data, function(index, el) {
             
             $('#contenido').append(
-                "<div id='"+el.comment_id+"'style=''>"
+                "<div name='"+el.comment_id+"'style='border:2px solid red;'>"
+                +"<a href='/admin/com_"+el.comment_id+"'>Someter informacion</a>"
                 +"<h3>coment submete by:"+el.submitter+"</h3>"
                 +"<b> creado: "+el.created+"</b><h4><a href="+el.post+">Post</a></h4>"
                 +"<h4>"+el.content+"</h4>"
-                +"<h5>Reportado</h5><b>"+el.razon+"</b><br>"
-                +"<input type='checkbox' name='report'>Quitar comentario</input><br>"
-                +"<button class='submit'>enviar</button></div><br>");
+                +"<h5>Reportado</h5><b>"+el.razon+"</b><br name='query' value='comments_reported_cache'>"
+                +"</div>");
         });
     }).fail(function() {
         $('#error').show();
@@ -37,15 +37,15 @@ $("#modificacion").click(function() {
         $('#error').hide();
         $.each(data, function(index, el) {
             console.log(el.submitter);
-            $('#contenido').append("<div id='"+el.post_id+"' style=''>"
+            $('#contenido').append(
+                "<div name='"+el.post_id+"' id='"+el.post_id+"'>"
+                +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
                 +"<h4>post <a href="+el.title+">"+el.title+"</a></h4>"
+                +"<p>created:"+el.created+"</p>"
                 +"<h3>"+el.topic+"</h3>"
                 +"<b> creado: "+el.post+" </b>"
-                +"<br>"
                 +"<b>"+el.razon+"</b><br>"
-                +"<input type='text' value='"+el.modificable+"'></input>"
-                +"<button class='submit'>enviar</button>"
-                +"</div><br>");
+                +"</div>");
         });
     }).fail(function() {
         $('#contenido').empty();
@@ -66,13 +66,12 @@ $("#administracion_user").click(function() {
         var cuenta = -1
         $.each(data, function(index, val) {
             cuenta = cuenta + 1; 
-            $('#contenido').append("<div id='"+val.userid+"' style=''>"
+            $('#contenido').append("<div id='"+val.userid+"' name='"+val.userid+"'>"
                                     +"<p>Nombre de usurio:"+val.displayName+"</p>"
                                     +"<p>Usuario Estado:"+val.user_type+"</p>"
                                     +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"
                                     +"<p>cambio de permiso para usuario </p>"
-                                    +"<input type='text'></input>"
-                                    +"<button type='submit' class='submit'>enviar</button>"
+                                    +"<a href=/admin/user_'"+val.userid+"'></a>"
                                     +"</div>");
         });
     })
@@ -99,38 +98,4 @@ $("#administracion_user").click(function() {
 //     .always(function() {
 //         console.log("complete");
 //     });
-    
-$(".submit").click(function(event){
-    event.preventDefault();
-    var id = $(this).parent().attr("id");
-    var estado = $(this).siblings('input').prop('checked');
-    $.ajax({
-        type     : "POST",
-        url      : '/admin/Admin_info',
-        dataType : "json",
-        data : {"query":'comments_reported_cache' ,"id": id, "estado":estado}
-    }).success( function(data) {
-            if(data == 'true'){ 
-                // $(this).css("border": "#00ff00");
-                $(this).parent().css({'display':'none'});
-            };
-        });
 
-});
-
-$(".submit").click(function(event){
-    event.preventDefault();
-    var id = $(this).parent().attr("id");
-    var estado = $(this).siblings('input').prop('text');
-    $.ajax({
-        type     : "POST",
-        url      : '/admin/Admin_info',
-        dataType : "json",
-        data : {"query":'post_modificable_cache' ,"id": id, "estado":estado}
-    }).success( function(data) {
-            if(data == 'true'){ 
-                // $(this).css("border": "#00ff00");
-                $(this).parent().css({'display':'none'});
-            };
-        });
-});    
