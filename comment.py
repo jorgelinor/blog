@@ -9,5 +9,4 @@ class Comment(db.Model):
 	created_str = db.StringProperty(required=False)
 	reported = db.BooleanProperty(required=True)
 	razon = db.ListProperty(str,required=True)
-	show = db.BooleanProperty(required=True)
-	state= db.BooleanProperty(required=True)
+	state= db.BooleanProperty(required=False)
