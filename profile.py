@@ -4,15 +4,44 @@ import re
 import time
 from message import Message
 from google.appengine.api import memcache
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from user import User
 import logging
 from post import Post
+from google.appengine.ext import db 
+from google.appengine.ext import blobstore 
+from google.appengine.ext.webapp import blobstore_handlers 
+
+ 
+class UserPhoto(ndb.Model): 
+    user = ndb.StringProperty() 
+    blob_key = ndb.BlobKeyProperty()
+
+
+class PhotoUploadHandler(handler.Handler,blobstore_handlers.BlobstoreUploadHandler): 
+    def post(self,user=None): 
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+        try: 
+            upload = self.get_uploads()[0] 
+            user_photo = UserPhoto( 
+                user=str(user.key().id()), 
+                blob_key=upload.key()) 
+            user_photo.put() 
+            user.img = str(upload.key())
+            user.put()
+            memcache.delete('user_'+self.request.cookies.get('user_id').split('|')[0])
+            time.sleep(2)
+            self.redirect('/profile') 
+
+        except: 
+            self.redirect('/newpost')
 
 class Profile(handler.Handler):
     #Handler que presenta la pagina del perfil propio, con toda la informacion para ver y cambiar
     def get(self,modificable=False,profile=None,messages=None):
         user = None
+        upload_url = blobstore.create_upload_url('/upload_photo')
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
             messages = self.GetMessages(actualizar=False,persona=user)#Los mensajes para mandarlos a la bandeja
@@ -32,7 +61,15 @@ class Profile(handler.Handler):
                 self.redirect("/profile")
             else:
                 self.redirect('/error?e=profile-notfound')#si el perfil no se encuentra da error
-        self.render("profile.html",pagename='Perfil',user=user, profile=profile,modificable=modificable,recent_msg=messages)
+        self.render("profile.html",pagename='Perfil',user=user, profile=profile,modificable=modificable,recent_msg=messages,img=profile,upload_url=upload_url)
+
+
+class ViewPhotoHandler(handler.Handler,blobstore_handlers.BlobstoreDownloadHandler): 
+    def get(self, photo_key):
+        if not blobstore.get(photo_key): 
+            self.error(404) 
+        else: 
+            self.send_blob(photo_key) 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):

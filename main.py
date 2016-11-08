@@ -37,5 +37,7 @@ app = webapp2.WSGIApplication([
     ("/([0-9]+)"+"/_keep", admin.KeepComment),
     ('/error/?', handler.ErrorHandler),
     ('/admin/stats', handler.Stats),
-    ('/search', search.Search)
+    ('/search', search.Search),
+    ('/upload_photo', profile.PhotoUploadHandler),
+    ('/view_photo/([^/]+)?', profile.ViewPhotoHandler)
 ], debug=True)

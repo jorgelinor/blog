@@ -3,12 +3,24 @@
 	{%if data%}
 		<h1>Resultados de busqueda</h1>
 		<br>
+		<div class="search-container">
 		{%if data_type == 'User'%}
 			<h4 style="color:gray">Personas</h4>
 			<br>
 				{%for ob in data%}
-					<a href="/profile?u={{ob.displayName}}"><div>{{ob.displayName}}</div></a>
+					<a style="text-decoration: none;" href="/profile?u={{ob.displayName}}"><div class='people-container'>
+					<br>
+					{%if ob.img%}
+						<img class="profile-pic" src="/view_photo/{{ob.img}}">
+					{%else%}
+						<img class="profile-pic" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg">
+					{%endif%}
+					<label style="margin-left: 15px">{{ob.displayName}}</label>
+					<br>
+					<br>
+					<hr></div></a>
 				{%endfor%}
+		</div>
 
 		{%elif data_type == 'Post'%}
 			<h4 style="color:gray">Posts</h4>
@@ -16,6 +28,7 @@
 				{%for ob in data%}
 					<a href="/{{ob.key().id()}}"><div>{{ob.title}}</div></a>
 				{%endfor%}
+		</div>
 
 		{%elif data_type == 'Comment'%}
 			<h4 style="color:gray">Comentarios</h4>
@@ -23,6 +36,56 @@
 				{%for ob in data%}
 					<a href="/{{ob.post}}"><div>{{ob.title}}</div></a>
 				{%endfor%}
+		</div>
+
+		{%elif data_type == 'All'%}			
+			<h4 style="color:gray">Comentarios</h4>
+			<br>
+			{%if data[2]%}
+				{%for ob in data[2]%}
+					<a href="/{{ob.post}}"><div>{{ob.title}}</div></a>
+				{%endfor%}
+			{%else%}
+				<label style="color:gray;font-style:italic">No hay comentarios</label>
+
+			{%endif%}
+			</div>	
+
+			<div class="search-container">
+			<h4 style="color:gray">Posts</h4>
+			<br>
+			{%if data[1]%}
+				{%for ob in data[1]%}
+					<a href="/{{ob.key().id()}}"><div>{{ob.title}}</div></a>
+				{%endfor%}
+			{%else%}
+				<label style="color:gray;font-style:italic">No hay posts</label>
+
+			{%endif%}
+			</div>
+
+			<div class="search-container">
+			<h4 style="color:gray">Personas</h4>
+			<br>
+			{%if data[0]%}
+				{%for ob in data[0]%}
+					<a style="text-decoration: none;" href="/profile?u={{ob.displayName}}"><div class='people-container'>
+					<br>
+					{%if ob.img%}
+						<img class="profile-pic" src="/view_photo/{{ob.img}}">
+					{%else%}
+						<img class="profile-pic" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg">
+					{%endif%}
+					<label style="margin-left: 15px">{{ob.displayName}}</label>
+					<br>
+					<br>
+					<hr></div></a>
+				{%endfor%}
+			{%else%}
+				<label style="color:gray;font-style:italic">No hay personas</label>
+
+			{%endif%}
+			</div>
 
 		{%endif%}
 

@@ -14,7 +14,6 @@ var deactivate = function() {
 function load_data(posts,mios,request,limit) {
 	lim = limit
 	$(".page-content").empty();
-	$('.page-content').append('<br><br><br><br>')
 	for (post in posts.slice(0,limit)) {
 		if (posts[post].visible == false){
 			if (mios=="True") {
@@ -35,8 +34,8 @@ function load_data(posts,mios,request,limit) {
 				if (request) {
 					$(".page-content").append('Razon: <label class="reported-comment" style="color:red;">'+posts[post].razon+'</label><a href="/admin/post_requests?post='+posts[post].id+'&action=deny_request"><button id="edit-link">Rechazar</button></a><a href="/admin/post_requests?post='+posts[post].id+'&action=accept_request"><button id="edit-link">Permitir</button></a>')
 				}
-				
 			}
+			$('.page-content').append("<br><hr>")
 		} else {
 			$(".page-content").append('<center><h2 style="margin-left:20%;margin-right:20%;margin-bottom:70px"><a id="post-title" href="/'+posts[post].id+'">'+posts[post].title+'</a></h2>')
 			if (mios=="True") {
@@ -59,16 +58,11 @@ function load_data(posts,mios,request,limit) {
 			if (request) {
 				$(".page-content").append('Razon: <label class="reported-comment" style="color:red;">'+posts[post].razon+'</label><a href="/admin/post_requests?post='+posts[post].id+'&action=deny_request"><button id="edit-link">Rechazar</button></a><a href="/admin/post_requests?post='+posts[post].id+'&action=accept_request"><button id="edit-link">Permitir</button></a>')
 			}
-		}
-		if (posts[post].visible == true){
 			$('.page-content').append("<br><hr>")
-		} else {
-			if (posts[post].visible == false) {
-				if (mios=="True"){
-					$('.page-content').append("<br><hr>")
-				}
-			}
 		}
+		/*if (posts[post].visible == true||mios=='True'){
+			$('.page-content').append("<br><hr>")
+		}*/
 	}
 	$(window).scroll(function() {
 		if($(window).scrollTop() == $(document).height() - $(window).height()) {
@@ -84,3 +78,15 @@ function load_data(posts,mios,request,limit) {
 	    }
 	})
 }
+
+$('.img').click(function(){
+	$('.img-viewer').css("display","block")
+})
+$('#img-viewer-close').click(function(){
+	$('.img-viewer').css('display','none')
+})
+$('.people-container').hover(function(){
+	$(this).css('background-color','#ffff66')
+},function(){
+	$(this).css('background-color','#ffffff')
+})
