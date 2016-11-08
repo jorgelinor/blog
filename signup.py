@@ -6,6 +6,7 @@ from user import User
 import hashlib
 import re
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 class Signup(handler.Handler):
     def get(self):
@@ -17,6 +18,7 @@ class Signup(handler.Handler):
             self.write("<a href='/'>Already registered</a>")
         
     def post(self):
+        cache= memcache('user_')
         randomStr = ''.join(random.choice(string.letters) for _ in xrange(5))
         username = valid_username(self.request.get('username'))
         password = valid_pass(self.request.get('password'))

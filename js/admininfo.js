@@ -9,10 +9,9 @@ $("#asd").click(function() {
         $('#contenido').empty();
         $('#error').hide();
         $.each(data, function(index, el) {
-            
             $('#contenido').append(
                 "<div name='"+el.comment_id+"'style='border:2px solid red;'>"
-                +"<a href='/admin/com_"+el.comment_id+"'>Someter informacion</a>"
+                +"<a href='/admin/come_"+el.comment_id+"'>Someter informacion</a>"
                 +"<h3>coment submete by:"+el.submitter+"</h3>"
                 +"<b> creado: "+el.created+"</b><h4><a href="+el.post+">Post</a></h4>"
                 +"<h4>"+el.content+"</h4>"
@@ -71,7 +70,7 @@ $("#administracion_user").click(function() {
                                     +"<p>Usuario Estado:"+val.user_type+"</p>"
                                     +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"
                                     +"<p>cambio de permiso para usuario </p>"
-                                    +"<a href=/admin/user_'"+val.userid+"'></a>"
+                                    +"<a href=/admin/user_"+val.userid+">someter informacion</a>"
                                     +"</div>");
         });
     })

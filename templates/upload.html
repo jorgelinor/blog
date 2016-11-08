@@ -16,11 +16,11 @@
 	    </div>
 	{% elif query == 'post_modificable_cache' %}
 		<div name='{{info.post_id}}' id='{{info.post_id}}'>
-            <h4>post <a href="/{{info.title}}">{{el.title}}</a></h4>
+            <h4>post <a href="/{{info.title}}">{{info.title}}</a></h4>
             <p>creado:{{info.created}}</p>
-            <h3>{{el.topic}}</h3>
-            <b> {{el.post}} </b>
-            <b>"+el.razon+"</b>
+            <h3>{{info.topic}}</h3>
+            <b> {{info.post}} </b>
+            <b>{{info.razon}}</b>
             <br name="query" value='post_modificable_cache'>
             <input type='text' name='permiso'>
 	        <input type='submit'>
@@ -32,7 +32,23 @@
             <p>Rason de Cambio:{{info.rason_solicitud_cambio}}</p>
             <br name="query" value='user_permisos_cache'>
             <p>cambio de permiso para usuario </p>
-            <input type='text' name='user_type'>
+            <select name='user_type'>
+            	<option value="">None</option>
+            	<option value="admin">admin</option>
+            	<option value="user">user</option>
+            </select>
+            <p>permiso de posteo</p>
+            <select name="banned_from_posting">
+            	<option value="">None</option>
+            	<option value="True">true</option>
+            	<option value="False">false</option>
+            </select>
+            <p>permiso de comentar</p>
+            <select name="banned_from_comments">
+            	<option value="">None</option>
+            	<option value="True">true</option>
+            	<option value="False">false</option>
+            </select>
 	        <input type='submit'>
         </div>
 	{% endif %}
