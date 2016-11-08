@@ -183,3 +183,7 @@ class Stats(Handler):
         musica = self.get_data("cantidad_Musica", len(list(db.GqlQuery("select * from Post where topic='Musica'"))))
         programacion = self.get_data("cantidad_Programacion", len(list(db.GqlQuery("select * from Post where topic='Programacion'"))))
         self.render("graficos.html",pagename="Stats de la pagina", t1=animales,t2=tecnologia,t3=preguntas,t4=musica,t5=programacion,user=user,recent_msg=messages)
+
+class Test(Handler):
+    def get(self):
+        self.render('test.html')
