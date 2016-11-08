@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 {%block content%}
 	{% if query == 'comments_reported_cache' %}
-		<div id="{{info.comment_id}}" name="{{info.comited_id}}">
+		<div id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8">
 	        <h3>coment submete by:{{info.submitter}}</h3>
 	        <b> creado: {{info.created}}</b>
 	        <h4>
@@ -15,7 +15,7 @@
 	        <input type='submit'>
 	    </div>
 	{% elif query == 'post_modificable_cache' %}
-		<div name='{{info.post_id}}' id='{{info.post_id}}'>
+		<div name='{{info.post_id}}' id='{{info.post_id}}' class="col-lg-8">
             <h4>post <a href="/{{info.title}}">{{info.title}}</a></h4>
             <p>creado:{{info.created}}</p>
             <h3>{{info.topic}}</h3>
@@ -25,8 +25,8 @@
             <input type='text' name='permiso'>
 	        <input type='submit'>
         </div>
-    {% elif query == 'post_modificable_cache' %}
-    	<div name='{{info.userid}}' id='{{info.userid}}'>
+    {% elif query == 'user_permisos_cache' %}
+    	<div name='{{info.userid}}' id='{{info.userid}}' class="col-lg-8">
             <p>Nombre de usurio:{{info.displayName}}</p>
             <p>Usuario Estado:{{info.user_type}}</p>
             <p>Rason de Cambio:{{info.rason_solicitud_cambio}}</p>
@@ -53,3 +53,4 @@
         </div>
 	{% endif %}
 {%endblock%}
+

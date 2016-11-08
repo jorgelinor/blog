@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="/css/styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<title>{{pagename}} - Blog</title>
 </head>
 <body>
@@ -33,15 +33,7 @@
 					</ul>
 				<li>
 				{%if user.user_type == "admin"%}
-					<li>
 						<a href="/admin">Admin Panel</a>
-						<ul>
-							<li><a href="/admin/reports">Reportes recientes</a><hr></li>
-							<li><a href="/admin/post_requests">Pedidos de modificacion de posts</a><hr></li>
-							<li><a href="/admin/users">Administracion de usuarios</a><hr></li>
-							<li><a href="/admin/posts">Administracion de Posts</a><hr></li>
-						</ul>
-					</li>
 				{%endif%}
 				<li><a href="/newpost">Postear</a></li>
 				<li><a href="/logout">Salir</a></li>

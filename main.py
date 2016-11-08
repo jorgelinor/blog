@@ -15,7 +15,6 @@ import re
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
 
-PAGE_RE = r'(/(?:[a-zA-Z0-9_-]+/?)*)'
 
 app = webapp2.WSGIApplication([
     ('/newpost', newpost.Newpost),

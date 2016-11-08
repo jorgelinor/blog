@@ -10,7 +10,7 @@ $("#asd").click(function() {
         $('#error').hide();
         $.each(data, function(index, el) {
             $('#contenido').append(
-                "<div name='"+el.comment_id+"'style='border:2px solid red;'>"
+                "<div name='"+el.comment_id+"'style='border:2px solid red;' class='col-lg-8'>"
                 +"<a href='/admin/come_"+el.comment_id+"'>Someter informacion</a>"
                 +"<h3>coment submete by:"+el.submitter+"</h3>"
                 +"<b> creado: "+el.created+"</b><h4><a href="+el.post+">Post</a></h4>"
@@ -37,7 +37,7 @@ $("#modificacion").click(function() {
         $.each(data, function(index, el) {
             console.log(el.submitter);
             $('#contenido').append(
-                "<div name='"+el.post_id+"' id='"+el.post_id+"'>"
+                "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-lg-8'>"
                 +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
                 +"<h4>post <a href="+el.title+">"+el.title+"</a></h4>"
                 +"<p>created:"+el.created+"</p>"
@@ -65,7 +65,7 @@ $("#administracion_user").click(function() {
         var cuenta = -1
         $.each(data, function(index, val) {
             cuenta = cuenta + 1; 
-            $('#contenido').append("<div id='"+val.userid+"' name='"+val.userid+"'>"
+            $('#contenido').append("<div id='"+val.userid+"' name='"+val.userid+"' class='col-lg-8'>"
                                     +"<p>Nombre de usurio:"+val.displayName+"</p>"
                                     +"<p>Usuario Estado:"+val.user_type+"</p>"
                                     +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"

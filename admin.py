@@ -192,7 +192,7 @@ class Admin_submit(handler.Handler):
                         cache.show = False
                         cache.state = True
                         cache.put()
-                        self.redirect('/admin/')
+                        self.redirect('/admin')
                     else:
                         self.write('no en contrado')
 
@@ -206,7 +206,7 @@ class Admin_submit(handler.Handler):
                         cache.modificable = modificable
                         cache.state = True
                         cache.put()
-                        self.redirect('/admin/')
+                        self.redirect('/admin')
                     else:
                         self.write('no en contrado')
 
@@ -224,7 +224,7 @@ class Admin_submit(handler.Handler):
                         cache.banned_from_comments = banned_from_comments
                         cache.state = True
                         cache.put()
-                        self.redirect('/admin/')
+                        self.redirect('/admin')
                     else:
                         self.write('no en contrado')
             else:
