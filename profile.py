@@ -4,14 +4,44 @@ import re
 import time
 from message import Message
 from google.appengine.api import memcache
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from user import User
 import logging
+from post import Post
+from google.appengine.ext import db 
+from google.appengine.ext import blobstore 
+from google.appengine.ext.webapp import blobstore_handlers 
+
+ 
+class UserPhoto(ndb.Model): 
+    user = ndb.StringProperty() 
+    blob_key = ndb.BlobKeyProperty()
+
+
+class PhotoUploadHandler(handler.Handler,blobstore_handlers.BlobstoreUploadHandler): 
+    def post(self,user=None): 
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+        try: 
+            upload = self.get_uploads()[0] 
+            user_photo = UserPhoto( 
+                user=str(user.key().id()), 
+                blob_key=upload.key()) 
+            user_photo.put() 
+            user.img = str(upload.key())
+            user.put()
+            memcache.delete('user_'+self.request.cookies.get('user_id').split('|')[0])
+            time.sleep(2)
+            self.redirect('/profile') 
+
+        except: 
+            self.redirect('/newpost')
 
 class Profile(handler.Handler):
     #Handler que presenta la pagina del perfil propio, con toda la informacion para ver y cambiar
     def get(self,modificable=False,profile=None,messages=None):
         user = None
+        upload_url = blobstore.create_upload_url('/upload_photo')
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
             messages = self.GetMessages(actualizar=False,persona=user)#Los mensajes para mandarlos a la bandeja
@@ -31,7 +61,15 @@ class Profile(handler.Handler):
                 self.redirect("/profile")
             else:
                 self.redirect('/error?e=profile-notfound')#si el perfil no se encuentra da error
-        self.render("profile.html",pagename='Perfil',user=user, profile=profile,modificable=modificable,recent_msg=messages)
+        self.render("profile.html",pagename='Perfil',user=user, profile=profile,modificable=modificable,recent_msg=messages,img=profile,upload_url=upload_url)
+
+
+class ViewPhotoHandler(handler.Handler,blobstore_handlers.BlobstoreDownloadHandler): 
+    def get(self, photo_key):
+        if not blobstore.get(photo_key): 
+            self.error(404) 
+        else: 
+            self.send_blob(photo_key) 
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
@@ -95,8 +133,9 @@ class EditProfile(handler.Handler):
                 user.solicitud_cambio = True
             user.rason_solicitud_cambio = rason_de_solicitud
             user.put()
-            self.delete_data('user_'+self.request.cookies.get('user_id').split('|')[0])
             time.sleep(2)
+            memcache.delete('user_'+self.request.cookies.get('user_id').split('|')[0])            
+            memcache.delete('displayName_'+user.displayName)
             self.redirect('/profile')
 
 
@@ -127,7 +166,7 @@ class EditPass(handler.Handler):
         if self.password_edition(user,oldpass,newpass,verify)[0]:
             user.user_pw = hashlib.sha256(newpass[1]).hexdigest()
             user.put()
-            self.delete_data('user_'+self.request.cookies.get('user_id').split('|')[0])
+            self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1],actualizar=True)
             time.sleep(2)
             self.redirect('/profile')
         else:        
@@ -136,27 +175,36 @@ class EditPass(handler.Handler):
             self.render('editpass.html',pagename='Editar contrasenia',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify,recent_msg=messages)
 
 class ViewPosts(handler.Handler):
-    def get(self):
+    def get(self,messages=None,mios=False):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            messages = self.GetMessages(actualizar=False,persona=user)
+        if self.request.get('post').isdigit():
+            post = Post.get_by_id(int(self.request.get('post')))
+            if post:
+                if self.request.get('visible') == '0':
+                    post.visible = False
+                elif self.request.get('visible') == '1':
+                    post.visible = True
+                post.put()
         if self.request.get("u"):
-            if user:
-                messages = self.GetMessages(actualizar=False,persona=user)#los mensajes para la bandeja
             profile = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#la informacion del perfil que estoy viendo
             profile = list(profile)
-            if len(profile) == 1:#si se encontro
+            if len(profile) > 0:#si se encontro
                 posts = self.get_data("posts_by_"+profile[0].user_id,db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc"))#me enlista sus posts
                 posts = self.display_names(user,list(posts))
-                self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages)
+                if user.user_id == profile[0].user_id:
+                    mios = True
+                self.load_data(lim=5,mios=mios,pagename="Ver posts",posts=posts)
             else:
-                self.write("Perfil no encontrado")
+                self.redirect("/error?e=profile-notfound")
         else:
             if user:
                 messages = self.GetMessages(actualizar=False,persona=user)
                 posts = self.get_data("posts_by_"+user.user_id,db.GqlQuery("select * from Post where submitter='"+user.user_id+"' order by created desc"))
                 posts = self.display_names(user,list(posts))
-                self.render('page.html',pagename='Ver posts',posts=posts,user=user,recent_msg=messages) 
+                self.load_data(lim=5,mios=True,pagename="Ver posts",posts=posts) 
             else:
                 self.redirect("/login")
 
@@ -186,7 +234,7 @@ class ViewComments(handler.Handler):
             self.redirect("/login")
 
 class SendPm(handler.Handler):#para enviar mensajes
-    def get(self,messages=None):
+    def get(self,messages=None,target=None):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])

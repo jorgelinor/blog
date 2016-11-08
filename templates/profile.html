@@ -1,8 +1,12 @@
 {%extends 'base.html'%}
 {%block content%}
-	<div id="user-holder">
+	<div id="user-holder" style="z-index: 1">
 		<div><b id="nickname">{{profile.displayName}}</b></div><br><br>
-		<div id="profile-picture">Pic</div>
+		{%if profile.img%}
+			<img class="img" src="/view_photo/{{profile.img}}" style="width: 100px;height: 100px;float: left">
+		{%else%}
+			<img class="img" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg" style="width: 100px;height: 100px;float: left">
+		{%endif%}
 		<div id="user-info">
 			{%if modificable == True%}
 				<b>Nombre de usuario:</b> {{profile.user_id}}<br>
@@ -17,6 +21,7 @@
 				<button><a href="/profile/_edit">Modificar informacion</a></button>
 				<button><a href="/profile/_editpass">Cambiar contrasenia</a></button>
 				<br>
+				{{cambiodeimagen}}
 			{%endif%}
 		</div>
 	</div>
@@ -26,4 +31,7 @@
 	{%if modificable!=True%}
 		<a href="/profile/_sendpm?u={{profile.displayName}}">Enviar un Mensaje</a><br>
 	{%endif%}
+
+	<script src="/js/jquery.js"></script>
+	<script src="/js/javascript.js"></script>
 {%endblock%}

@@ -8,43 +8,49 @@
 </head>
 <body>
 	<div id="header">
-	<br>
-		<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" style="float:left;width: 24px; height: 24px;"></a>
-		<form style="float:left" action="/profile">
-			<input type="text" name="u" placeholder="Buscar usuario por nombre">
+		<a href="/"><img src="http://image.flaticon.com/icons/svg/50/50422.svg" class="logo"></a>
+		<form style="margin-top: 15px;float:left;margin-right: 10%" action="/search">
+			<input type="text" name="q" placeholder="Buscar" required>
+			<input type="hidden" name="filter" value="All">
 			<button>Buscar</button>
 		</form>
 		{%if user%}
 			<ul class="menu">
-				{%if user.banned_from_posting and user.banned_from_comments%}
-					<div id="banned-error">Attencion: No puedes postear ni comentar porque se te han quitado los derechos.</div>
-				{%elif user.banned_from_posting%}
-					<div id="banned-error">Attencion: No puedes postear porque se te han quitado los derechos.</div>
-				{%elif user.banned_from_comments%}
-					<div id="banned-error">Attencion: No puedes comentar porque se te han quitado los derechos.</div>
-				{%endif%}
-				<li>
-					<a href="/profile">{{user.user_id}}</a>
-					<ul>
-						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
-						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
-						<li><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
-						<li><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
-					</ul>
-				<li>
 				{%if user.user_type == "admin"%}
 						<a href="/admin">Admin Panel</a>
 				{%endif%}
 				<li><a href="/newpost">Postear</a></li>
 				<li><a href="/logout">Salir</a></li>
 				<li><a id="inbox-link" onclick="activate()">Bandeja de entrada</a></li>
+				<li>
+					{%if user.img%}
+						<a style="height: 35px" href="/profile"><img src='/view_photo/{{user.img}}' class="profile-pic">
+					{%else%}
+						<a style="height: 35px" href="/profile"><img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg' class="profile-pic">
+					{%endif%}</a>
+					<ul>
+						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
+						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
+						<li><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
+						<li><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
+					</ul>
+				</li>
 			</ul>
-		{%else%}
-			<a href="/signup" class="header-link">Registrar</a>   
-			<a href="/login" class="header-link">Iniciar sesion</a>
-			<br>
-		{%endif%}
 	</div>
+			{%if user.banned_from_posting and user.banned_from_comments%}
+				<div id="banned-error">Atencion: No puedes postear ni comentar porque se te han quitado los derechos.</div>
+			{%elif user.banned_from_posting%}
+				<div id="banned-error">Atencion: No puedes postear porque se te han quitado los derechos.</div>
+			{%elif user.banned_from_comments%}
+				<div id="banned-error">Atencion: No puedes comentar porque se te han quitado los derechos.</div>
+			{%endif%}
+		{%else%}
+			<ul class="menu">
+				<li><a href="/signup">Registrar</a></li>   
+				<li><a href="/login">Iniciar sesion</a></li>
+			</ul>
+	</div>
+		{%endif%}
 	<div id='bandeja'>
 		{%if recent_msg%}
 			{%for msg in recent_msg%}
@@ -64,12 +70,37 @@
 			{%endfor%}
 		{%endif%}
 	</div>
+		<div class="menu-left">
+			{%if menu == 'filter'%}
+				<h3>Que buscas?</h3>
+				<a href="/search?q={{search}}&filter=All">Todo</a><br>
+				<a href="/search?q={{search}}&filter=User">Personas</a><br>
+				<a href="/search?q={{search}}&filter=Post">Posts</a><br>
+				<a href="/search?q={{search}}&filter=Comment">Comentarios</a><br>
+			{%endif%}
+		</div>
 		<div class="page-content">
-		<br><br><br><br>
 			{%block content%}
 			{%endblock%}
 		</div>
+		<div id="loading" style="position:fixed;bottom:-120px;left:520px;color:blue;font-weight:bold;"></div>
+	{%if profile%}
+		{%if profile.img%}
+			<div class="img-viewer"><img class="img-viewer-img" src='/view_photo/{{profile.img}}'>
+		{%else%}
+			<div class="img-viewer"><img class="img-viewer-img" src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg'>
+		{%endif%}
+			<label id="img-viewer-close">Cerrar</label>
+		{%if modificable == True%}
+	        <form action="{{upload_url}}" method="POST" enctype="multipart/form-data" class="change-pic"> 
+	          Cambiar foto: <input type="file" name="file"><br> 
+	          <input type="submit" name="submit" value="Guardar"> 
+	        </form> </div>
+	    {%endif%}
+
+    {%endif%}
 	<script src="/js/jquery.js"></script>
 	<script src="/js/javascript.js"></script>
+
 </body>
 </html>

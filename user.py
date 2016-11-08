@@ -16,5 +16,4 @@ class User(db.Model):
 	banned_from_comments = db.BooleanProperty(required=False)
 	banned_from_posting = db.BooleanProperty(required=False)
 	state = db.BooleanProperty(required=False)
-
-
+	img = db.StringProperty(required=False)

@@ -6,6 +6,7 @@ from user import User
 import hashlib
 import time
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 class Newpost(handler.Handler):
     def render_front(self,title = '',post = '',error = '',user='',recent_msg=None):
@@ -29,12 +30,15 @@ class Newpost(handler.Handler):
         submitter = self.get_cookie_user(self.request.cookies.get('user_id'))[1]
         messages = self.GetMessages(actualizar=False,persona=submitter)
         if title and post and topic:
+
             a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,state=False)
+
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
-            self.delete_data('posts')
+            self.get_data('posts',db.GqlQuery('select * from Post order by created desc'),actualizar=True)
             a.put()           
             self.redirect('/'+str(a.key().id()))
+            memcache.delete('cantidad_'+self.request.get("topic"))
         else:
             error = 'Titulo y contenido y tema requeridos'
         user = None

@@ -1,5 +1,4 @@
 #Esta es la clase principal, la cual hereda a la mayoria de las demas.
-
 import webapp2 
 import os
 import jinja2
@@ -8,6 +7,7 @@ from google.appengine.ext import db
 import logging
 import hashlib
 from user import User
+import json
 
 template_dir = os.path.join(os.path.dirname(__file__),'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
@@ -36,19 +36,13 @@ class Handler(webapp2.RequestHandler):
 
     #este metodo es super util a la hora de obtener cache, toma dos parametros (key,funcion) donde si la key no existe en el cache, se ejecuta
     #la funcion y se hace cache para la proxima peticion
-    def get_data(self,key,query):
+    def get_data(self,key,query,actualizar=False):
         data = memcache.get(key)
-        if data is not None:
-            return data
-        else:
+        if data == None or actualizar==True:
             data = query
             self.write('algo')
             memcache.add(key, data)
         return data
-
-    #Este es el metodo de limpiado de cache con una key especifica. Sirve de complemento para get_data
-    def delete_data(self,key):
-        memcache.delete(key)
 
     #Este es el metodo de verificacion de cookie que toma una cookie y si es completamente valida, retorna una tupla (True,objeto)
     def get_cookie_user(self,cookie):
@@ -100,15 +94,16 @@ class Handler(webapp2.RequestHandler):
 
     def display_names(self,user=None,lista=[]):
         for e in lista:
-            if user != None and e.submitter == user.user_id:
+            if user and e.submitter == user.user_id:
                 e.submitter = "ti"
             else:
                 submitter = self.get_data('submitter_'+e.submitter,db.GqlQuery("select * from User where user_id='"+e.submitter+"'"))
                 submitter = list(submitter)
-                if len(submitter) < 1:
-                    e.submitter = e.submitter+"|False"
-                else:
-                    e.submitter = submitter[0].displayName
+                if e.submitter != "ti":
+                    if len(submitter) < 1:
+                        e.submitter = e.submitter+"|False"
+                    else:
+                        e.submitter = submitter[0].displayName
         return lista
 
     def password_edition(self,user,oldpass,newpass,verify):
@@ -127,6 +122,31 @@ class Handler(webapp2.RequestHandler):
         else:
             errorpass = 'Invalid password'
         return (False,errorpass,errornew,errorverify)
+    def make_json_data(self,posts=None,mios=None):
+        index = {}
+        for e in posts:
+            if e.visible != False or e.visible==False and mios==True: #antes de mandar el json, revisa si los posts son visibles o no, para luego reenderizarlos correctamente
+                obj = {}
+                obj["id"] = e.key().id()
+                obj["title"] = e.title
+                obj["post"] = e.post
+                obj["submitter"] = e.submitter
+                obj["created"] = str(e.created)
+                obj["created_str"] = e.created_str
+                obj["modificable"] = e.modificable
+                obj["razon"] = e.razon
+                obj["comments"] = e.comments
+                obj["visible"] = e.visible
+                index[len(index)] = obj
+        return json.dumps(index)
+
+    def load_data(self,messages=None,lim=None,mios=None,pagename=None,posts=None):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            messages = self.GetMessages(actualizar=False,persona=user)
+        posts = self.display_names(user,list(posts))
+        self.render('page.html',pagename=pagename,posts=posts,user=user,recent_msg=messages,limit=lim,data=self.make_json_data(posts=posts,mios=mios),mios=mios)
 
 class ErrorHandler(Handler):
     def get(self,error='',messages=None):
@@ -151,3 +171,15 @@ class ErrorHandler(Handler):
             error = 'Este post no te pertenece.'
         self.render('error.html',user=user,pagename='Error',error=error, recent_msg=messages)
 
+class Stats(Handler):
+    def get(self,messages=None):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            messages = self.GetMessages(actualizar=False,persona=user)
+        animales = self.get_data("cantidad_Animales",len(list(db.GqlQuery("select * from Post where topic='Animales'"))))
+        tecnologia = self.get_data("cantidad_Tecnologia", len(list(db.GqlQuery("select * from Post where topic='Tecnologia'"))))
+        preguntas = self.get_data("cantidad_Preguntas", len(list(db.GqlQuery("select * from Post where topic='Preguntas'"))))
+        musica = self.get_data("cantidad_Musica", len(list(db.GqlQuery("select * from Post where topic='Musica'"))))
+        programacion = self.get_data("cantidad_Programacion", len(list(db.GqlQuery("select * from Post where topic='Programacion'"))))
+        self.render("graficos.html",pagename="Stats de la pagina", t1=animales,t2=tecnologia,t3=preguntas,t4=musica,t5=programacion,user=user,recent_msg=messages)

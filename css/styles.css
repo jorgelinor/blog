@@ -113,6 +113,25 @@ li-link {
 	margin-left: 10%;
 	margin-right: 10%;
 	overflow-y: auto;
+	margin-top: 75px;
+}
+.menu-left{
+	position: fixed;
+    left: 0px;
+    margin-left: 1%;
+    max-width: 8%;
+    margin-right: 0%;
+    top: 67px
+}
+.people-container{
+	text-decoration: none; 
+}
+.search-container{
+
+    width: 30%;
+    float: left;
+    overflow: hidden;
+    margin-right:3%;
 }
 #user-chart {
 	display:block;
@@ -146,32 +165,50 @@ li-link {
 	background-color: darkgray;
 }
 #header {
-	font-family: "Courier New", monospace;
-	overflow:none;
-	background-color: gray;
-	width:100%;
-	position: fixed;
-	width:98%;
-	top:0px;
-	margin-left: 1%;
+    font-family: "Courier New", monospace;
+    overflow: none;
+    background-color: gray;
+    position: fixed;
+    width: 100%;
+    top: 0px;
+    margin-left: 0;
+    z-index: 2147483647;
+}
+.logo{
+	float: left;
+	width: 24px;
+	height: 24px;
+	margin: 15px;
+}
+.profile-pic{
+	float: left;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	margin-top: -13px;
 }
 #banned-error{
-	text-align:center;
-	color: red;
-	background-color: white
+    text-align: center;
+    color: red;
+    background-color: white;
+    position: fixed;
+    top: 54px;
+    right: 10%;
+    left: 10%;
 }
 #inbox-link {
 	cursor:pointer;
 }
 #bandeja {
 	position:fixed;
-	bottom: 280px;
+	bottom: 338px;
 	right:3%;
 	width:40%;
-	height:315px;
+	height:215px;
 	display:none;
 	border: groove 3px darkgray;
 	overflow:scroll;
+	z-index:2147483646;
 }
 ul, ol {
 	list-style: none;
@@ -193,6 +230,7 @@ ul, ol {
 .menu > li {
 	margin-left:5%;
 	float:left;
+	margin-top: 15px
 }
 .menu li ul {
 	display: none;
@@ -202,6 +240,7 @@ ul, ol {
 }
 .menu li:hover > ul{
 	display: block;
+	z-index:999999999999999;
 }
 .admin-link {
 	margin:2%;
@@ -221,4 +260,66 @@ ul, ol {
 .reported-comment{
     word-wrap: break-word;
     max-width: 40%;
+}
+#chart {
+	width:40%;
+	height:300px;
+	float:left;
+	margin:25px;
+
+}
+#chart2 {
+	width:40%;
+	height:300px;
+	float:left;
+	margin:25px;
+}
+
+/* Hora de empezar la responsividad*/
+
+@media screen and (max-width: 800px) {
+	#chart,#chart2 {
+		float:none;
+		border:none;
+	}
+}
+
+.img-viewer-img{
+
+    width: 70%;
+    float: left;
+    height: 600px;
+    margin: 3%;
+    margin-top: 4.5%;
+    opacity: 1;
+}
+
+.img-viewer{
+
+    display: none;
+    position: fixed;
+    width: 100%;
+    z-index: 99;
+    top: 0px;
+    background-color: rgba(0, 0, 0, 0.721569);
+}
+
+.change-pic{    
+	top: 25%;
+    position: absolute;
+    right: 0px;
+    max-width: 25%;
+}
+
+#img-viewer-close{
+    margin: 136.5px;
+    top: -77.2px;
+    position: absolute;
+    right: -7%;
+    max-width: 25%;
+    cursor: pointer;
+}
+
+li.username{
+	margin-left: 0px
 }

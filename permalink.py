@@ -3,7 +3,9 @@ from post import Post
 import hashlib
 from user import User
 import comment
+import time
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 class Permalink(handler.Handler):
     #para ver la pagina de un post en particular
@@ -16,8 +18,18 @@ class Permalink(handler.Handler):
             self.redirect('/login')#pal login
         post = self.get_data("post_"+link,Post.get_by_id(int(link)))#obtiene el post
         if post:#si existe
+            if self.request.get('action') == 'deletecomment':
+                com = self.get_data(self.request.get('c')+'_eComment',comment.Comment.get_by_id(int(self.request.get("c"))))# si el comentario existe con el query
+                if com and int(com.post) == post.key().id() and post.submitter == user.user_id:
+                    db.delete(com)
+                    post.comments -= 1
+                    post.put()
+                    time.sleep(1)
             if self.request.get("action") == "newcomment": #query para verificar si se agrega un nuevo comentario
-                newcomment = True# si es asi, manda algo al render para un espacio de comentario
+                if not user.banned_from_comments:
+                    newcomment = True# si es asi, manda algo al render para un espacio de comentario
+                else:
+                    self.redirect('/'+link)
             elif self.request.get('action') == 'editcomment':#query para editar un comentario
                 com = self.get_data(self.request.get('c')+'_eComment',comment.Comment.get_by_id(int(self.request.get("c"))))# si el comentario existe con el query
                 if com and int(com.post) == post.key().id():#y tiene relacion con el post
@@ -50,8 +62,9 @@ class Permalink(handler.Handler):
                 com.created_str = str(com.created)
                 com.created_str = com.created_str[0:16]
                 com.put()
-                self.delete_data(link+'_comments')
                 post.comments += 1
+                memcache.delete(link+'_comments')
+                memcache.delete("post_"+link)
                 post.put()
                 self.redirect("/"+link)
         elif self.request.get('action') == 'editcomment':#para saber si la accion post o el metodo post es para editar un comentario
@@ -99,7 +112,7 @@ class EditPost(handler.Handler):
         if post and content:
             post.post = content
             post.modificable = "False"
-            self.delete_data('post_'+link)
+            self.get_data('post_'+link,post,actualizar=True)
             post.put()
             self.redirect('/'+link)
         else:
@@ -127,7 +140,7 @@ class EditRequest(handler.Handler):
         if razon:
             post = self.get_data('post_'+link,Post.get_by_id(int(link)))
             post.modificable = 'pending'
-            self.delete_data('post_'+str(post.key().id()))
             post.razon = razon
+            self.get_data('post_'+str(post.key().id()),post,actualizar=True)
             post.put()
         self.redirect('/'+link)

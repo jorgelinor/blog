@@ -11,7 +11,11 @@ import permalink
 import admin
 import test
 import handler
+<<<<<<< HEAD
 import re
+=======
+import search
+>>>>>>> f7a36a8ed874702cd7b22dcb811719dc3fc4981f
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
 
@@ -34,5 +38,9 @@ app = webapp2.WSGIApplication([
     ("/admin/?", admin.Admin),
     ("/admin/([a-z0-9_-]+)", admin.Admin_submit),
     ("/admin/Admin_info", admin.Admin_info),
-    ('/error/?', handler.ErrorHandler)
+    ('/error/?', handler.ErrorHandler),
+    ('/admin/stats', handler.Stats),
+    ('/search', search.Search),
+    ('/upload_photo', profile.PhotoUploadHandler),
+    ('/view_photo/([^/]+)?', profile.ViewPhotoHandler)
 ], debug=True)
