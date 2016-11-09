@@ -1,3 +1,19 @@
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('.img-viewer-img').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$("#imginput").change(function(){
+    readURL(this);
+});
+
 var activate = function() {
 	$("#bandeja").css("display","block");
 	$("#bandeja").css("background-color","gray");
