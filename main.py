@@ -11,11 +11,8 @@ import permalink
 import admin
 import test
 import handler
-<<<<<<< HEAD
 import re
-=======
 import search
->>>>>>> f7a36a8ed874702cd7b22dcb811719dc3fc4981f
 #este es el archivo principal, si se crea una pagina o archivo nuevo se debe importar aqui y asignarle un path de referencia
 
 
