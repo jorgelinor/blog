@@ -101,8 +101,8 @@
 		{%endif%}
 			<label id="img-viewer-close">Cerrar</label>
 		{%if modificable == True%}
-	        <form action="{{upload_url}}" method="POST" enctype="multipart/form-data" class="change-pic"> 
-	          Cambiar foto: <input type="file" name="file"><br> 
+	        <form action="{{upload_url}}" method="POST" runat="server" enctype="multipart/form-data" class="change-pic"> 
+	          Cambiar foto: <input id="imginput" type="file" name="file"><br> 
 	          <input type="submit" name="submit" value="Guardar"> 
 	        </form> </div>
 	    {%endif%}
