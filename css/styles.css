@@ -187,6 +187,9 @@ li-link {
 	border-radius: 50%;
 	margin-top: -13px;
 }
+.profile-pic:hover {
+	background-color:gray;
+}
 #banned-error{
     text-align: center;
     color: red;
