@@ -78,15 +78,25 @@ function load_data(posts,mios,request,limit) {
 	    }
 	})
 }
+function lol(){
+	console.log('hola')
+}
 
 $('.img').click(function(){
 	$('.img-viewer').css("display","block")
 })
+$('.img').hover(function(){
+	$('#hover-view').css('opacity','0.3')
+},function(){
+	$('#hover-view').css('opacity','0')
+})
 $('#img-viewer-close').click(function(){
 	$('.img-viewer').css('display','none')
 })
+
 $('.people-container').hover(function(){
 	$(this).css('background-color','#ffff66')
 },function(){
 	$(this).css('background-color','#ffffff')
 })
+
