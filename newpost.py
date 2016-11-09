@@ -31,7 +31,7 @@ class Newpost(handler.Handler):
         messages = self.GetMessages(actualizar=False,persona=submitter)
         if title and post and topic:
 
-            a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,state=False)
+            a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,visible=True,state=False)
 
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
