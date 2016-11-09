@@ -17,7 +17,11 @@
 		{%if user%}
 			<ul class="menu">
 				{%if user.user_type == "admin"%}
-						<a href="/admin">Admin Panel</a>
+					<li><a href="/admin">Admin Panel</a>
+						<ul>
+							<li><a href="/_stats">Graficos de posts</li>
+						</ul>
+					</li>
 				{%endif%}
 				<li><a href="/newpost">Postear</a></li>
 				<li><a href="/logout">Salir</a></li>
@@ -29,10 +33,10 @@
 						<a style="height: 35px" href="/profile"><img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg' class="profile-pic">
 					{%endif%}</a>
 					<ul>
-						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
-						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
-						<li><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
-						<li><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
+						<li class="prof-li"><a href="/profile/_edit">Modificar perfil</a><hr></li>
+						<li class="prof-li"><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
+						<li class="prof-li"><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
+						<li class="prof-li"><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
 					</ul>
 				</li>
 			</ul>

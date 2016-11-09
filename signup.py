@@ -18,7 +18,7 @@ class Signup(handler.Handler):
             self.redirect("error?e=already-registered")
         
     def post(self):
-        cache= memcache('user_')
+        cache= memcache.get('user_')
         randomStr = ''.join(random.choice(string.letters) for _ in xrange(5))
         username = valid_username(self.request.get('username'))
         password = valid_pass(self.request.get('password'))

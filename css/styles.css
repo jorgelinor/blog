@@ -242,8 +242,9 @@ ul, ol {
 
 }
 .menu li:hover > ul{
+	margin:0px;
 	display: block;
-	z-index:999999999999999;
+	z-index:2147483647;
 }
 .admin-link {
 	margin:2%;
@@ -325,4 +326,8 @@ ul, ol {
 
 li.username{
 	margin-left: 0px
+}
+
+.prof-li hr {
+	margin:0px;
 }
