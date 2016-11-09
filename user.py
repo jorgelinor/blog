@@ -15,4 +15,5 @@ class User(db.Model):
 	rason_solicitud_cambio = db.TextProperty(required=False)
 	banned_from_comments = db.BooleanProperty(required=False)
 	banned_from_posting = db.BooleanProperty(required=False)
+	state = db.BooleanProperty(required=False)
 	img = db.StringProperty(required=False)
