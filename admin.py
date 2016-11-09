@@ -118,67 +118,35 @@ class Reports(handler.Handler):
             self.redirect('/login')
 
 
-class DeleteComment(handler.Handler):
-    def get(self,link):
-        comment = Comment.get_by_id(int(link))
-        user = None
-        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            if user.user_type == 'admin':
-                post = Post.get_by_id(int(comment.post))
-                post.comments -= 1
-                post.put()
-                self.get_data('post_'+str(post.key().id()),post,actualizar=True)
-                db.delete(comment)
-                time.sleep(2)
-                self.redirect('/admin/reports')
-            else:
-                self.redirect('/')
-        else:
-            self.redirect('/login')
-
-class KeepComment(handler.Handler):
-    def get(self,link):
-        comment = Comment.get_by_id(int(link))
-        user = None
-        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            if user.user_type == 'admin':
-                comment.razon = []
-                comment.reported = False
-                comment.put()
-                time.sleep(2)
-                self.redirect('/admin/reports')
-            else:
-                self.redirect('/')
-        else:
-            self.redirect('/login')
 # fabian
 # 
 # 
 class Admin_info(handler.Handler):
     def get(self):
-        logging.error('entro')
         # los querys deben ser comments_reported_cache o 
         # post_modificable_cache o user_permisos_cache o post_reposrted_cache
-        action = self.request.GET.get('action')
+        # if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
 
-        info = memcache.get(action)
-        if info is None:
-            createquerty(action)
-            info = memcache.get(action)
-        informacion = diccionarisarcache(info,action)
-        logging.error(action,info)
-        self.write(json.dumps(informacion))
-    def post(self, query):
-        if query == 'comments_reported_cache':
-            pass
-        elif query == 'post_modificable_cache':
-            pass
-        elif query == 'user_permisos_cache':
-            pass
-        elif query == 'post_reposrted_cache':
-            pass
+            if user.user_type == "admin":
+                action = self.request.GET.get('action')
+                logging.error(action)
+                info = memcache.get(action)
+                logging.error(info)
+                logging.error('creando passs')
+                if info is None:
+                    createquerty(action)
+                    info = memcache.get(action)
+                logging.error(action)
+                informacion = diccionarisarcache(info,action)
+                self.write(json.dumps(informacion))
+            else:
+                self.redirect('/')
+        else:
+            self.redirect('/login')
+
 # clase de admind para manejar los reportes de los comentario reportados para determinar si son validos de mostar o no 
 # muestra los post de los cuales los creadores desean modifcar o actualizar con informacion
 # les cambia el atributo al post para ser modificado solo por el creador 
@@ -186,66 +154,186 @@ class Admin_info(handler.Handler):
 # de terminar si u post reportado tiene un contenido que se puede mostrar
 
 
+class Admin_submit(handler.Handler):
+    def get(self, id_obj):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            if user.user_type == "admin":
+                ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
+                query=''
+                if ins == 'come':
+                    query='comments_reported_cache'
+                elif ins == 'post':
+                    query='post_modificable_cache'
+                elif ins == 'user':
+                    query='user_permisos_cache'
+
+                info = buscar(id_object , query)
+                self.render('upload.html',info=info, query=query,user=user)
+            else:
+                self.redirect('/')
+        else:
+            self.redirect('/login')
+
+    def post(self):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            if user.user_type == "admin":
+                query= self.request.get('query')
+                if query == 'comments_reported_cache':
+                    coment_id = self.request.get('comment_id')
+                    comments_reported = self.request.get('report')
+
+                    cache = buscar(coment_id,query)
+                    if cache and comments_reported == 'True':
+                        cache.show = False
+                        cache.state = True
+                        cache.put()
+                        self.redirect('/admin')
+                    else:
+                        self.write('no en contrado')
+
+                elif query == 'post_modificable_cache':
+
+                    post_id = self.request.get('post_id')
+                    modificable = self.request.get('permiso')
+
+                    cache = buscar(post_id,query)
+                    if cache and modificable:
+                        cache.modificable = modificable
+                        cache.state = True
+                        cache.put()
+                        self.redirect('/admin')
+                    else:
+                        self.write('no en contrado')
+
+                elif query == 'user_permisos_cache':
+
+                    user_id = self.request.get('userid')
+                    user_type = self.request.get('user_type')
+                    banned_from_comments = self.request.get('banned_from_comments')
+                    banned_from_posting = self.request.get('banned_from_posting')
+
+                    cache = buscar(user_id,query)
+                    if cache and user_type:
+                        cache.user_type = user_type
+                        cache.banned_from_posting = banned_from_posting
+                        cache.banned_from_comments = banned_from_comments
+                        cache.state = True
+                        cache.put()
+                        self.redirect('/admin')
+                    else:
+                        self.write('no en contrado')
+            else:
+                self.redirect('/')
+        else:
+            self.redirect('/login')
+    #     elif query == 'post_reposrted_cache':
+    #         pass
+        
+
+#encuentra los post o usuario y comentario por el id
+def buscar(id_elemento, elemento):
+    logging.error(id_elemento)
+    cache = memcache.get(elemento)
+    if id_elemento in cache:
+        return cache[id_elemento]
+    else:
+        return
+
+
+
 # convierte el objeto de la base de datos a una diccionario lejible para json  
 def diccionarisarcache(info,cual):
+    informacion={}
     #info es la cache creada solo con la informacion de echa
-    for partes in info:
-            informacion={info[partes].submitter:{'title':info[partes].title,
-                                                  'content':info[partes].content,
-                                                  'post':info[partes].post,
-                                                  'submitter':info[partes].submitter,
-                                                  'created':info[partes].created.strftime('%y/%m/%d'),
-                                                  'created_str':info[partes].created_str,
-                                                  'reported':info[partes].reported,
-                                                  'razon':info[partes].razon
-                                                }
-                        }
+    if cual == 'comments_reported_cache':
+        for partes in info:
+            if info[partes].reported == True:
+                informacion[str(info[partes].key().id())]={'comment_id':str(info[partes].key().id()),
+                                                          'title':info[partes].title,
+                                                          'content':info[partes].content,
+                                                          'post':info[partes].post,
+                                                          'submitter':info[partes].submitter,
+                                                          'created':info[partes].created.strftime('%y/%m/%d'),
+                                                          'reported':info[partes].reported,
+                                                          'razon':info[partes].razon,
+                                                        }
+    elif cual == 'post_modificable_cache':
+        for partes in info:
+            if info[partes].modificable == 'pending':
+                informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
+                                                          'topic':info[partes].topic,
+                                                          'title':info[partes].title,
+                                                          'content':info[partes].post,
+                                                          'post':info[partes].post,
+                                                          'submitter':info[partes].submitter,
+                                                          'created':info[partes].created.strftime('%y/%m/%d'),
+                                                          'modificable':info[partes].modificable,
+                                                          'razon':info[partes].razon
+                                                        }
+    elif cual == 'user_permisos_cache':
+        for partes in info:
+            if info[partes].solicitud_cambio == True:
+                informacion[str(info[partes].key().id())]={"userid":str(info[partes].key().id()),
+                                                "user_type":info[partes].user_type,
+                                                "user_id":info[partes].user_id,
+                                                "displayName":info[partes].displayName,
+                                                "solicitud_cambio":info[partes].solicitud_cambio,
+                                                "rason_solicitud_cambio":info[partes].rason_solicitud_cambio,
+                                                "banned_from_comments":info[partes].banned_from_comments,
+                                                "banned_from_posting":info[partes].banned_from_posting
+                                                        }
     return informacion                    
 # crea el query deacuerdo ala info pedidad por el admin
 def createquerty(content):
-    if content == "comments_reported_cache":# comentario reportados
+    # comentario reportados
+    if content == "comments_reported_cache":
         comments = {}
-        banned_comments = db.GqlQuery("SELECT * FROM Comment WHERE reported = True ORDER BY created desc")
+        banned_comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created desc")
         for p in banned_comments:
-            comments[p.title] = p
+            comments[str(p.key().id())] = p
         memcache.set("comments_reported_cache", comments)
-        logging.error(comments)
+        # logging.error(comments)
         return comments
-    elif content == 'post_modificable_cache':#solicitud de modiicar un post post
+
+    #solicitud de modiicar un post post
+    elif content == 'post_modificable_cache':
         post ={}
-        post_modificables =  db.GqlQuery("SELECT * FROM Post WHERE  Post.modificable = 'pending' ORDER BY created desc")
+        post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
         for p in post_modificables:
-            post[p.title] = p
+            post[str(p.key().id())] = p
         memcache.set("post_modificable_cache", post)
         return post
-    elif content == 'user_permisos_cache':# permisos para usuarios
+
+    # permisos para usuarios
+    elif content == 'user_permisos_cache':
+    
         users ={}
-        users_modificables =  db.GqlQuery("SELECT * FROM User WHERE User.solicitud_cambio = True ORDER BY created desc")
-        for p in post_modificables:
-            users[p.subject] = p
+
+        users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
+
+        for p in users_modificables:
+            users[str(p.key().id())] = p
         memcache.set("user_permisos_cache", users)
         return users
-    elif content == 'post_reposrted_cache':#post reportados
-        post_repo ={}
-        post_reported =  db.GqlQuery("SELECT * FROM Post WHERE Post.repost = True ORDER BY created desc")
-        for p in post_reported:
-            post_repo[p.subject] = p
-        memcache.set("post_reposrted_cache", post)
-        return post_repo
+
 
 
 # Form_html="""
 #     {% for content in action %}
 #     <form>
-#         <h1>coment submete by: {{action[content].submitter}}</h1>
-#         <b> crado: {{action[content].created_str}}</b>
-#         <br>
-#         <h4>post <a href="{{action[content].post}}">Post del mensaje</a></h4>
-#         <div>
-#             {{action[content].content}}
-#         </div>
-#         <h3>Reportado</h3><br>
-#         <b>{{action[content].razon}}</b>
+        # <h1>coment submete by: {{action[content].submitter}}</h1>
+        # <b> crado: {{action[content].created_str}}</b>
+        # <br>
+        # <h4>post <a href="{{action[content].post}}">Post del mensaje</a></h4>
+        # <div>
+        #     {{action[content].content}}
+        # </div>
+        # <h3>Reportado</h3><br>
+        # <b>{{action[content].razon}}</b>
 #     </form>
 #     <br>
 #     {% endfor %}

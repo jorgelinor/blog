@@ -58,7 +58,7 @@ class Permalink(handler.Handler):
             if len(content) < 1:
                 self.redirect('/'+link)
             else:
-                com = comment.Comment(submitter=submitter.user_id,content=content,post=link,reported=False,title="Comentario #"+str(len(list(comments))+1)+" en "+post.title)
+                com = comment.Comment(submitter=submitter.user_id,content=content,post=link,reported=False,title="Comentario #"+str(len(list(comments))+1)+" en "+post.title,state=False)
                 com.created_str = str(com.created)
                 com.created_str = com.created_str[0:16]
                 com.put()

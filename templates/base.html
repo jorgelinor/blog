@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="/css/styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<title>{{pagename}} - Blog</title>
 </head>
 <body>
@@ -17,14 +17,9 @@
 		{%if user%}
 			<ul class="menu">
 				{%if user.user_type == "admin"%}
-					<li>
-						<a href="/admin">Admin Panel</a>
+					<li><a href="/admin">Admin Panel</a>
 						<ul>
-							<li><a href="/admin/reports">Reportes recientes</a><hr></li>
-							<li><a href="/admin/post_requests">Pedidos de modificacion de posts</a><hr></li>
-							<li><a href="/admin/users">Administracion de usuarios</a><hr></li>
-							<li><a href="/admin/posts">Administracion de Posts</a><hr></li>
-							<li><a href="/admin/stats">Graficos de publicaciones</a></li>
+							<li><a href="/_stats">Graficos de posts</li>
 						</ul>
 					</li>
 				{%endif%}
@@ -38,10 +33,10 @@
 						<a style="height: 35px" href="/profile"><img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg' class="profile-pic">
 					{%endif%}</a>
 					<ul>
-						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
-						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
-						<li><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
-						<li><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
+						<li class="prof-li"><a href="/profile/_edit">Modificar perfil</a><hr></li>
+						<li class="prof-li"><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
+						<li class="prof-li"><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
+						<li class="prof-li"><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
 					</ul>
 				</li>
 			</ul>
