@@ -10,8 +10,19 @@
 	width:100px;
 	height:100px;
 	border:black solid 1px;
-	float:left
+	float:left;
+	z-index: 49
 }
+#hover-view{
+	width: 100px;
+	height: 100px;
+	float: left;
+	cursor: pointer;
+	position: fixed;
+    background-color: black;
+    opacity: 0;
+}
+.profile-pic:hover {background-color:gray}
 #user-info {
 	margin-left:150px;
 	text-align:left;
@@ -194,17 +205,13 @@ li-link {
     text-align: center;
     color: red;
     background-color: white;
-    position: fixed;
-    top: 54px;
-    right: 10%;
-    left: 10%;
 }
 #inbox-link {
 	cursor:pointer;
 }
 #bandeja {
 	position:fixed;
-	bottom: 338px;
+	top: 54px;
 	right:3%;
 	width:40%;
 	height:215px;
@@ -296,6 +303,12 @@ ul, ol {
     margin: 3%;
     margin-top: 4.5%;
     opacity: 1;
+}
+.img{
+	width: 100px;
+	height: 100px;
+	float: left;
+	cursor: pointer;
 }
 
 .img-viewer{
