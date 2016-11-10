@@ -90,6 +90,9 @@
 		<div id="loading" style="position:fixed;bottom:-120px;left:520px;color:blue;font-weight:bold;"></div>
 	{%if profile%}
 		{%if profile.img%}
+			<script type='text/javascript'>
+				user_img = "{{profile.img}}"
+			</script>
 			<div class="img-viewer"><img class="img-viewer-img" src='/view_photo/{{profile.img}}'>
 		{%else%}
 			<div class="img-viewer"><img class="img-viewer-img" src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg'>
