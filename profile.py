@@ -100,16 +100,16 @@ class EditProfile(handler.Handler):
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])#obtiene el objeto con la informacion del usuario a editar
             date_pre = self.get_data('create_date',create_date())#creacion de los datos para la fecha,como el procedimiento usa loop lo almaceno en cache para evitar usar el loop nuevamente
             messages = self.GetMessages(actualizar=False,persona=user)#Los mensajes para la bandeja
-            self.render("editprofile.html",pagename='Editar Perfil', user=user,years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],recent_msg=messages)
+            self.render("editprofile.html",pagename='Editar Perfil', user=user,years=date_pre[0],months=date_pre[1],days=date_pre[2],recent_msg=messages)
         else:
             self.redirect('/login')
    
     def post(self):
         #se toman los datos nuevos del usuario
-        nickname = valid_username(self.request.get('nickname'))
+        nickname = valid_display(self.request.get('nickname'))
         actual_password = self.request.get('actualpassword')#para tomar la contrasenia introducida y compararla con la actual
         tel = valid_tel(self.request.get('tel'))
-        date = self.request.get('date1')+'-'+self.request.get('date2')+'-'+self.request.get('date3')
+        date = valid_date(self.request.get('date1'))[1]+'-'+valid_date(self.request.get('date2'))[1]+'-'+valid_date(self.request.get('date3'))[1]
         description = self.request.get('description')
         permisos_cambio = self.request.get('solicitar')
         rason_de_solicitud = self.request.get('rason')
@@ -121,8 +121,8 @@ class EditProfile(handler.Handler):
         if not self.verify_edition(user,nickname,tel,date,actual_password)[0]:#el procedimiento de verificacion se define en handler.py, si no cumplese renderiza con errores
             date_pre = self.get_data('create_date',create_date())
             unused,erroruser,errortel,errordesc,errordate,passerror = self.verify_edition(user,nickname,tel,date,actual_password)
-            self.render('editprofile.html',pagename='Editar Perfil',user=user,dateerror=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
-                years=list(reversed(date_pre[0])),months=date_pre[1],days=date_pre[2],passerror=passerror,recent_msg=messages)
+            self.render('editprofile.html',pagename='Editar Perfil',user=user,errordate=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
+                years=date_pre[0],months=date_pre[1],days=date_pre[2],passerror=passerror,recent_msg=messages)
         else:#de lo contrario, se establecen los nuevos datos al usuario
             user.displayName=nickname[1]
             user.user_tel=tel[1]
@@ -138,15 +138,30 @@ class EditProfile(handler.Handler):
             memcache.delete('displayName_'+user.displayName)
             self.redirect('/profile')
 
+def valid_date(date):
+    if not date:
+        return (False,'')
+    if date.isdigit():
+        return (True,date)
+    return (False,'')
+
+DISPLAY_RE = re.compile(r"^[a-zA-Z0-9_ -]{3,20}$")
+def valid_display(username):
+    if DISPLAY_RE.match(username):
+        return (True,username)
+    else:
+        return (False,username)
 
 def create_date():
-    years,months,days = [],[],[]
+    years,months,days = [],['MES'],['DIA']
     for e in range(1,32):
         days.append(e)
     for e in range(1,13):
         months.append(e)
     for e in range(1950,2013):
         years.append(e)
+    years.append('ANIO')
+    years = list(reversed(years))
     return (years,months,days)
 
 class EditPass(handler.Handler):

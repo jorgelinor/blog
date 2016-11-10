@@ -68,6 +68,31 @@ class Handler(webapp2.RequestHandler):
             return (False,errorpass,erroruser)
         return (True,errorpass,erroruser)
 
+    def verify_signup(self,username,email,nick,tel,date,pw,verify,user,user1):
+        erroruser,errormail,errorpass,errorverify,errortel,errordesc,errordate='','','','','','',''
+
+        if not(username[0] and nick[0] and tel[0] and len(date)>7 and pw[0] and verify and email[0] and not (user and user1)):
+            if not nick[0]:
+                errordisplay = 'Nombre invalido'
+            if user1:
+                errordisplay = 'Nombre tomado'
+            if not username[0]:
+                erroruser = 'Nombre de usuario invalido'
+            if user:
+                erroruser = 'Este usuario ya existe'
+            if not pw[0]:
+                errorpass = 'Contrasenia invalida'
+            if not verify:
+                errorverify = "Las contrasenias no coinciden"
+            if not tel[0]:
+                errortel = 'Introduce un numero de telefono'
+            if not len(date)>7:
+                errordate = 'Fecha invalida'
+            if not email[0]:
+                errormail = 'Correo invalido'
+            return (False,erroruser,errormail,errorpass,errorverify,errortel,errordesc,errordate)
+        return (True,erroruser,errormail,errorpass,errorverify,errortel,errordesc,errordate)
+
     def verify_edition(self,user=None,nick=None,tel=[],date='',actual_pw=''):
         erroruser,errortel,errordesc,errordate,passerror='','','','',''
         actualnick = self.get_data("displayName_"+nick[1],db.GqlQuery("select * from User where displayName='"+nick[1]+"'").fetch(1))

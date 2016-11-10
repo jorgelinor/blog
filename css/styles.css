@@ -205,10 +205,6 @@ li-link {
     text-align: center;
     color: red;
     background-color: white;
-    position: fixed;
-    top: 54px;
-    right: 10%;
-    left: 10%;
 }
 #inbox-link {
 	cursor:pointer;
