@@ -132,20 +132,17 @@ class Admin_info(handler.Handler):
 
             if user.user_type == "admin":
                 action = self.request.GET.get('action')
-                logging.error(action)
                 info = memcache.get(action)
-                logging.error(info)
-                logging.error('creando passs')
                 if info is None:
                     createquerty(action)
                     info = memcache.get(action)
-                logging.error(action)
                 informacion = diccionarisarcache(info,action)
                 self.write(json.dumps(informacion))
             else:
                 self.redirect('/')
         else:
             self.redirect('/login')
+
 
 # clase de admind para manejar los reportes de los comentario reportados para determinar si son validos de mostar o no 
 # muestra los post de los cuales los creadores desean modifcar o actualizar con informacion
@@ -176,72 +173,63 @@ class Admin_submit(handler.Handler):
         else:
             self.redirect('/login')
 
-    def post(self):
-        user = None
-        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            if user.user_type == "admin":
-                query= self.request.get('query')
-                if query == 'comments_reported_cache':
-                    coment_id = self.request.get('comment_id')
-                    comments_reported = self.request.get('report')
+    def post(self, id_obj):
+        logging.error('entro al handler post para guardar')
+        ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
+        logging.error('este el el query '+ins+' and '+id_object)
+        if ins == 'come':
+            # coment_id = self.request.get('comment_id')
+            comments_reported = self.request.get('report')
+            logging.error("entro en el handler "+comments_reported)
 
-                    cache = buscar(coment_id,query)
-                    if cache and comments_reported == 'True':
-                        cache.show = False
-                        cache.state = True
-                        cache.put()
-                        self.redirect('/admin')
-                    else:
-                        self.write('no en contrado')
-
-                elif query == 'post_modificable_cache':
-
-                    post_id = self.request.get('post_id')
-                    modificable = self.request.get('permiso')
-
-                    cache = buscar(post_id,query)
-                    if cache and modificable:
-                        cache.modificable = modificable
-                        cache.state = True
-                        cache.put()
-                        self.redirect('/admin')
-                    else:
-                        self.write('no en contrado')
-
-                elif query == 'user_permisos_cache':
-
-                    user_id = self.request.get('userid')
-                    user_type = self.request.get('user_type')
-                    banned_from_comments = self.request.get('banned_from_comments')
-                    banned_from_posting = self.request.get('banned_from_posting')
-
-                    cache = buscar(user_id,query)
-                    if cache and user_type:
-                        cache.user_type = user_type
-                        cache.banned_from_posting = banned_from_posting
-                        cache.banned_from_comments = banned_from_comments
-                        cache.state = True
-                        cache.put()
-                        self.redirect('/admin')
-                    else:
-                        self.write('no en contrado')
+            cache = buscar(id_object, 'comments_reported_cache')
+            if cache and comments_reported == 'on':
+                cache.show = False
+                cache.state = True
+                cache.put()
+                logging.error('guardo la informacion')
+                self.redirect('/admin')
             else:
-                self.redirect('/')
-        else:
-            self.redirect('/login')
+                cache.show = True
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+
+        elif ins == 'post':
+            modificable = self.request.get('permiso')
+            cache = buscar(id_object, 'post_modificable_cache')
+            if cache and modificable:
+                cache.modificable = modificable
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+            else:
+                self.redirect('/admin')
+        elif ins == 'user':
+            user_type = self.request.get('user_type')
+            banned_from_comments = self.request.get('banned_from_comments')
+            banned_from_posting = self.request.get('banned_from_posting')
+
+            cache = buscar(id_object, 'user_permisos_cache')
+            if cache and user_type and banned_from_comments and banned_from_posting:
+                cache.user_type = user_type
+                cache.banned_from_posting = banned_from_posting
+                cache.banned_from_comments = banned_from_comments
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+            else:
+                self.redirect('/admin')
     #     elif query == 'post_reposrted_cache':
     #         pass
         
 
 #encuentra los post o usuario y comentario por el id
 def buscar(id_elemento, elemento):
-    logging.error(id_elemento)
     cache = memcache.get(elemento)
     if id_elemento in cache:
         return cache[id_elemento]
-    else:
-        return
+
 
 
 
