@@ -133,7 +133,9 @@ $('.img').click(function(){
 	$('.img-viewer').css("display","block")
 })
 $('#img-viewer-close').click(function(){
-	$('.img-viewer').css('display','none')
+	$('.img-viewer').css('display','none');
+	$("#imginput").val('')
+	$('.img-viewer-img').attr("src","/view_photo/"+user_img)
 })
 $('.people-container').hover(function(){
 	$(this).css('background-color','#ffff66')
