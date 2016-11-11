@@ -13,3 +13,21 @@ class Post(db.Model):
 	comments = db.IntegerProperty(required=True)
 	visible = db.BooleanProperty(required=True)
 	state = db.BooleanProperty(required=False)
+
+	def submitter_user(nombre):
+		post = Post.all().filter('submitter =', nombre).get()
+		return post
+
+	def buscar_topico(id_elemento, elemento):
+	    cache = memcache.get(elemento)
+	    cantidad =  (cache[elemento].values().topic == id_elemento)
+	    if id_elemento in cache:
+	        return cache[id_elemento]
+
+	def post_cache():
+		post ={}
+		post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
+		for p in post_modificables:
+			post[str(p.key().id())] = p
+		memcache.set("post_cache", post)
+		return post

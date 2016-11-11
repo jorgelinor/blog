@@ -136,6 +136,7 @@ class Admin_info(handler.Handler):
                 if info is None:
                     createquerty(action)
                     info = memcache.get(action)
+                buscar_topico('Animales',action)
                 informacion = diccionarisarcache(info,action)
                 self.write(json.dumps(informacion))
             else:
@@ -225,10 +226,13 @@ class Admin_submit(handler.Handler):
         
 
 #encuentra los post o usuario y comentario por el id
-def buscar(id_elemento, elemento):
-    cache = memcache.get(elemento)
-    if id_elemento in cache:
-        return cache[id_elemento]
+def buscar_topico(id_elemento, elemento):
+        cache = memcache.get(elemento)
+        logging.error(user_comment('carlosdVjyI'))
+        logging.error(submitter_user('carlosdVjyI'))
+        logging.error(cache[elemento].values().topic)
+        # if id_elemento in cache:
+        #     return cache[id_elemento]
 
 
 
@@ -278,17 +282,17 @@ def diccionarisarcache(info,cual):
 # crea el query deacuerdo ala info pedidad por el admin
 def createquerty(content):
     # comentario reportados
-    if content == "comments_reported_cache":
+    if content == "comments_cache":
         comments = {}
         banned_comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created desc")
         for p in banned_comments:
             comments[str(p.key().id())] = p
-        memcache.set("comments_reported_cache", comments)
+        memcache.set("comments_cache", comments)
         # logging.error(comments)
         return comments
 
     #solicitud de modiicar un post post
-    elif content == 'post_modificable_cache':
+    elif content == 'post_cache':
         post ={}
         post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
         for p in post_modificables:

@@ -10,3 +10,23 @@ class Comment(db.Model):
 	reported = db.BooleanProperty(required=True)
 	razon = db.ListProperty(str,required=True)
 	state= db.BooleanProperty(required=False)
+
+
+
+	def user_comment(nombre):
+		comment = Comment.all().filter('submitter =', nombre).get()
+		return comment
+
+	# def comment_repost():
+	# 	reported= Comment.all().filter('reported =', True)
+
+	def createquerty(content):
+    # comentario cre el cache para el content de comments
+	    if content == "comments_cache":
+	        comments = {}
+	        banned_comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created desc")
+	        for p in banned_comments:
+	            comments[str(p.key().id())] = p
+	        memcache.set("comments_cache", comments)
+	        # logging.error(comments)
+	        return comments
