@@ -249,7 +249,7 @@ def diccionarisarcache(info,cual):
 
 #         users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
 
-<<<<<<< HEAD
+
 #         for p in users_modificables:
 #             users[str(p.key().id())] = p
 #         memcache.set("user_cache", users)
@@ -257,4 +257,3 @@ def diccionarisarcache(info,cual):
 
 
 
-=======
