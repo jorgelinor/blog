@@ -3,9 +3,15 @@
 	<div id="user-holder" style="z-index: 1">
 		<div><b id="nickname">{{profile.displayName}}</b></div><br><br>
 		{%if profile.img%}
-			<img class="img" src="/view_photo/{{profile.img}}" style="width: 100px;height: 100px;float: left">
+		<div class="img">
+			<img class="img" src="/view_photo/{{profile.img}}">
+			<div id="hover-view"></div>
+		</div>
 		{%else%}
-			<img class="img" src="https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg" style="width: 100px;height: 100px;float: left">
+		<div class="img">
+			<img class="img" src="http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg">
+			<div id="hover-view"></div>
+		</div>
 		{%endif%}
 		<div id="user-info">
 			{%if modificable == True%}

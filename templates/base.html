@@ -3,7 +3,7 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="/css/styles.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<title>{{pagename}} - Blog</title>
 </head>
 <body>
@@ -17,7 +17,11 @@
 		{%if user%}
 			<ul class="menu">
 				{%if user.user_type == "admin"%}
-						<a href="/admin">Admin Panel</a>
+					<li><a href="/admin">Admin Panel</a>
+						<ul>
+							<li><a href="/_stats">Graficos de posts</li>
+						</ul>
+					</li>
 				{%endif%}
 				<li><a href="/newpost">Postear</a></li>
 				<li><a href="/logout">Salir</a></li>
@@ -26,24 +30,17 @@
 					{%if user.img%}
 						<a style="height: 35px" href="/profile"><img src='/view_photo/{{user.img}}' class="profile-pic">
 					{%else%}
-						<a style="height: 35px" href="/profile"><img src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg' class="profile-pic">
+						<a style="height: 35px" href="/profile"><img src='http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg' class="profile-pic">
 					{%endif%}</a>
 					<ul>
-						<li><a href="/profile/_edit">Modificar perfil</a><hr></li>
-						<li><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
-						<li><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
-						<li><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
+						<li class="prof-li"><a href="/profile/_edit">Modificar perfil</a><hr></li>
+						<li class="prof-li"><a href="/profile/_editpass">Cambiar contrasena</a><hr></li>
+						<li class="prof-li"><a href="/profile/_viewposts?u={{user.displayName}}">Mis publicaciones</a><hr></li>
+						<li class="prof-li"><a href="/profile/_viewcomments?u={{user.displayName}}">Mis comentarios</a><hr></li>
 					</ul>
 				</li>
 			</ul>
 	</div>
-			{%if user.banned_from_posting and user.banned_from_comments%}
-				<div id="banned-error">Atencion: No puedes postear ni comentar porque se te han quitado los derechos.</div>
-			{%elif user.banned_from_posting%}
-				<div id="banned-error">Atencion: No puedes postear porque se te han quitado los derechos.</div>
-			{%elif user.banned_from_comments%}
-				<div id="banned-error">Atencion: No puedes comentar porque se te han quitado los derechos.</div>
-			{%endif%}
 		{%else%}
 			<ul class="menu">
 				<li><a href="/signup">Registrar</a></li>   
@@ -86,9 +83,12 @@
 		<div id="loading" style="position:fixed;bottom:-120px;left:520px;color:blue;font-weight:bold;"></div>
 	{%if profile%}
 		{%if profile.img%}
+		<script type="text/javascript">
+			var user_img = '{{profile.img}}'
+		</script>
 			<div class="img-viewer"><img class="img-viewer-img" src='/view_photo/{{profile.img}}'>
 		{%else%}
-			<div class="img-viewer"><img class="img-viewer-img" src='https://image.freepik.com/iconos-gratis/usuario-masculino-foto-de-perfil_318-37825.jpg'>
+			<div class="img-viewer"><img class="img-viewer-img" src='http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg'>
 		{%endif%}
 			<label id="img-viewer-close">Cerrar</label>
 		{%if modificable == True%}
@@ -102,5 +102,14 @@
 	<script src="/js/jquery.js"></script>
 	<script src="/js/javascript.js"></script>
 
-</body>
+</body><footer>
+		{%if user%}
+			{%if user.banned_from_posting and user.banned_from_comments%}
+				<div id="banned-error">Atencion: No puedes postear ni comentar porque se te han quitado los derechos.</div>
+			{%elif user.banned_from_posting%}
+				<div id="banned-error">Atencion: No puedes postear porque se te han quitado los derechos.</div>
+			{%elif user.banned_from_comments%}
+				<div id="banned-error">Atencion: No puedes comentar porque se te han quitado los derechos.</div>
+			{%endif%}
+		{%endif%}</footer>
 </html>

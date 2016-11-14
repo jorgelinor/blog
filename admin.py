@@ -60,64 +60,6 @@ class PostRequest(handler.Handler):
             self.redirect("/login")
         self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
 
-
-class Users(handler.Handler):
-    def get(self):
-        user = None
-        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            if user.user_type == "admin":
-                users = self.get_data("users_admin",db.GqlQuery("select * from User"))
-                profile = self.get_data(self.request.get("u"),db.GqlQuery("select * from User where user_id='"+self.request.get("u")+"'"))
-                if len(list(profile))>0:
-                    profile = list(profile)[0]
-                    changed = False
-                    if self.request.get("action"):
-                        if self.request.get("action") == "ascend":
-                            profile.user_type = "admin"
-                            changed = True
-                        if self.request.get("action") == "descend":
-                            profile.user_type = "user"
-                            changed = True
-                        if self.request.get("action") == "ban_posting":
-                            profile.banned_from_posting = True
-                            changed = True
-                        if self.request.get("action") == "allow_posting":
-                            profile.banned_from_posting = False
-                            changed = True
-                        if self.request.get("action") == "ban_comments":
-                            profile.banned_from_comments = True
-                            changed = True
-                        if self.request.get("action") == "allow_comments":
-                            profile.banned_from_comments = False
-                            changed = True
-                        if changed == True:
-                            memcache.delete('user_'+str(profile.key().id()))
-                            profile.put()
-                    self.redirect("/admin/users")
-                else:
-                    messages = self.GetMessages(actualizar=False,persona=user)
-                    self.render("users.html",users=users,pagename="Panel de usuarios", user=user,recent_msg=messages)
-            else:
-                self.redirect("/")
-        else:
-            self.redirect("/login")
-
-class Reports(handler.Handler):
-    def get(self):
-        user = None
-        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            if user.user_type == "admin":
-                messages = self.GetMessages(actualizar=False,persona=user)
-                reported_comments = self.get_data("reported_comments",db.GqlQuery('select * from Comment where reported=True'))
-                self.render('reported.html',user=user,pagename='Reportes',comments=list(reported_comments),recent_msg=messages)
-            else:
-                self.redirect('/')
-        else:
-            self.redirect('/login')
-
-
 # fabian
 # 
 # 
@@ -307,6 +249,7 @@ def diccionarisarcache(info,cual):
 
 #         users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
 
+<<<<<<< HEAD
 #         for p in users_modificables:
 #             users[str(p.key().id())] = p
 #         memcache.set("user_cache", users)
@@ -314,3 +257,4 @@ def diccionarisarcache(info,cual):
 
 
 
+=======

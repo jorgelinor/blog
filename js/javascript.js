@@ -26,8 +26,36 @@ var deactivate = function() {
 	$("#bandeja").css("background-color", "none")
 	$("#inbox-link").attr("onclick","activate()")
 }
+function setCookie(name,value,days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
 
+function getCookie(name){
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+
+function eraseCookie(name) {
+    createCookie(name,"",-1);
+}
 function load_data(posts,mios,request,limit) {
+	if (getCookie("limit")!=null){
+		if (mios=="True"){
+			var limit = parseInt(getCookie("limit").split("|")[0])
+		}
+	}
 	lim = limit
 	$(".page-content").empty();
 	for (post in posts.slice(0,limit)) {
@@ -76,14 +104,20 @@ function load_data(posts,mios,request,limit) {
 			}
 			$('.page-content').append("<br><hr>")
 		}
-		/*if (posts[post].visible == true||mios=='True'){
-			$('.page-content').append("<br><hr>")
-		}*/
+	}
+	if (getCookie("limit") != null){
+		if (mios=="True"){
+			$(window).scrollTop(parseInt(getCookie("limit").split("|")[1]))
+		}
 	}
 	$(window).scroll(function() {
+		if (mios=="True") {
+			setCookie('limit',limit+"|"+$(window).scrollTop())
+		}
 		if($(window).scrollTop() == $(document).height() - $(window).height()) {
 		    if (posts.length > lim){
 			    lim = limit + 5
+			    setCookie('limit',lim+"|"+$(window).scrollTop())
 			    $("#loading").empty()
 				$("#loading").append("<img src='http://i.stack.imgur.com/h6viz.gif' alt='loading'></img>")
 			    setTimeout(function(){
@@ -98,11 +132,20 @@ function load_data(posts,mios,request,limit) {
 $('.img').click(function(){
 	$('.img-viewer').css("display","block")
 })
-$('#img-viewer-close').click(function(){
-	$('.img-viewer').css('display','none')
+$('.img').hover(function(){
+	$('#hover-view').css('opacity','0.3')
+},function(){
+	$('#hover-view').css('opacity','0')
 })
+$('#img-viewer-close').click(function(){
+	$('.img-viewer').css('display','none');
+	$('.img-viewer-img').attr('src','/view_photo/'+user_img);
+	$('#imginput').val('')
+})
+
 $('.people-container').hover(function(){
 	$(this).css('background-color','#ffff66')
 },function(){
 	$(this).css('background-color','#ffffff')
 })
+
