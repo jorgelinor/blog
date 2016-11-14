@@ -1,10 +1,21 @@
+$('.Seleccion').click().val('topic', function(){
+    $('topic').removeAttr('disabled');
+    $('user').attr('disabled');
+});
+$('.Seleccion').click().val('user', function(){
+    $('user').removeAttr('disabled');
+    $('topic').attr('disabled');
+});
+
+
+
 $("#asd").click(function() {
     console.log("asdfasdfsaf");
     $.ajax({
         url: '/admin/Admin_info',
         type: 'GET',
         dataType: 'json',
-        data: { 'action': 'comments_reported_cache'}
+        data: { 'action': 'comments_cache'}
     }).done(function(data) {
         $('#contenido').empty();
         $('#error').hide();
@@ -32,7 +43,7 @@ $("#modificacion").click(function() {
         url: '/admin/Admin_info',
         type: 'GET',
         dataType: 'json',
-        data: { 'action': 'post_modificable_cache'}
+        data: { 'action': 'post_cache'}
     }).done(function(data) {
         $('#contenido').empty();
         $('#error').hide();
@@ -60,7 +71,7 @@ $("#administracion_user").click(function() {
         url: '/admin/Admin_info',
         type: 'GET',
         dataType: 'json',
-        data: { 'action': 'user_permisos_cache'}
+        data: { 'action': 'user_cache'}
     })
     .done(function(data) {
         $('#contenido').empty();

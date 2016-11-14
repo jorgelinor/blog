@@ -16,16 +16,16 @@
                         <!-- selector de topicos para post -->
                         <div class="well">
                         <div class="row">
-	                        <div class="col-lg-6">
-		                        <label><input type="radio" name="Seleccion" value="topic">Posts</label>
+                        <label><input type="radio" class="Seleccion" name="seleccion" value="topic" >Posts</label>
+	                        <div class="col-lg-6" disabled>
 		                        <label><input type="radio" name="topic" value="Animales">Animales</label>
 								<label><input type="radio" name="topic" value="Tecnologia">Tecnologia</label>
 								<label><input type="radio" name="topic" value="Preguntas">Preguntas</label>
 								<label><input type="radio" name="topic" value="Musica">Musica</label>
 								<label><input type="radio" name="topic" value="Programacion">Programacion</label>
 							</div>
-							<div class="col-lg-6">
-								<label><input type="radio" name="Seleccion" value="user">Users</label>
+							<label><input type="radio" class="Seleccion" name="seleccion" value="user">Users</label>
+							<div class="col-lg-6" disabled>
 		                        <label><input type="radio" name="user" value="admin">Admin</label>
 		                        <label><input type="radio" name="user" value="user">User</label>
 							</div>
@@ -36,7 +36,7 @@
                     <!-- /.input-group -->
                 </div>
             </div>
-	<div >
+	<div class="col-md-8">
 	<button class="admin-link" id='asd'>Reportes recientes</button>
 	<button class="admin-link" id='modificacion'>Pedidos de modificacion de posts</button>
 	<button class="admin-link" id='administracion_user'>Administracion de usuarios</button>
@@ -44,7 +44,7 @@
 	</div>
 	<div id="posts" class="col-md-8">
 	<h3 id='error' style='color:#c15646' hidden>No hay informacion que verificar</h3>
-    <form type='POST' id='contenido' class="col-md-8">
+    <form type='POST' id='contenido' >
         <!-- contenido se agrega con ajax -->
     </form>
     <br>

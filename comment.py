@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 class Comment(db.Model):
 	title = db.TextProperty(required=True)
@@ -17,8 +18,8 @@ class Comment(db.Model):
 		comment = Comment.all().filter('submitter =', nombre).get()
 		return comment
 
-	# def comment_repost():
-	# 	reported= Comment.all().filter('reported =', True)
+	def comment_repost():
+		reported= Comment.all().filter('reported =', True).get()
 
 	def createquerty(content):
     # comentario cre el cache para el content de comments

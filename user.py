@@ -1,5 +1,5 @@
 #Esta es la clase que sirve como objeto para el usuario y sus propiedades
-
+from google.appengine.api import memcache
 from google.appengine.ext import db
 
 class User(db.Model):
@@ -27,6 +27,19 @@ class User(db.Model):
 		u = User.all().filter('displayName =', name).get()
 		return u
 
+
+	def busqueda_ser(nombre):
+		listas={}
+		users = memcache.get("user_cache")
+		if users is None:
+			cache=user_cache()
+			users = cache["user_cache"]
+		for user in users:
+			if nombre in user.user_id:
+				listas[str(user.key().id())]= user
+		return listas
+
+
 	def user_cache():
 		users ={}
 
@@ -34,5 +47,5 @@ class User(db.Model):
 
 		for p in users_modificables:
 			users[str(p.key().id())] = p
-		memcache.set("user_permisos_cache", users)
+		memcache.set("user_cache", users)
 		return users

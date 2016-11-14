@@ -1,5 +1,7 @@
 #Esta es la clase que sirve como objeto para el post y sus propiedades
 from google.appengine.ext import db
+from google.appengine.api import memcache
+
 
 class Post(db.Model):
 	topic = db.StringProperty(required=False)
@@ -19,10 +21,13 @@ class Post(db.Model):
 		return post
 
 	def buscar_topico(id_elemento, elemento):
-	    cache = memcache.get(elemento)
-	    cantidad =  (cache[elemento].values().topic == id_elemento)
-	    if id_elemento in cache:
-	        return cache[id_elemento]
+		topic={}
+		cache = memcache.get(elemento)
+		cantidad =  (cache[elemento].values().topic == id_elemento)
+		for post in cache:
+			if id_elemento == post.topic:
+				topic[str(post.key().id())]=post
+		return topic
 
 	def post_cache():
 		post ={}
