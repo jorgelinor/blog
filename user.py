@@ -1,6 +1,8 @@
 #Esta es la clase que sirve como objeto para el usuario y sus propiedades
 from google.appengine.api import memcache
 from google.appengine.ext import db
+import logging
+
 
 class User(db.Model):
 	user_type = db.StringProperty(required=True)
@@ -39,6 +41,17 @@ def busqueda_user(nombre):
 			listas[str(user.key().id())]= user
 	return listas
 
+# admin info para buscar los usuarios que solicitaron cambio de 
+def user_cambio():
+	reported = {}
+	users= memcache.get("user_cache")
+	
+	for user in users:
+		logging.error(users[user].state)
+		if users[user].solicitud_cambio == True and users[user].state != True:
+			reported[str(users[user].key().id())]=users[user]
+	return reported
+
 
 def user_cache():
 	users ={}
@@ -48,4 +61,3 @@ def user_cache():
 	for p in users_modificables:
 		users[str(p.key().id())] = p
 	memcache.set("user_cache", users)
-	return users

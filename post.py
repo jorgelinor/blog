@@ -1,6 +1,7 @@
 #Esta es la clase que sirve como objeto para el post y sus propiedades
 from google.appengine.ext import db
 from google.appengine.api import memcache
+import logging
 
 
 class Post(db.Model):
@@ -16,10 +17,8 @@ class Post(db.Model):
 	visible = db.BooleanProperty(required=True)
 	state = db.BooleanProperty(required=False)
 
-def submitter_user(nombre):
-	post = Post.all().filter('submitter =', nombre).get()
-	return post
 
+# busca el post por topico
 def buscar_topico(id_elemento, elemento):
 	topic={}
 	cache = memcache.get(elemento)
@@ -29,11 +28,21 @@ def buscar_topico(id_elemento, elemento):
 			topic[str(post.key().id())]=post
 	return topic
 
+# busca los post que se solicitan modificacion o permisos
+def post_cambio():
+	reported = {}
+	posts = memcache.get("post_cache")
 
+	for post in posts:
+		if posts[post].modificable == 'pending' and posts[post].state == False:
+			reported[str(posts[post].key().id())]=posts[post]
+	return reported
+
+
+# crea memcache de los post
 def post_cache():
 	post ={}
 	post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
 	for p in post_modificables:
 		post[str(p.key().id())] = p
 	memcache.set("post_cache", post)
-	return post

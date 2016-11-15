@@ -74,14 +74,24 @@ class Admin_info(handler.Handler):
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
 
             if user.user_type == "admin":
+                info={}
                 action = self.request.GET.get('action')
-                info = memcache.get(action)
+                logging.error(action)
+                if action == 'comments_cache':
+                    info = comment_report()
+
+                elif action =='user_cache':
+                    logging.error(action)
+                    info = user_cambio()
+
+                elif action =='post_cache':
+                    info = post_cambio()
+                
                 if info is None:
                     post_cache()
                     user_cache()
                     comments_cache()
                     info = memcache.get(action)
-
                 informacion = diccionarisarcache(info,action)
                 self.write(json.dumps(informacion))
             else:
@@ -186,7 +196,7 @@ def diccionarisarcache(info,cual):
     #info es la cache creada solo con la informacion de echa
     if cual == 'comments_cache':
         for partes in info:
-            if info[partes].reported == True:
+            if info[partes].reported == True and info[partes].state == False:
                 informacion[str(info[partes].key().id())]={'comment_id':str(info[partes].key().id()),
                                                           'title':info[partes].title,
                                                           'content':info[partes].content,
@@ -198,7 +208,7 @@ def diccionarisarcache(info,cual):
                                                         }
     elif cual == 'post_cache':
         for partes in info:
-            if info[partes].modificable == 'pending':
+            if info[partes].modificable == 'pending' and info[partes].state == False:
                 informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
                                                           'topic':info[partes].topic,
                                                           'title':info[partes].title,
@@ -211,7 +221,7 @@ def diccionarisarcache(info,cual):
                                                         }
     elif cual == 'user_cache':
         for partes in info:
-            if info[partes].solicitud_cambio == True:
+            if info[partes].solicitud_cambio == True and info[partes].state == False:
                 informacion[str(info[partes].key().id())]={"userid":str(info[partes].key().id()),
                                                 "user_type":info[partes].user_type,
                                                 "user_id":info[partes].user_id,
