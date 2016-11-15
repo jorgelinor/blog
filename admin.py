@@ -76,7 +76,12 @@ class Admin_info(handler.Handler):
             if user.user_type == "admin":
                 info={}
                 action = self.request.GET.get('action')
-                logging.error(action)
+                info = memcache.get(action)
+                if info is None:
+                    post_cache()
+                    user_cache()
+                    comments_cache()
+                    
                 if action == 'comments_cache':
                     info = comment_report()
 
@@ -86,12 +91,7 @@ class Admin_info(handler.Handler):
 
                 elif action =='post_cache':
                     info = post_cambio()
-                
-                if info is None:
-                    post_cache()
-                    user_cache()
-                    comments_cache()
-                    info = memcache.get(action)
+    
                 informacion = diccionarisarcache(info,action)
                 self.write(json.dumps(informacion))
             else:
