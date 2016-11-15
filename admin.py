@@ -76,8 +76,8 @@ class Admin_info(handler.Handler):
             if user.user_type == "admin":
                 info={}
                 action = self.request.GET.get('action')
-                info = memcache.get(action)
-                if info is None:
+                informacion= memcache.get(action)
+                if informacion is None:
                     post_cache()
                     user_cache()
                     comments_cache()
@@ -99,6 +99,8 @@ class Admin_info(handler.Handler):
         else:
             self.redirect('/login')
 
+    def post(self):
+        pass
 
 # clase de admind para manejar los reportes de los comentario reportados para determinar si son validos de mostar o no 
 # muestra los post de los cuales los creadores desean modifcar o actualizar con informacion
