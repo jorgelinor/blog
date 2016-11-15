@@ -58,6 +58,11 @@
 		{%endif%}
 		<br>
 		{%if newcomment==True%}
+			<script type='text/javascript'>
+				$(document).ready(function(){
+					$(window).scrollTop(document.body.scrollHeight)
+				})
+			</script>
 			<form method="post">
 				<textarea id="comment" name="content">{{content}}</textarea>
 				<button type="submit">Enviar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
