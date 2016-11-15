@@ -1,18 +1,56 @@
 {%extends "base.html"%}
 {%block content%}
+<div class="col-md-8">
+    <button class="admin-link" id='asd'>Reportes recientes</button>
+    <button class="admin-link" id='modificacion'>Pedidos de modificacion de posts</button>
+    <button class="admin-link" id='administracion_user'>Administracion de usuarios</button>
+    <br><br>
 
-	<button class="admin-link" id='asd'>Reportes recientes</button>
-	<button class="admin-link" id='modificacion'>Pedidos de modificacion de posts</button>
-	<button class="admin-link" id='administracion_user'>Administracion de usuarios</button>
-	<br><br>
-	
-	<div id="posts" ALIGN="center" >
-	<h3 id='error' style='color:#c15646' hidden>No hay informacion que verificar</h3>
-    <form type='POST' id='contenido'>
+    <div id="posts" class="col-md-8">
+    <h3 id='error' style='color:#c15646' hidden>No hay informacion que verificar</h3>
+    <form type='POST' id='contenido' class="col-md-8">
         <!-- contenido se agrega con ajax -->
     </form>
     <br>
-	</div>
+    </div>
+</div>
+	<!-- Blog Sidebar Widgets Column -->
+<div class="col-md-4">
+    <!-- Blog Search Well -->
+    <div class="well">
+        <h4>Blog Search</h4>
+        <div class="input-group">
+        <input type="text" class="form-control">
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="button">
+            <span class="glyphicon glyphicon-search"></span></button>
+        </span>
+                        <!-- selector de topicos para post -->
+        <div class="well">
+            <div class="row">
+                <input type="radio" class="Seleccion" name="seleccion" value="topic" >Posts
+	            <div class="col-lg-6" id='topicos'>
+		            <label><input type="radio" name="topic" value="Animales">Animales</label>
+					<label><input type="radio" name="topic" value="Tecnologia">Tecnologia</label>
+					<label><input type="radio" name="topic" value="Preguntas">Preguntas</label>
+					<label><input type="radio" name="topic" value="Musica">Musica</label>
+					<label><input type="radio" name="topic" value="Programacion">Programacion</label>
+				</div>
+				<input type="radio" class="Seleccion" name="seleccion" value="user">Users
+					<div class="col-lg-6" id='users'>
+                        <label><input type="radio" name="user" value="admin">Admin</label>
+                        <label><input type="radio" name="user" value="user">User</label>
+					</div>
+				</div>
+                        <!-- end topicos -->
+            </div>
+        </div>
+                    <!-- /.input-group -->
+    </div>
+</div>
+	
+
 <!-- scripts -->
 <script src="/js/admininfo.js"></script>
+<!-- scripts -->
 {%endblock%}

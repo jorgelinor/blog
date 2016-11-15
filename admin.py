@@ -2,8 +2,9 @@ from google.appengine.ext import db
 from google.appengine.api import memcache
 import handler
 import hashlib
-from user import User
-from post import Post
+from user import *
+from post import *
+from comment import *
 import time
 from message import Message
 from comment import Comment
@@ -73,21 +74,33 @@ class Admin_info(handler.Handler):
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
 
             if user.user_type == "admin":
+                info={}
                 action = self.request.GET.get('action')
-                logging.error(action)
-                info = memcache.get(action)
-                logging.error(info)
-                logging.error('creando passs')
-                if info is None:
-                    createquerty(action)
-                    info = memcache.get(action)
-                logging.error(action)
+                informacion= memcache.get(action)
+                if informacion is None:
+                    post_cache()
+                    user_cache()
+                    comments_cache()
+                    
+                if action == 'comments_cache':
+                    info = comment_report()
+
+                elif action =='user_cache':
+                    logging.error(action)
+                    info = user_cambio()
+
+                elif action =='post_cache':
+                    info = post_cambio()
+    
                 informacion = diccionarisarcache(info,action)
                 self.write(json.dumps(informacion))
             else:
                 self.redirect('/')
         else:
             self.redirect('/login')
+
+    def post(self):
+        pass
 
 # clase de admind para manejar los reportes de los comentario reportados para determinar si son validos de mostar o no 
 # muestra los post de los cuales los creadores desean modifcar o actualizar con informacion
@@ -105,11 +118,11 @@ class Admin_submit(handler.Handler):
                 ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
                 query=''
                 if ins == 'come':
-                    query='comments_reported_cache'
+                    query='comments_cache'
                 elif ins == 'post':
-                    query='post_modificable_cache'
+                    query='post_cache'
                 elif ins == 'user':
-                    query='user_permisos_cache'
+                    query='user_cache'
 
                 info = buscar(id_object , query)
                 self.render('upload.html',info=info, query=query,user=user)
@@ -118,72 +131,64 @@ class Admin_submit(handler.Handler):
         else:
             self.redirect('/login')
 
-    def post(self):
-        user = None
-        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            if user.user_type == "admin":
-                query= self.request.get('query')
-                if query == 'comments_reported_cache':
-                    coment_id = self.request.get('comment_id')
-                    comments_reported = self.request.get('report')
+    def post(self, id_obj):
+        logging.error('entro al handler post para guardar')
+        ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
+        logging.error('este el el query '+ins+' and '+id_object)
+        if ins == 'come':
+            # coment_id = self.request.get('comment_id')
+            comments_reported = self.request.get('report')
+            logging.error("entro en el handler "+comments_reported)
 
-                    cache = buscar(coment_id,query)
-                    if cache and comments_reported == 'True':
-                        cache.show = False
-                        cache.state = True
-                        cache.put()
-                        self.redirect('/admin')
-                    else:
-                        self.write('no en contrado')
-
-                elif query == 'post_modificable_cache':
-
-                    post_id = self.request.get('post_id')
-                    modificable = self.request.get('permiso')
-
-                    cache = buscar(post_id,query)
-                    if cache and modificable:
-                        cache.modificable = modificable
-                        cache.state = True
-                        cache.put()
-                        self.redirect('/admin')
-                    else:
-                        self.write('no en contrado')
-
-                elif query == 'user_permisos_cache':
-
-                    user_id = self.request.get('userid')
-                    user_type = self.request.get('user_type')
-                    banned_from_comments = self.request.get('banned_from_comments')
-                    banned_from_posting = self.request.get('banned_from_posting')
-
-                    cache = buscar(user_id,query)
-                    if cache and user_type:
-                        cache.user_type = user_type
-                        cache.banned_from_posting = banned_from_posting
-                        cache.banned_from_comments = banned_from_comments
-                        cache.state = True
-                        cache.put()
-                        self.redirect('/admin')
-                    else:
-                        self.write('no en contrado')
+            cache = buscar(id_object, 'comments_cache')
+            if cache and comments_reported == 'on':
+                cache.show = False
+                cache.state = True
+                cache.put()
+                logging.error('guardo la informacion')
+                self.redirect('/admin')
             else:
-                self.redirect('/')
-        else:
-            self.redirect('/login')
+                cache.show = True
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+
+        elif ins == 'post':
+            modificable = self.request.get('permiso')
+            cache = buscar(id_object, 'post_cache')
+            if cache and modificable:
+                cache.modificable = modificable
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+            else:
+                self.redirect('/admin')
+        elif ins == 'user':
+            user_type = self.request.get('user_type')
+            banned_from_comments = self.request.get('banned_from_comments')
+            banned_from_posting = self.request.get('banned_from_posting')
+
+            cache = buscar(id_object, 'user_cache')
+            if cache and user_type and banned_from_comments and banned_from_posting:
+                cache.user_type = user_type
+                cache.banned_from_posting = banned_from_posting
+                cache.banned_from_comments = banned_from_comments
+                cache.state = True
+                cache.put()
+                self.redirect('/admin')
+            else:
+                self.redirect('/admin')
     #     elif query == 'post_reposrted_cache':
     #         pass
         
 
 #encuentra los post o usuario y comentario por el id
 def buscar(id_elemento, elemento):
-    logging.error(id_elemento)
-    cache = memcache.get(elemento)
-    if id_elemento in cache:
-        return cache[id_elemento]
-    else:
-        return
+        cache = memcache.get(elemento)
+        logging.error(cache[elemento].values().topic)
+        if id_elemento in cache:
+            return cache[id_elemento]
+
 
 
 
@@ -191,9 +196,9 @@ def buscar(id_elemento, elemento):
 def diccionarisarcache(info,cual):
     informacion={}
     #info es la cache creada solo con la informacion de echa
-    if cual == 'comments_reported_cache':
+    if cual == 'comments_cache':
         for partes in info:
-            if info[partes].reported == True:
+            if info[partes].reported == True and info[partes].state == False:
                 informacion[str(info[partes].key().id())]={'comment_id':str(info[partes].key().id()),
                                                           'title':info[partes].title,
                                                           'content':info[partes].content,
@@ -203,9 +208,9 @@ def diccionarisarcache(info,cual):
                                                           'reported':info[partes].reported,
                                                           'razon':info[partes].razon,
                                                         }
-    elif cual == 'post_modificable_cache':
+    elif cual == 'post_cache':
         for partes in info:
-            if info[partes].modificable == 'pending':
+            if info[partes].modificable == 'pending' and info[partes].state == False:
                 informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
                                                           'topic':info[partes].topic,
                                                           'title':info[partes].title,
@@ -216,9 +221,9 @@ def diccionarisarcache(info,cual):
                                                           'modificable':info[partes].modificable,
                                                           'razon':info[partes].razon
                                                         }
-    elif cual == 'user_permisos_cache':
+    elif cual == 'user_cache':
         for partes in info:
-            if info[partes].solicitud_cambio == True:
+            if info[partes].solicitud_cambio == True and info[partes].state == False:
                 informacion[str(info[partes].key().id())]={"userid":str(info[partes].key().id()),
                                                 "user_type":info[partes].user_type,
                                                 "user_id":info[partes].user_id,
@@ -230,34 +235,38 @@ def diccionarisarcache(info,cual):
                                                         }
     return informacion                    
 # crea el query deacuerdo ala info pedidad por el admin
-def createquerty(content):
-    # comentario reportados
-    if content == "comments_reported_cache":
-        comments = {}
-        banned_comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created desc")
-        for p in banned_comments:
-            comments[str(p.key().id())] = p
-        memcache.set("comments_reported_cache", comments)
-        # logging.error(comments)
-        return comments
+# def createquerty(content):
+#     # comentario reportados
+#     if content == "comments_cache":
+#         comments = {}
+#         banned_comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created desc")
+#         for p in banned_comments:
+#             comments[str(p.key().id())] = p
+#         memcache.set("comments_cache", comments)
+#         # logging.error(comments)
+#         return comments
 
-    #solicitud de modiicar un post post
-    elif content == 'post_modificable_cache':
-        post ={}
-        post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
-        for p in post_modificables:
-            post[str(p.key().id())] = p
-        memcache.set("post_modificable_cache", post)
-        return post
+#     #solicitud de modiicar un post post
+#     elif content == 'post_cache':
+#         post ={}
+#         post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
+#         for p in post_modificables:
+#             post[str(p.key().id())] = p
+#         memcache.set("post_cache", post)
+#         return post
 
-    # permisos para usuarios
-    elif content == 'user_permisos_cache':
+#     # permisos para usuarios
+#     elif content == 'user_permisos_cache':
     
-        users ={}
+#         users ={}
 
-        users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
+#         users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
 
-        for p in users_modificables:
-            users[str(p.key().id())] = p
-        memcache.set("user_permisos_cache", users)
-        return users
+
+#         for p in users_modificables:
+#             users[str(p.key().id())] = p
+#         memcache.set("user_cache", users)
+#         return users
+
+
+
