@@ -25,19 +25,33 @@
 					<div id="post-comment-title">{{comment.title}}: </div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div>
 					<div>{{comment.created_str}}</div>
 					<br>
-					{%if post.submitter == 'ti'%}
+					{%if comment.submitter == 'ti'%}
 						<a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}" id="edit-link">Borrar</a>
 					{%endif%}
 					{%if comment.submitter.split("|")[1] != "False"%}
 						{%if comment.submitter.split('|')[0]=='ti'%}
 							<a id="edit-link" href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a>
 						{%else%}
-							<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
+							{%if post.submitter != 'ti'%}
+								<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
+							{%endif%}
 						{%endif%}
 						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
 					{%else%}
 						<div id="comment-submitter-deleted">Enviado por: {{comment.submitter.split("|")[0]}}</div><br>
 					{%endif%}
+				</div>
+				<div style="display:none" id="hidden-edit-{{comment.key().id()}}">
+					<form method="post">
+						<textarea id="comment" name="content">{{comment.content}}</textarea>
+						<button type="submit">Guardar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
+					</form>
+				</div>
+				<div style="display:none" id="hidden-report-{{comment.key().id()}}">
+					<form method="post">
+						<input type="text" id="comment" name="razon" placeholder="Escribe una razon valida"></input>
+						<button type="submit">Reportar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
+					</form>
 				</div>
 				<hr>
 			{%endfor%}
@@ -46,21 +60,19 @@
 		{%if newcomment==True%}
 			<form method="post">
 				<textarea id="comment" name="content">{{content}}</textarea>
-				<button type="submit">Enviar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo comentar</button>
+				<button type="submit">Enviar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
 			</form>
 		{%endif%}
 		{%if editcomment==True%}
-			<form method="post">
-				<textarea id="comment" name="content">{{comment.content}}</textarea>
-				<button type="submit">Guardar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo guardar</button>
-			</form>
+			<script type='text/javascript'>
+				$("#hidden-edit-"+"{{comment.key().id()}}").css("display","block")
+			</script>
 		{%endif%}
 
 		{%if reportcomment==True%}
-			<form method="post">
-				<input type="text" id="comment" name="razon" placeholder="Escribe una razon valida"></input>
-				<button type="submit">Reportar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo hacer esto</button>
-			</form>
+			<script type='text/javascript'>
+				$("#hidden-report-"+"{{comment.key().id()}}").css("display","block")
+			</script>
 		{%endif%}
 
 <br>

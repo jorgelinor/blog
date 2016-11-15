@@ -35,7 +35,7 @@ class Signup(handler.Handler):
             user_ob = user_query[0]
         if not(username[0] and tel[0] and len(date)>7 and email and password[0] and verify and email[0] and not user_ob):
             if not username[0]:
-                erroruser = 'Invalid username'
+                erroruser = 'Invalid u'
             if user_ob:
                 erroruser = 'Username already exists'
             if not password[0]:
