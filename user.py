@@ -18,34 +18,34 @@ class User(db.Model):
 	state = db.BooleanProperty(required=False)
 	img = db.StringProperty(required=False)
 
-	@classmethod
-	def by_id(cls, uid):
-		return User.get_by_id(uid, parent = users_key())
-
-	@classmethod
-	def by_name(cls, name):
-		u = User.all().filter('displayName =', name).get()
-		return u
+	
+def by_id(cls, uid):
+	return User.get_by_id(uid, parent = users_key())
 
 
-	def busqueda_ser(nombre):
-		listas={}
-		users = memcache.get("user_cache")
-		if users is None:
-			cache=user_cache()
-			users = cache["user_cache"]
-		for user in users:
-			if nombre in user.user_id:
-				listas[str(user.key().id())]= user
-		return listas
+def by_name(cls, name):
+	u = User.all().filter('displayName =', name).get()
+	return u
 
 
-	def user_cache():
-		users ={}
+def busqueda_user(nombre):
+	listas={}
+	users = memcache.get("user_cache")
+	if users is None:
+		cache=user_cache()
+		users = cache["user_cache"]
+	for user in users:
+		if nombre in user.user_id:
+			listas[str(user.key().id())]= user
+	return listas
 
-		users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
 
-		for p in users_modificables:
-			users[str(p.key().id())] = p
-		memcache.set("user_cache", users)
-		return users
+def user_cache():
+	users ={}
+
+	users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
+
+	for p in users_modificables:
+		users[str(p.key().id())] = p
+	memcache.set("user_cache", users)
+	return users

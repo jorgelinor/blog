@@ -2,8 +2,9 @@ from google.appengine.ext import db
 from google.appengine.api import memcache
 import handler
 import hashlib
-from user import User
-from post import Post
+from user import *
+from post import *
+from comment import *
 import time
 from message import Message
 from comment import Comment
@@ -76,9 +77,11 @@ class Admin_info(handler.Handler):
                 action = self.request.GET.get('action')
                 info = memcache.get(action)
                 if info is None:
-                    createquerty(action)
+                    post_cache()
+                    user_cache()
+                    comments_cache()
                     info = memcache.get(action)
-                buscar_topico('Animales',action)
+
                 informacion = diccionarisarcache(info,action)
                 self.write(json.dumps(informacion))
             else:
@@ -168,13 +171,11 @@ class Admin_submit(handler.Handler):
         
 
 #encuentra los post o usuario y comentario por el id
-# def buscar_topico(id_elemento, elemento):
-#         cache = memcache.get(elemento)
-#         logging.error(user_comment('carlosdVjyI'))
-#         logging.error(submitter_user('carlosdVjyI'))
-#         logging.error(cache[elemento].values().topic)
-#         if id_elemento in cache:
-#             return cache[id_elemento]
+def buscar(id_elemento, elemento):
+        cache = memcache.get(elemento)
+        logging.error(cache[elemento].values().topic)
+        if id_elemento in cache:
+            return cache[id_elemento]
 
 
 

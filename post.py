@@ -16,23 +16,24 @@ class Post(db.Model):
 	visible = db.BooleanProperty(required=True)
 	state = db.BooleanProperty(required=False)
 
-	def submitter_user(nombre):
-		post = Post.all().filter('submitter =', nombre).get()
-		return post
+def submitter_user(nombre):
+	post = Post.all().filter('submitter =', nombre).get()
+	return post
 
-	def buscar_topico(id_elemento, elemento):
-		topic={}
-		cache = memcache.get(elemento)
-		cantidad =  (cache[elemento].values().topic == id_elemento)
-		for post in cache:
-			if id_elemento == post.topic:
-				topic[str(post.key().id())]=post
-		return topic
+def buscar_topico(id_elemento, elemento):
+	topic={}
+	cache = memcache.get(elemento)
+	cantidad =  (cache[elemento].values().topic == id_elemento)
+	for post in cache:
+		if id_elemento == post.topic:
+			topic[str(post.key().id())]=post
+	return topic
 
-	def post_cache():
-		post ={}
-		post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
-		for p in post_modificables:
-			post[str(p.key().id())] = p
-		memcache.set("post_cache", post)
-		return post
+
+def post_cache():
+	post ={}
+	post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
+	for p in post_modificables:
+		post[str(p.key().id())] = p
+	memcache.set("post_cache", post)
+	return post

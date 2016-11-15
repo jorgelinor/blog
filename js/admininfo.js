@@ -1,12 +1,24 @@
-$('.Seleccion').click().val('topic', function(){
-    $('topic').removeAttr('disabled');
-    $('user').attr('disabled');
+$(document).ready(function() {
+// By Default Disable radio button
+    $(".well").find(':radio[name=topic]').attr('disabled', true);
+    $('#topicos').find(':radio[name=topic]').css('opacity', '.2');
+    $(".well").find(':radio[name=user]').attr('disabled', true);
+    $('#users').find(':radio[name=user]').css('opacity', '.2');// This line is used to lightly hide label for disable radio buttons.
+// Disable radio buttons function on Check Disable radio button.
 });
-$('.Seleccion').click().val('user', function(){
-    $('user').removeAttr('disabled');
-    $('topic').attr('disabled');
+$(':radio[value=topic]').click(function(event) {
+    $(".well").find(':radio[name=user]').attr('disabled', true);
+    $('#users').find(':radio[name=user]').css('opacity', '.3');
+    $(".well").find(':radio[name=topic]').removeAttr('disabled');
+    $('#topicos').find(':radio[name=topic]').css('opacity', '2');
+    
 });
-
+$(':radio[value="user"]').click(function(event) {
+    $(".well").find(':radio[name=topic]').attr('disabled', true);
+    $('#topicos').find(':radio[name=topic]').css('opacity', '.3');
+    $(".well").find(':radio[name=user]').removeAttr('disabled');
+    $('#users').find(':radio[name=user]').css('opacity', '2');
+});
 
 
 $("#asd").click(function() {
@@ -20,6 +32,7 @@ $("#asd").click(function() {
         $('#contenido').empty();
         $('#error').hide();
         $.each(data, function(index, el) {
+            console.log('estado'+el.state);
             if(el.state == False){
                 $('#contenido').append(
                     "<div name='"+el.comment_id+" class='col-md-8'>"
