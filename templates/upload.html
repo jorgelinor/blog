@@ -1,6 +1,6 @@
 {%extends "base.html"%}
 {%block content%}
-	{% if query == 'comments_reported_cache' %}
+	{% if query == 'comments_cache' %}
 		<form method="post" id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8" >
 	        <h3>coment submete by:{{info.submitter}}</h3>
 	        <b> creado: {{info.created}}</b>
@@ -14,7 +14,7 @@
 	        <input type='checkbox' name='report'>Quitar comentario</input>
 	        <input type='submit'>
 	    </form>
-	{% elif query == 'post_modificable_cache' %}
+	{% elif query == 'post_cache' %}
 		<form method="post" name='{{info.post_id}}' id='{{info.post_id}}' class="col-lg-8">
             <h4>post <a href="/{{info.title}}">{{info.title}}</a></h4>
             <p>creado:{{info.created}}</p>
@@ -25,7 +25,7 @@
             <input type='text' name='permiso'>
 	        <input type='submit'>
         </form>
-    {% elif query == 'user_permisos_cache' %}
+    {% elif query == 'user_cache' %}
     	<form method="post" name='{{info.userid}}' id='{{info.userid}}' class="col-lg-8">
             <p>Nombre de usurio:{{info.displayName}}</p>
             <p>Usuario Estado:{{info.user_type}}</p>
