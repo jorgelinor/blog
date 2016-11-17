@@ -19,7 +19,63 @@ $(':radio[value="user"]').click(function(event) {
     $(".well").find(':radio[name=user]').removeAttr('disabled');
     $('#users').find(':radio[name=user]').css('opacity', '2');
 });
+$(":radio[name=topic]").click(function() {
+    var value = $(this).val();
+    $.ajax({
 
+        url: '/admin/load',
+        type: 'GET',
+        dataType: 'json',
+        data: {'topic': 'topic','topico':value},
+    }).done(function(data) {
+        $('#contenido').empty();
+        $('#error').hide();
+
+        $.each(data, function(index, el) {
+            $('#contenido').append(
+                    "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
+                    +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
+                    +"<h4>post <a href="+el.title+">"+el.title+"</a></h4>"
+                    +"<p>created:"+el.created+"</p>"
+                    +"<h3>"+el.topic+"</h3>"
+                    +"<b> creado: "+el.post+" </b>"
+                    +"<b>"+el.razon+"</b><br>"
+                    +"</div>");
+        });
+    }).fail(function() {
+        $('#contenido').empty();
+        $('#error').show();
+        console.log("error");
+    })
+});
+
+$(":radio[name=user]").click(function() {
+    var value = $(this).val();
+    $.ajax({
+        url: '/admin/load',
+        type: 'GET',
+        dataType: 'json',
+        data: {'topic':'user','user': value},
+    }).done(function(data) {
+        $('#contenido').empty();
+        $('#error').hide();
+        
+        $.each(data, function(index, val) {
+            $('#contenido').append("<div id='"+val.userid+"' name='"+val.userid+"' class='col-md-8'>"
+                                        +"<p>Nombre de usurio:"+val.displayName+"</p>"
+                                        +"<p>Usuario Estado:"+val.user_type+"</p>"
+                                        +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"
+                                        +"<p>cambio de permiso para usuario </p>"
+                                        +"<a href=/admin/user_"+val.userid+">someter informacion</a>"
+                                        +"</div>");
+
+        });
+    }).fail(function() {
+        $('#contenido').empty();
+        $('#error').show();
+        console.log("error");
+    })
+});
 
 $("#asd").click(function() {
     console.log("asdfasdfsaf");

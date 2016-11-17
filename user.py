@@ -29,6 +29,14 @@ def by_name(cls, name):
 	u = User.all().filter('displayName =', name).get()
 	return u
 
+def buscar_user_tipe(user_type):
+	listas={}
+	users = memcache.get('user_cache')
+	for user in users:
+		if users[user].user_type == user_type:
+			listas[str(user.key().id())]= user
+	return listas
+
 
 def busqueda_user(nombre):
 	listas={}

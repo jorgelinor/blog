@@ -99,8 +99,25 @@ class Admin_info(handler.Handler):
         else:
             self.redirect('/login')
 
-    def post(self):
-        pass
+class Load(handler.Handler):
+    def get(self):
+        seleccion = self.request.GET.get('seleccion')
+        if seleccion == 'topic':
+            topi= self.request.GET.get('topico')
+            topicos = buscar_topico("post_cache",topi)
+            informacion = diccionarisarcache(topicos,'post_cache')
+            self.write(json.dumps(informacion))
+        elif seleccion == 'user':
+            user = self.request.GET.get('user')
+            topicos = buscar_user_tipe(user)
+            informacion = diccionarisarcache(topicos,'user_cache')
+            self.write(json.dumps(informacion))
+        else:
+            self.wirte(None)
+
+
+
+        
 
 # clase de admind para manejar los reportes de los comentario reportados para determinar si son validos de mostar o no 
 # muestra los post de los cuales los creadores desean modifcar o actualizar con informacion
@@ -115,8 +132,8 @@ class Admin_submit(handler.Handler):
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
             if user.user_type == "admin":
-                ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
-                query=''
+                ins, id_object, query = id_obj.split('_')[0], id_obj.split('_')[1], ''
+
                 if ins == 'come':
                     query='comments_cache'
                 elif ins == 'post':
@@ -184,10 +201,11 @@ class Admin_submit(handler.Handler):
 
 #encuentra los post o usuario y comentario por el id
 def buscar(id_elemento, elemento):
-        cache = memcache.get(elemento)
-        logging.error(cache[elemento].values().topic)
-        if id_elemento in cache:
-            return cache[id_elemento]
+    cache = memcache.get(elemento)
+    logging.error(id_elemento)
+    logging.error(cache[id_elemento])
+    if id_elemento in cache:
+        return cache[id_elemento]
 
 
 
