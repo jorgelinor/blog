@@ -18,6 +18,19 @@ class Post(db.Model):
 	state = db.BooleanProperty(required=False)
 
 
+	@classmethod
+	def by_owner(self,name):
+		m = list(Post.all().filter('submitter = ',name).run())
+		return m
+
+	@classmethod
+	def by_topic(cls,topic):
+		result = []
+		m = list(Post.all())
+		for post in m:
+			if post.topic == topic:
+				result.append(post)
+		return result
 # busca el post por topico
 def buscar_topico(id_elemento, elemento):
 	topic={}

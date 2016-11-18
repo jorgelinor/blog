@@ -6,3 +6,8 @@ class Message(db.Model):
 	subject = db.StringProperty(required=True)
 	content = db.TextProperty(required=True)
 	date = db.DateTimeProperty(auto_now_add=True)
+
+	@classmethod
+	def by_destination(self,name):
+		m = list(Message.all().filter('destination = ',name).run())
+		return m

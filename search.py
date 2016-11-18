@@ -4,7 +4,8 @@ from google.appengine.ext import db
 class Search(Handler):
     def get(self,html=None,user=None,messages=None):        
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             messages = self.GetMessages(actualizar=False,persona=user)#Los mensajes para mandarlos a la bandeja
         search = self.request.get('q')
         filter_search = self.request.get('filter')

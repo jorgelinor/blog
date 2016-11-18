@@ -20,26 +20,23 @@ class User(db.Model):
 	state = db.BooleanProperty(required=False)
 	img = db.StringProperty(required=False)
 
-	
-def by_id(cls, uid):
-	return User.get_by_id(uid, parent = users_key())
+	@classmethod
+	def by_id(cls, uid):
+		return User.get_by_id(uid, parent = users_key())
 
-
-def by_name(cls, name):
-	u = User.all().filter('displayName =', name).get()
-	return u
-
-
-def busqueda_user(nombre):
-	listas={}
-	users = memcache.get("user_cache")
-	if users is None:
-		cache=user_cache()
-		users = cache["user_cache"]
-	for user in users:
-		if nombre in user.user_id:
-			listas[str(user.key().id())]= user
-	return listas
+	@classmethod
+	def by_nickname(cls, name):
+		u = User.all()
+		for e in u:
+			if e.displayName == name:
+				return e
+	@classmethod
+	def by_username(cls, name):
+		u = list(User.all())
+		for user in u:
+			if user.user_id == name:
+				return user
+		return None
 
 # admin info para buscar los usuarios que solicitaron cambio de 
 def user_cambio():

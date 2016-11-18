@@ -11,7 +11,7 @@ from google.appengine.api import memcache
 class Signup(handler.Handler):
     def get(self):
         user = None
-        date_pre = self.get_data('create_date',create_date())
+        date_pre = create_date()
         if not self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             self.render('signup.html',pagename='Registrar',url='Signup',link='/',years=date_pre[0],months=date_pre[1],days=date_pre[2])
         else:
@@ -34,7 +34,7 @@ class Signup(handler.Handler):
             user_ob1 = user_query1[0]
         if not self.verify_signup(username,email,displayName,tel,date,password,verify,user_ob,user_ob1)[0]:
             unused,erroruser,errormail,errorpass,errorverify,errortel,errordesc,errordate = self.verify_signup(username,email,displayName,tel,date,password,verify,user_ob,user_ob1)
-            date_pre = self.get_data('create_date',create_date())
+            date_pre = create_date()
             self.render('signup.html',pagename='Registrar',username=username[1],displayName=displayName[1],email=email[1],erroruser=erroruser,errormail=errormail,errorpass=errorpass,errorverify=errorverify,
                         errortel=errortel,errordisplay=errordisplay,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description, years=date_pre[0],
                         months=date_pre[1],days=date_pre[2])
