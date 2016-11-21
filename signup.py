@@ -26,14 +26,10 @@ class Signup(handler.Handler):
         description = self.request.get('description')
         verify = self.request.get('verify')==self.request.get('password')
         email = valid_email(self.request.get('email'))
-        user_query = list(db.GqlQuery('select * from User where user_id=:1',username[1]))
-        user_query1 = list(db.GqlQuery('select * from User where user_id=:1',displayName[1]))
-        if len(user_query) > 0:
-            user_ob = user_query[0]
-        if len(user_query1) > 0:
-            user_ob1 = user_query1[0]
+        user_ob = User.by_username(username[1])
+        user_ob1 = User.by_nickname(displayName[1])
         if not self.verify_signup(username,email,displayName,tel,date,password,verify,user_ob,user_ob1)[0]:
-            unused,erroruser,errormail,errorpass,errorverify,errortel,errordesc,errordate = self.verify_signup(username,email,displayName,tel,date,password,verify,user_ob,user_ob1)
+            unused,erroruser,errordisplay,errormail,errorpass,errorverify,errortel,errordesc,errordate = self.verify_signup(username,email,displayName,tel,date,password,verify,user_ob,user_ob1)
             date_pre = create_date()
             self.render('signup.html',pagename='Registrar',username=username[1],displayName=displayName[1],email=email[1],erroruser=erroruser,errormail=errormail,errorpass=errorpass,errorverify=errorverify,
                         errortel=errortel,errordisplay=errordisplay,errordate=errordate,errordesc=errordesc,tel=tel[1],description=description, years=date_pre[0],
