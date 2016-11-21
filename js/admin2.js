@@ -22,15 +22,14 @@ $(':radio[value="user"]').click(function(event) {
 
 $(":radio[name=topic]").click(function() {
     var topic = $(this).val();
-    console.log(value);
-    $.$.ajax({
+    console.log(topic);
+    $.ajax({
         url: '/admin/topic',
         type: 'GET',
         dataType: 'json',
         data: {'topico':topic},
     })
-    .done(function(data) {
-        console.log(data);
+    .done(function() {
         console.log("success");
     })
     .fail(function() {
@@ -45,7 +44,7 @@ $(":radio[name=user]").click(function() {
         url: '/admin/load',
         type: 'GET',
         dataType: 'json',
-        data: {'topic':'user','user': value}
+        data: {'user': value}
     }).done(function(data) {
         $('#contenido').empty();
         $('#error').hide();
