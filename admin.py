@@ -86,7 +86,6 @@ class Admin_info(handler.Handler):
                     info = comment_report()
 
                 elif action =='user_cache':
-                    logging.error(action)
                     info = user_cambio()
 
                 elif action =='post_cache':
@@ -101,7 +100,9 @@ class Admin_info(handler.Handler):
 
 class Load(handler.Handler):
     def get(self):
-        seleccion = self.request.GET.get('seleccion')
+        logging.error('nooooooooooooooooooooo')
+        seleccion = self.request.GET.get('topic')
+        logging.error(seleccion)
         if seleccion == 'topic':
             topi= self.request.GET.get('topico')
             topicos = buscar_topico("post_cache",topi)
@@ -132,8 +133,8 @@ class Admin_submit(handler.Handler):
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
             if user.user_type == "admin":
-                ins, id_object, query = id_obj.split('_')[0], id_obj.split('_')[1], ''
-
+                query=''
+                ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
                 if ins == 'come':
                     query='comments_cache'
                 elif ins == 'post':
@@ -149,20 +150,16 @@ class Admin_submit(handler.Handler):
             self.redirect('/login')
 
     def post(self, id_obj):
-        logging.error('entro al handler post para guardar')
         ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
-        logging.error('este el el query '+ins+' and '+id_object)
         if ins == 'come':
             # coment_id = self.request.get('comment_id')
             comments_reported = self.request.get('report')
-            logging.error("entro en el handler "+comments_reported)
 
             cache = buscar(id_object, 'comments_cache')
             if cache and comments_reported == 'on':
                 cache.show = False
                 cache.state = True
                 cache.put()
-                logging.error('guardo la informacion')
                 self.redirect('/admin')
             else:
                 cache.show = True
@@ -202,8 +199,6 @@ class Admin_submit(handler.Handler):
 #encuentra los post o usuario y comentario por el id
 def buscar(id_elemento, elemento):
     cache = memcache.get(elemento)
-    logging.error(id_elemento)
-    logging.error(cache[id_elemento])
     if id_elemento in cache:
         return cache[id_elemento]
 
