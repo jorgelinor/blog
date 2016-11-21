@@ -98,25 +98,22 @@ class Admin_info(handler.Handler):
         else:
             self.redirect('/login')
 
-class Load(handler.Handler):
+class Users(handler.Handler):
     def get(self):
         logging.error('nooooooooooooooooooooo')
-        seleccion = self.request.GET.get('topic')
-        logging.error(seleccion)
-        if seleccion == 'topic':
-            topi= self.request.GET.get('topico')
-            topicos = buscar_topico("post_cache",topi)
-            informacion = diccionarisarcache(topicos,'post_cache')
-            self.write(json.dumps(informacion))
-        elif seleccion == 'user':
-            user = self.request.GET.get('user')
-            topicos = buscar_user_tipe(user)
-            informacion = diccionarisarcache(topicos,'user_cache')
-            self.write(json.dumps(informacion))
-        else:
-            self.wirte(None)
+        user = self.request.GET.get('user')
+        topicos = buscar_user_tipe(user)
+        informacion = diccionarisarcache(topicos,'user_cache')
+        self.write(json.dumps(informacion))
 
 
+class Topicos(handler.Handler):
+    def get(self):
+        topi= self.request.GET.get('topico')
+        topicos = buscar_topico("post_cache",topi)
+        informacion = diccionarisarcache(topicos,'post_cache')
+        self.write(json.dumps(informacion))
+        
 
         
 

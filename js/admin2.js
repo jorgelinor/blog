@@ -19,34 +19,24 @@ $(':radio[value="user"]').click(function(event) {
     $(".well").find(':radio[name=user]').removeAttr('disabled');
     $('#users').find(':radio[name=user]').css('opacity', '2');
 });
-$(":radio[name=topic]").click(function() {
-    var value = $(this).val();
-    console.log('helloo loleol');
-    $.ajax({
 
-        url: '/admin/load',
+$(":radio[name=topic]").click(function() {
+    var topic = $(this).val();
+    console.log(value);
+    $.$.ajax({
+        url: '/admin/topic',
         type: 'GET',
         dataType: 'json',
-        data: {'topic': 'topic','topico':value}
-    }).done(function(data) {
-        $('#contenido').empty();
-        $('#error').hide();
-        $.each(data, function(index, el) {
-            $('#contenido').append(
-                    "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
-                    +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
-                    +"<p>post <a href="+el.title+">"+el.title+"</a></p>"
-                    +"<p>created:"+el.created+"</p>"
-                    +"<p>"+el.topic+"</h3>"
-                    +"<p> creado: "+el.post+" </p>"
-                    +"<p>"+el.razon+"</p><br>"
-                    +"</div>");
-        });
-    }).fail(function(data) {
-        $('#contenido').empty();
-        $('#error').show();
+        data: {'topico':topic},
+    })
+    .done(function(data) {
+        console.log(data);
+        console.log("success");
+    })
+    .fail(function() {
         console.log("error");
     });
+       
 });
 
 $(":radio[name=user]").click(function() {
