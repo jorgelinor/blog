@@ -59,8 +59,22 @@ class Handler(webapp2.RequestHandler):
             data = {key_cache+'_list':data_list,key_cache+'_dict':data_dict}
             memcache.add(key_cache,data)
         if actualizar==True:
-            data[key_cache+'_dict'][key] = query
-            data[key_cache+'_list'].insert(0,query)
+            test = data[key_cache+'_dict'].get(key)
+            if query:
+                data[key_cache+'_dict'][key] = query
+            else:
+                del data[key_cache+'_dict'][key]
+            if not test:
+                data[key_cache+'_list'].insert(0,query)
+            else:
+                lista = data[key_cache+'_list']
+                for indice in range(len(lista)-1):
+                    if lista[indice].key().id() == test.key().id():
+                        if query:
+                            lista[indice] = query
+                        else:
+                            del lista[indice]
+                data[key_cache+'_list'] = lista
             memcache.set(key_cache, data)
         return data[key_cache+'_'+list_or_dict]
 
@@ -183,9 +197,10 @@ class Handler(webapp2.RequestHandler):
         else:
             errorpass = 'Contrasenia incorrecta'
         return (False,errorpass,errornew,errorverify)
-    def make_json_data(self,posts=None,mios=None):
+    def make_json_data(self,posts=None,mios=None,user=None):
         index = {}
         for e in posts:
+            user_ac = User.by_nickname(e.submitter.split('|')[0],user)
             if e.visible != False or e.visible==False and mios==True: #antes de mandar el json, revisa si los posts son visibles o no, para luego reenderizarlos correctamente
                 obj = {}
                 obj["id"] = e.key().id()
@@ -196,8 +211,21 @@ class Handler(webapp2.RequestHandler):
                 obj["created_str"] = e.created_str
                 obj["modificable"] = e.modificable
                 obj["razon"] = e.razon
-                obj["comments"] = e.comments
+                if e.submitter == 'ti':
+                    obj["options"] = True
+                else:
+                    obj["options"] = False
+                if e.comments > 1:
+                    obj["comments"] = str(e.comments)+' comentarios'
+                elif e.comments == 1:
+                    obj["comments"] = str(e.comments)+' comentario'
+                else:
+                    obj['comments'] = ''
                 obj["visible"] = e.visible
+                if user_ac.img:
+                    obj["submitter_img"] = '/view_photo/'+user_ac.img
+                else:
+                    obj["submitter_img"] = 'http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg'
                 index[len(index)] = obj
         return json.dumps(index)
 
@@ -208,7 +236,7 @@ class Handler(webapp2.RequestHandler):
             user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             messages = self.GetMessages(persona=user)
         posts = self.display_names(user,posts)
-        self.render('page.html',pagename=pagename,posts=posts,user=user,recent_msg=messages,limit=lim,data=self.make_json_data(posts=posts,mios=mios),mios=mios)
+        self.render('page.html',pagename=pagename,posts=posts,user=user,recent_msg=messages,limit=lim,data=self.make_json_data(posts=posts,mios=mios,user=user),mios=mios)
 
 class ErrorHandler(Handler):
     def get(self,error='',messages=None):

@@ -39,7 +39,6 @@ class Newpost(handler.Handler):
             a.put()
             self.get_data('Post','dict',a.key().id(),a,actualizar=True) 
             self.redirect('/'+str(a.key().id()))
-            memcache.delete('cantidad_'+self.request.get("topic"))
         else:
             error = 'Titulo y contenido y tema requeridos'
         user = None

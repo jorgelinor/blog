@@ -42,6 +42,7 @@ class Signup(handler.Handler):
             user_ob = User(user_id=username[1],user_pw=hashlib.sha256(password[1]).hexdigest(),user_mail=email[1],
                             user_tel=tel[1],user_date=date,user_desc=description,user_type='user',solicitud_cambio=False, displayName=displayName[1],state=False) #se crea un objeto usuario con los datos
             user_ob.put() #se sube a la base de datos
+            self.get_data('User','dict',user_ob.key().id(),user_ob,actualizar=True)
             self.response.headers.add_header('Set-Cookie','user_id='+str(user_ob.key().id())+'|'+hashlib.sha256(str(user_ob.key().id())).hexdigest()+';Path=/') #y se crea la cookie
             self.redirect('/profile')
 

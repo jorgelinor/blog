@@ -27,6 +27,8 @@ class Permalink(handler.Handler):
                     db.delete(com)
                     post.comments -= 1
                     post.put()
+                    self.get_data('Post','dict',post.key().id(),post,actualizar=True)
+                    self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
                     time.sleep(1)
             if self.request.get("action") == "newcomment": #query para verificar si se agrega un nuevo comentario
                 if not user.banned_from_comments:
@@ -97,6 +99,7 @@ class Permalink(handler.Handler):
                 com.razon = com.razon+[razon]
                 com.reported = True
                 com.put()
+                self.get_data('Comment','dict',com.key().id(),com,actualizar=True)
                 self.redirect("/"+link)
 
 class EditPost(handler.Handler):
@@ -124,7 +127,7 @@ class EditPost(handler.Handler):
         if post and content:
             post.post = content
             post.modificable = "False"
-            self.get_data('Post',int(link),post,actualizar=True)
+            self.get_data('Post','dict',int(link),post,actualizar=True)
             post.put()
             self.redirect('/'+link)
         else:

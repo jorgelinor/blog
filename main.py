@@ -23,6 +23,7 @@ app = webapp2.WSGIApplication([
     ('/login',login.Login),
     ('/logout',logout.Logout),
     ('/',page.Page),
+    ('/posts/([a-zA-Z0-9_-]+)/?',page.FilterPosts),
     ('/profile/?', profile.Profile),
     ('/profile/_edit/?', profile.EditProfile),
     ('/profile/_editpass/?',profile.EditPass),
@@ -39,5 +40,6 @@ app = webapp2.WSGIApplication([
     ('/_stats', handler.Stats),
     ('/search', search.Search),
     ('/upload_photo', profile.PhotoUploadHandler),
-    ('/view_photo/([^/]+)?', profile.ViewPhotoHandler)
+    ('/view_photo/([^/]+)?', profile.ViewPhotoHandler),
+    ('/change-bg', profile.ChangeBackground)
 ], debug=True)

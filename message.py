@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+import handler
 
 class Message(db.Model):
 	submitter = db.StringProperty(required=True)
@@ -9,5 +10,5 @@ class Message(db.Model):
 
 	@classmethod
 	def by_destination(self,name):
-		m = list(Message.all().filter('destination = ',name).run())
+		m = handler.Handler().get_data('Message','list').run()
 		return m

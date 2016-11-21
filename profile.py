@@ -39,6 +39,23 @@ class PhotoUploadHandler(handler.Handler,blobstore_handlers.BlobstoreUploadHandl
         except: 
             self.redirect('/newpost')
 
+class ChangeBackground(handler.Handler):
+    def get(self):
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+        if user:
+            color = self.request.get('color')
+            img = self.request.get('img')
+            if color:
+                user.pref_color = color
+            elif img:
+                user.pref_color = None
+            user.put()
+            self.get_data('User','dict',user.key().id(),user,actualizar=True)
+        self.redirect('/')
+        
+
 class Profile(handler.Handler):
     #Handler que presenta la pagina del perfil propio, con toda la informacion para ver y cambiar
     def get(self,modificable=False,profile=None,messages=None):
@@ -210,6 +227,7 @@ class ViewPosts(handler.Handler):
                 elif self.request.get('visible') == '1':
                     post.visible = True
                 post.put()
+                self.get_data('Post','dict',post.key().id(),post,actualizar=True)
                 self.redirect("/profile/_viewposts")
         if self.request.get("u"):
             profile = User.by_nickname(self.request.get('u'))

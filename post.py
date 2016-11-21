@@ -2,7 +2,7 @@
 from google.appengine.ext import db
 from google.appengine.api import memcache
 import logging
-
+from handler import *
 
 class Post(db.Model):
 	topic = db.StringProperty(required=False)
@@ -20,13 +20,17 @@ class Post(db.Model):
 
 	@classmethod
 	def by_owner(self,name):
-		m = list(Post.all().filter('submitter = ',name).run())
-		return m
+		result = []
+		m = Handler().get_data('Post','list')
+		for post in m:
+			if post.submitter == name:
+				result.append(post)
+		return result
 
 	@classmethod
 	def by_topic(cls,topic):
 		result = []
-		m = list(Post.all())
+		m = Handler().get_data('Post','list')
 		for post in m:
 			if post.topic == topic:
 				result.append(post)
