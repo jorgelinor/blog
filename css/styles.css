@@ -210,20 +210,23 @@ li-link {
 	cursor:pointer;
 }
 #bandeja {
-	position:fixed;
-	top: 54px;
-	right:3%;
-	width:40%;
-	height:215px;
-	display:none;
-	border: groove 3px darkgray;
-	overflow:scroll;
-	z-index:2147483646;
+    position: fixed;
+    top: 54px;
+    right: 3%;
+    color: white;
+    background-color: #222;
+    width: 40%;
+    height: 215px;
+    display: none;
+    border: groove 3px #222;
+    overflow: scroll;
+    z-index: 2147483646;
 }
 ul, ol {
 	list-style: none;
 }
 * {
+	border-radius: 4px;
 	margin: 0px;
 	padding: 0px;
 }

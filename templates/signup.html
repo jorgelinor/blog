@@ -22,17 +22,17 @@
             <input type='text' name='tel' value="{{tel}}">
         </label><label name='errortel' style='color:red' value=''>{{errortel}}</label><br>
         <label><b>Fecha de nacimiento</b>
-            <select name='date1' placeholder="AAAA">
+            <select name='date1'>
                 {%for year in years%}
                     <option value='{{year}}'>{{year}}</option>
                 {%endfor%}
             </select>
-             <select name='date2' placeholder="MM">
+             <select name='date2'>
                 {%for month in months%}
                     <option value='{{month}}'>{{month}}</option>
                 {%endfor%}
              </select> 
-             <select name='date3' placeholder="DD">
+             <select name='date3'>
                 {%for day in days%}
                     <option value='{{day}}'>{{day}}</option>
                 {%endfor%}

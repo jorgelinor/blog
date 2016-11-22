@@ -120,8 +120,9 @@ class EditProfile(handler.Handler):
             user = self.get_data('User')
             user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             date_pre = create_date()#creacion de los datos para la fecha,como el procedimiento usa loop lo almaceno en cache para evitar usar el loop nuevamente
+            date = str(user.user_date).split('-')
             messages = self.GetMessages(persona=user)#Los mensajes para la bandeja
-            self.render("editprofile.html",pagename='Editar Perfil', user=user,years=date_pre[0],months=date_pre[1],days=date_pre[2],recent_msg=messages)
+            self.render("editprofile.html",date=date,pagename='Editar Perfil', user=user,years=date_pre[0],months=date_pre[1],days=date_pre[2],recent_msg=messages)
         else:
             self.redirect('/login')
    
@@ -308,8 +309,11 @@ class SendPm(handler.Handler):#para enviar mensajes
             msg = Message(submitter=submitter,destination=destination.user_id,subject=subject,content=content)
             msg.put()
             mensajes = memcache.get('Message')
-            mensaje = memcache.get('Message').get(destination.user_id)
-            mensaje.insert(0,msg)
+            mensaje = mensajes.get(destination.user_id)
+            if mensaje:
+                mensaje.insert(0,msg)
+            else:
+                mensaje = list(db.GqlQuery("select * from Message where destination='%s'"%destination.user_id))
             mensajes[destination.user_id] = mensaje
             memcache.set('Message',mensajes)
             self.redirect("/profile?u="+self.request.get("u"))

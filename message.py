@@ -10,5 +10,5 @@ class Message(db.Model):
 
 	@classmethod
 	def by_destination(self,name):
-		m = handler.Handler().get_data('Message','list').run()
+		m = handler.Handler().get_data('Message','list')
 		return m

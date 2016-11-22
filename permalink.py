@@ -159,6 +159,6 @@ class EditRequest(handler.Handler):
             post = post.get(int(link))
             post.modificable = 'pending'
             post.razon = razon
-            self.get_data('post_'+str(post.key().id()),post,actualizar=True)
+            self.get_data('Post','dict',post.key().id(),post,actualizar=True)
             post.put()
         self.redirect('/'+link)

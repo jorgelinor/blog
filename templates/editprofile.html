@@ -8,17 +8,17 @@
 				<label>Numero de telefono</label>
 				<input type="text" name="tel" value="{{user.user_tel}}" class="editable"><div class="error">{{errortel}}</div></input><br><br>
 				<label>Fecha de nacimiento</label>
-		            <select name='date1' placeholder="AAAA">
+		            <select name='date1' value='{{date[0]}}'>
 		                {%for year in years%}
 		                    <option value='{{year}}'>{{year}}</option>
 		                {%endfor%}
 		            </select>
-		             <select name='date2' placeholder="MM">
+		             <select name='date2' value='{{date[1]}}'>
 		                {%for month in months%}
 		                    <option value='{{month}}'>{{month}}</option>
 		                {%endfor%}
 		             </select> 
-		             <select name='date3' placeholder="DD">
+		             <select name='date3' value='{{date[2]}}'>
 		                {%for day in days%}
 		                    <option value='{{day}}'>{{day}}</option>
 		                {%endfor%}
@@ -33,7 +33,10 @@
 				<button type="submit">Guardar</button>
 			</div>
 			<script type="text/javascript">
-				$('footer').css('display','none')
+				var date = {{date|safe}}
+				$('select[name=date1]').val(date[0])
+				$('select[name=date2]').val(date[1])
+				$('select[name=date3]').val(date[2])
 			</script>
 		</div>
 		</div>

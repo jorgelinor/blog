@@ -225,7 +225,7 @@ class Handler(webapp2.RequestHandler):
                 if user_ac.img:
                     obj["submitter_img"] = '/view_photo/'+user_ac.img
                 else:
-                    obj["submitter_img"] = 'http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg'
+                    obj["submitter_img"] = '/img/profile.jpg'
                 index[len(index)] = obj
         return json.dumps(index)
 

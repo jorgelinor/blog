@@ -68,10 +68,10 @@
 	  </div>
       <form class="navbar-form navbar-right" action="/search" role="search">
         <div class="form-group input-group">
-          <input type="text" class="form-control" name="q" placeholder="Buscar...">
+          <input type="text" class="form-control" name="q" placeholder="Buscar..." required="true">
           <input type="hidden" name="filter" value="all">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button">
+            <button class="btn btn-default" type="submit">
               <span class="glyphicon glyphicon-search"></span>
             </button>
           </span>
@@ -107,12 +107,13 @@
     <div class="col-sm-3 well">
       <div class="well">
       {%if user%}
-        <p><a href="/profile">Mi perfil</a></p>
+        <a href="/profile"><p>Mi perfil</p>
         {%if user.img%}
         	<img src="/view_photo/{{user.img}}" class="img-circle" height="65" width="65" alt="Avatar">
         {%else%}
-        	<img src="http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg" class="img-circle" height="65" width="65" alt="Avatar">
+        	<img src="/img/profile.jpg" class="img-circle" height="65" width="65" alt="Avatar">
         {%endif%}
+        </a>
       {%else%}
       	<form action="/login" method="post">
       		<input style="width: 100%;margin:2%" type="text" name="username" placeholder="Usuario">
@@ -214,7 +215,7 @@
  			</script>
  			<div class="img-viewer"><img class="img-viewer-img" src='/view_photo/{{profile.img}}'>
  		{%else%}
- 			<div class="img-viewer"><img class="img-viewer-img" src='http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg'>
+ 			<div class="img-viewer"><img class="img-viewer-img" src='/img/profile.jpg'>
  		{%endif%}
  			<label id="img-viewer-close">Cerrar</label>
  		{%if modificable == True%}
