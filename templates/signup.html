@@ -1,24 +1,27 @@
 {%extends 'base.html'%}
 {%block content%}
     <form method='post'>
-        <h2>Singup</h2>
+        <h2>Registrate</h2>
         <br>
-        <label><b>User</b>
+        <label><b>Nombre de usuario</b>
             <input type='text' name='username' value='{{username}}'>
         </label><label name='erroruser' style='color:red' value=''>{{erroruser}}</label><br>
-        <label><b>Password</b>
+        <label><b>Apodo</b>
+            <input type='text' name='displayName' value='{{displayName}}'>
+        </label><label name='errordisplay' style='color:red' value=''>{{errordisplay}}</label><br>
+        <label><b>Contrasenia</b>
             <input type='password' name='password'>
         </label><label name='errorpass' style='color:red' value=''>{{errorpass}}</label><br>
-        <label><b>Verify password</b>
+        <label><b>Verificar contrasenia</b>
             <input type='password' name='verify' value=''>
         </label><label name='errorverify' style='color:red' value=''>{{errorverify}}</label><br>
-        <label><b>E-mail</b>
+        <label><b>Correo</b>
             <input type='text' name='email' value='{{email}}'>
         </label><label name='errormail' style='color:red' value=''>{{errormail}}</label><br>
-        <label><b>Phone</b>
+        <label><b>Telefono</b>
             <input type='text' name='tel' value="{{tel}}">
         </label><label name='errortel' style='color:red' value=''>{{errortel}}</label><br>
-        <label><b>Birth Date</b>
+        <label><b>Fecha de nacimiento</b>
             <select name='date1' placeholder="AAAA">
                 {%for year in years%}
                     <option value='{{year}}'>{{year}}</option>
@@ -35,11 +38,11 @@
                 {%endfor%}
             </select>
         </label><label name='errordate' style='color:red' value=''>{{errordate}}</label><br>
-        <label><b>Description (opcional)</b>
+        <label><b>Descripcion (opcional)</b>
             <input type='text' name='description' value='{{description}}'>
         </label><label name='errordesc' style='color:red' value=''>{{errordesc}}</label><br>
         <br>
         <br>
-        <button>Submit</button>
+        <button>Registrar</button>
     </form>
 {%endblock%}
