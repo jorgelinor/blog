@@ -1,56 +1,65 @@
 {%extends "base.html"%}
 {%block content%}
-	{% if query == 'comments_reported_cache' %}
-		<div id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8">
-	        <h3>coment submete by:{{info.submitter}}</h3>
-	        <b> creado: {{info.created}}</b>
-	        <h4>
+	{% if query == 'comments_cache' %}
+		<form method="post" id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8" >
+	        <p>coment submete by:{{info.submitter}}</p>
+	        <p> creado: {{info.created}}</p>
+	        <p>
 	        	<a href="/{{info.post}}">Post</a>
-	        </h4>
-	        <h4>{{info.content}}</h4>
-	        <h5>Reportado</h5>
+	        </p>
+	        <p>{{info.content}}</p>
+	        <p>Reportado</p>
 	        <b>{{info.razon}}</b>
-	        <br name="query" value='comments_reported_cache'>
+	        <br>
 	        <input type='checkbox' name='report'>Quitar comentario</input>
 	        <input type='submit'>
-	    </div>
-	{% elif query == 'post_modificable_cache' %}
-		<div name='{{info.post_id}}' id='{{info.post_id}}' class="col-lg-8">
-            <h4>post <a href="/{{info.title}}">{{info.title}}</a></h4>
+	    </form>
+	{% elif query == 'post_cache' %}
+		<form method="post" name='{{info.post_id}}' id='{{info.post_id}}' class="col-lg-8">
+            <p>post <a href="/{{info.title}}">{{info.title}}</a></p>
             <p>creado:{{info.created}}</p>
-            <h3>{{info.topic}}</h3>
+            <p>{{info.topic}}</p>
             <b> {{info.post}} </b>
             <b>{{info.razon}}</b>
-            <br name="query" value='post_modificable_cache'>
+            <br>
             <input type='text' name='permiso'>
 	        <input type='submit'>
-        </div>
-    {% elif query == 'user_permisos_cache' %}
-    	<div name='{{info.userid}}' id='{{info.userid}}' class="col-lg-8">
+        </form>
+    {% elif query == 'user_cache' %}
+    	<form method="post" name='{{info.userid}}' id='{{info.userid}}' class="col-lg-8">
             <p>Nombre de usurio:{{info.displayName}}</p>
             <p>Usuario Estado:{{info.user_type}}</p>
             <p>Rason de Cambio:{{info.rason_solicitud_cambio}}</p>
-            <br name="query" value='user_permisos_cache'>
-            <p>cambio de permiso para usuario </p>
+            <hr>
+            <label class="col-lg-8">
+            <label class='col-lg-4'>
+            <p>permiso de usuario </p>
             <select name='user_type'>
             	<option value="">None</option>
             	<option value="admin">admin</option>
             	<option value="user">user</option>
             </select>
+            </label>
+            <label class='col-lg-4'>
             <p>permiso de posteo</p>
             <select name="banned_from_posting">
             	<option value="">None</option>
             	<option value="True">true</option>
             	<option value="False">false</option>
             </select>
+            </label>
+            <label class='col-lg-4'>
             <p>permiso de comentar</p>
             <select name="banned_from_comments">
             	<option value="">None</option>
             	<option value="True">true</option>
             	<option value="False">false</option>
             </select>
-	        <input type='submit'>
-        </div>
+            </label>
+            </label>
+            <br>
+	        <input class='button' type='submit'>
+        </form>
 	{% endif %}
 {%endblock%}
 
