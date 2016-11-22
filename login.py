@@ -17,13 +17,12 @@ class Login(handler.Handler):
     def post(self):
         username = valid_username(self.request.get('username'))
         password = valid_pass(self.request.get('password'))
-        user_query = self.get_data('user_'+username[1],db.GqlQuery('select * from User where user_id=:1',username[1]))
-        user_query = list(user_query) #<---esta variable la uso mucho a la hora de asignar un objeto usuario
+        user_query = User.by_username(self.request.get('username')) #<---esta variable la uso mucho a la hora de asignar un objeto usuario
         if not self.verify_login(username,password,user_query)[0]:
             unused,errorpass,erroruser = self.verify_login(username,password,user_query)
             self.render('login.html',pagename='Iniciar sesion',username=username[1],erroruser=erroruser,errorpass=errorpass)
         else: #si todo esta correcto
-            self.response.headers.add_header('Set-Cookie','user_id='+str(user_query[0].key().id())+'|'+hashlib.sha256(str(user_query[0].key().id())).hexdigest()+';Path=/') #se hace la cookie del usuario
+            self.response.headers.add_header('Set-Cookie','user_id='+str(user_query.key().id())+'|'+hashlib.sha256(str(user_query.key().id())).hexdigest()+';Path=/') #se hace la cookie del usuario
             self.redirect('/profile')
 
 #estas funciones sirven para validar el usuario y la contrasenia, pero se le pueden agregar mas condiciones al verificar.

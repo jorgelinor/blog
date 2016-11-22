@@ -89,20 +89,4 @@ $("#administracion_user").click(function() {
     
    
 });
-// $("#administracion_post").click(function() {
-//     $.ajax({
-//         url: '/admin/Admin_info',
-//         type: 'GET',
-//         dataType: 'json',
-//         data: { 'action': 'user_permisos_cache'},
-//     })
-//     .done(function(data) {
-//         console.log(data);
-//     })
-//     .fail(function() {
-//         console.log("error");
-//     })
-//     .always(function() {
-//         console.log("complete");
-//     });
 

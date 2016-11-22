@@ -2,7 +2,7 @@
 from google.appengine.api import memcache
 from google.appengine.ext import db
 import logging
-
+import handler
 
 class User(db.Model):
 	user_type = db.StringProperty(required=True)
@@ -19,15 +19,27 @@ class User(db.Model):
 	banned_from_posting = db.BooleanProperty(required=False)
 	state = db.BooleanProperty(required=False)
 	img = db.StringProperty(required=False)
+	pref_color = db.StringProperty(required=False)
 
-	
-def by_id(cls, uid):
-	return User.get_by_id(uid, parent = users_key())
+	@classmethod
+	def by_id(cls, uid):
+		return User.get_by_id(uid, parent = users_key())
 
-
-def by_name(cls, name):
-	u = User.all().filter('displayName =', name).get()
-	return u
+	@classmethod
+	def by_nickname(cls, name,user=None):
+		u = handler.Handler().get_data('User','list')
+		for e in u:
+			if e.displayName == name:
+				return e
+		if name == 'ti':
+			return user
+	@classmethod
+	def by_username(cls, name):
+		u = handler.Handler().get_data('User','list')
+		for user in u:
+			if user.user_id == name:
+				return user
+		return None
 
 def buscar_user_tipe(user_type):
 	listas={}

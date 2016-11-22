@@ -36,9 +36,13 @@
 	float:right;
 }
 #edit-holder {
-	margin-left:10px;
-	width: 40%;
-	height:auto;
+    margin-left: 10px;
+    /* width: 40%; */
+    text-align: left;
+    height: auto;
+}
+.well{
+	overflow:hidden;
 }
 .date-space {
 	width: 40px;
@@ -123,10 +127,6 @@ li-link {
 	text-decoration: none;
 }
 .page-content{
-	margin-left: 10%;
-	margin-right: 10%;
-	overflow-y: auto;
-	margin-top: 75px;
 }
 .menu-left{
 	position: fixed;
@@ -212,24 +212,27 @@ li-link {
 	cursor:pointer;
 }
 #bandeja {
-	position:fixed;
-	top: 54px;
-	right:3%;
-	width:40%;
-	height:215px;
-	display:none;
-	border: groove 3px darkgray;
-	overflow:scroll;
-	z-index:2147483646;
+    position: fixed;
+    top: 54px;
+    right: 3%;
+    color: white;
+    background-color: #222;
+    width: 40%;
+    height: 215px;
+    display: none;
+    border: groove 3px #222;
+    overflow: scroll;
+    z-index: 2147483646;
 }
 ul, ol {
 	list-style: none;
 }
 * {
+	border-radius: 4px;
 	margin: 0px;
 	padding: 0px;
 }
-.menu li a {
+/*.menu li a {
 	background-color: gray;
 	color: black;
 	text-decoration: none;
@@ -243,17 +246,50 @@ ul, ol {
 	margin-left:5%;
 	float:left;
 	margin-top: 15px
-}
+}*/
 .menu li ul {
 	display: none;
 	position:absolute;
 	max-width: 140px;
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    background-color: #222;
+	z-index:2147483647
 
 }
+#post-options{
+	display: none;
+	position:absolute;
+	max-width: 140px;
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    background-color: #f3f3f3;
+	z-index:2147483647	
+}
+.post-options-bt{
+	color:#c7c7c7;
+}
+
+#myNavbar{
+	overflow-y: inherit;
+}
+.navbar-inverse .navbar-nav>li>ul>li>a {
+    color: #9d9d9d;
+}
+.navbar-inverse .navbar-nav>li>ul>li>a:hover {
+  color: #fff;
+  background-color: transparent;
+  text-decoration:none;
+}
+.navbar-collapse {
+    overflow-y: inherit;
+}
 .menu li:hover > ul{
-	margin:0px;
 	display: block;
-	z-index:2147483647;
 }
 .admin-link {
 	margin:2%;
@@ -262,7 +298,6 @@ ul, ol {
 	color: gray;
 	text-decoration: none;
 }
-
 #report-razon {
 	color:red;
 	margin-left: 60%;
@@ -337,6 +372,28 @@ ul, ol {
     right: -7%;
     max-width: 25%;
     cursor: pointer;
+    color: #f3f3f3
+}
+.change-bg{
+	display: none;
+	position:absolute;
+	max-width: 140px;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    right: 0px;
+    bottom: 0px;
+    border: 1px solid #337ab7;
+    background-color: #f3f3f3;
+	z-index:2147483647	
+}
+.change-bg-close{
+	cursor: pointer;
+	float: right;
+}
+.change-bg-bt{
+	cursor: pointer;
 }
 
 li.username{
