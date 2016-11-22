@@ -19,13 +19,15 @@ class Post(db.Model):
 
 
 # busca el post por topico
-def buscar_topico(id_elemento, elemento):
+def buscar_topico(id_elemento, elemento):#id_elemento= topicos,Animales.etc: elemento= post_cache
 	topic={}
 	cache = memcache.get(elemento)
-	cantidad =  (cache[elemento].values().topic == id_elemento)
+	# cantidad =  (cache[elemento].topic == id_elemento)
 	for post in cache:
-		if id_elemento == post.topic:
-			topic[str(post.key().id())]=post
+		if cache[post].topic == id_elemento:
+			# logging.error(cache[post].topic)
+			topic[str(cache[post].key().id())]=cache[post]
+			logging.error(topic)
 	return topic
 
 # busca los post que se solicitan modificacion o permisos

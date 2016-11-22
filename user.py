@@ -32,9 +32,12 @@ def by_name(cls, name):
 def buscar_user_tipe(user_type):
 	listas={}
 	users = memcache.get('user_cache')
+	if users is None:
+		cache=user_cache()
+		users = cache["user_cache"]
 	for user in users:
 		if users[user].user_type == user_type:
-			listas[str(user.key().id())]= user
+			listas[str(users[user].key().id())]= users[user]
 	return listas
 
 
@@ -46,7 +49,7 @@ def busqueda_user(nombre):
 		users = cache["user_cache"]
 	for user in users:
 		if nombre in user.user_id:
-			listas[str(user.key().id())]= user
+			listas[str(user.key().id())]= users[user]
 	return listas
 
 # admin info para buscar los usuarios que solicitaron cambio de 

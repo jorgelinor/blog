@@ -98,23 +98,22 @@ class Admin_info(handler.Handler):
         else:
             self.redirect('/login')
 
-# class Users(handler.Handler):
-#     def get(self, user):
-#         logging.error(user)
-#         logging.error('nooooooooooooooooooooo')
-#         user = self.request.get('user')
-#         topicos = buscar_user_tipe(user)
-#         informacion = diccionarisarcache(topicos,'user_cache')
-#         self.write(json.dumps(informacion))
+class Users(handler.Handler):
+    def get(self):
+        logging.error('nooooooooooooooooooooo')
+        user = self.request.get('user')
+        topicos = buscar_user_tipe(user)
+        informacion = diccio(topicos,'user_cache')
+        self.write(json.dumps(informacion))
 
 
-# class Topicos(handler.Handler):
-#     def get(self, topico):
-#         logging.error(topico)
-#         topi= self.request.get('topico')
-#         topicos = buscar_topico("post_cache",topi)
-#         informacion = diccionarisarcache(topicos,'post_cache')
-#         self.write(json.dumps(informacion))
+class Topicos(handler.Handler):
+    def get(self):
+        topi= self.request.get('topico')
+        logging.error(topi)
+        topicos = buscar_topico(topi,'post_cache')
+        informacion = diccio(topicos,'post_cache')
+        self.write(json.dumps(informacion))
         
 
         
@@ -184,8 +183,8 @@ class Admin_submit(handler.Handler):
             cache = buscar(id_object, 'user_cache')
             if cache and user_type and banned_from_comments and banned_from_posting:
                 cache.user_type = user_type
-                cache.banned_from_posting = banned_from_posting
-                cache.banned_from_comments = banned_from_comments
+                cache.banned_from_posting = (True if banned_from_posting == 'True' else False)
+                cache.banned_from_comments = (True if banned_from_comments == 'True' else False)
                 cache.state = True
                 cache.put()
                 self.redirect('/admin')
@@ -246,39 +245,34 @@ def diccionarisarcache(info,cual):
                                                 "banned_from_posting":info[partes].banned_from_posting
                                                         }
     return informacion                    
-# crea el query deacuerdo ala info pedidad por el admin
-# def createquerty(content):
-#     # comentario reportados
-#     if content == "comments_cache":
-#         comments = {}
-#         banned_comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created desc")
-#         for p in banned_comments:
-#             comments[str(p.key().id())] = p
-#         memcache.set("comments_cache", comments)
-#         # logging.error(comments)
-#         return comments
-
-#     #solicitud de modiicar un post post
-#     elif content == 'post_cache':
-#         post ={}
-#         post_modificables =  db.GqlQuery("SELECT * FROM Post ORDER BY created desc")
-#         for p in post_modificables:
-#             post[str(p.key().id())] = p
-#         memcache.set("post_cache", post)
-#         return post
-
-#     # permisos para usuarios
-#     elif content == 'user_permisos_cache':
-    
-#         users ={}
-
-#         users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
 
 
-#         for p in users_modificables:
-#             users[str(p.key().id())] = p
-#         memcache.set("user_cache", users)
-#         return users
+def diccio(info,cual):
+    informacion={}
+    if cual == 'post_cache':
+        for partes in info:
+            informacion[str(info[partes].key().id())]={'post_id':str(info[partes].key().id()),
+                                                          'topic':info[partes].topic,
+                                                          'title':info[partes].title,
+                                                          'content':info[partes].post,
+                                                          'post':info[partes].post,
+                                                          'submitter':info[partes].submitter,
+                                                          'created':info[partes].created.strftime('%y/%m/%d'),
+                                                          'modificable':info[partes].modificable,
+                                                          'razon':info[partes].razon
+                                                        }
+    elif cual == 'user_cache':
+        for partes in info:
+            informacion[str(info[partes].key().id())]={"userid":str(info[partes].key().id()),
+                                                "user_type":info[partes].user_type,
+                                                "user_id":info[partes].user_id,
+                                                "displayName":info[partes].displayName,
+                                                "solicitud_cambio":info[partes].solicitud_cambio,
+                                                "rason_solicitud_cambio":info[partes].rason_solicitud_cambio,
+                                                "banned_from_comments":info[partes].banned_from_comments,
+                                                "banned_from_posting":info[partes].banned_from_posting
+                                                        }
+    return informacion
 
 
 

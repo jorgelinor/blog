@@ -24,15 +24,28 @@ $(":radio[name=topic]").click(function() {
     var topic = $(this).val();
     console.log(topic);
     $.ajax({
-        url: '/admin/topic',
+        url: '/admin_topic',
         type: 'GET',
         dataType: 'json',
         data: {'topico':topic},
-    })
-    .done(function() {
-        console.log("success");
-    })
-    .fail(function() {
+    }).done(function(data) {
+        $('#contenido').empty();
+        $('#error').hide();
+        console.log(data);
+        $.each(data, function(index, el) {
+            $('#contenido').append(
+                    "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
+                    +"<h4 class='page-header'>post <a href="+el.title+">"+el.title+"</a></h4>"
+                    +"<p class='glyphicon glyphicon-time'>created:"+el.created+"</p>"
+                    +"<h3>"+el.topic+"</h3>"
+                    +"<b> "+el.post+" </b>"
+                    +"<b>"+el.razon+"</b><br>"
+                    +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
+                    +"<hr></div>");
+        });
+    }).fail(function() {
+        $('#contenido').empty();
+        $('#error').show();
         console.log("error");
     });
        
@@ -41,7 +54,7 @@ $(":radio[name=topic]").click(function() {
 $(":radio[name=user]").click(function() {
     var value = $(this).val();
     $.ajax({
-        url: '/admin/load',
+        url: '/admin_load',
         type: 'GET',
         dataType: 'json',
         data: {'user': value}
