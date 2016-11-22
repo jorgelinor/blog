@@ -177,6 +177,13 @@ function load_data(posts,mios,request,limit) {
 		}else{
 			var submitter = posts[post].submitter
 		}
+		var title = posts[post].title
+		var content = posts[post].post.toString()
+		title = title.replace(/</g, "&lt;");
+		title = title.replace(/>/g, "&gt;");
+		content = content.replace(/</g, "&lt;");
+		content = content.replace(/>/g, "&gt;");
+
 	if (posts[post].visible==true||mios=='True'){
 		$('.page-content').append('<div class="row">'+
 	        '<div class="col-sm-3">'+
@@ -187,8 +194,8 @@ function load_data(posts,mios,request,limit) {
 	        '</div>'+
 	        '<div class="col-sm-9">'+
 	          '<div style="padding-top: 10px" class="well">'+options+
-	          '<a href="/'+posts[post].id+'"><b style="font-size:250%">'+posts[post].title+'</b>'+
-	          	'<p style="font-size:130%">'+posts[post].post+'</p>'+'<label style="font-size:80%;float:left;color:gray;font-style:italic">'+posts[post].comments+'&nbsp;&nbsp;</label>'+
+	          '<a href="/'+posts[post].id+'"><b style="font-size:250%">'+title+'</b>'+
+	          	'<p style="font-size:130%">'+content+'</p>'+'<label style="font-size:80%;float:left;color:gray;font-style:italic">'+posts[post].comments+'&nbsp;&nbsp;</label>'+
 	 			'<label style="font-size:80%;float:right">'+posts[post].created_str+'</label></a>'+
 	          '</div>'+
 	        '</div>'+
