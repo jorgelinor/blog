@@ -50,7 +50,7 @@
 	  <div id='bandeja'>
 	    {%if recent_msg%}
 	      {%for msg in recent_msg%}
-	        <center>
+	        <center style='color: white'>
 	          {{msg.subject|safe}}
 	        </center>
 	        <br>
@@ -59,27 +59,21 @@
 	        {%else%}
 	          De: {{msg.submitter}}<br>
 	        {%endif%}
-	        <center>
+	        <center style='color: white'>
 	          {{msg.content|safe}}
 	        </center>
 	        <hr>
 	      {%endfor%}
 	    {%endif%}
 	  </div>
-      <form class="navbar-form navbar-right" action="/search" role="search">
-        <div class="form-group input-group">
-          <input type="text" class="form-control" name="q" placeholder="Buscar..." required="true">
-          <input type="hidden" name="filter" value="all">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="submit">
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
-          </span>
-        </div>
-      </form>
       {%if user%}
 	      <ul class="nav navbar-nav navbar-right">
-	        <li><a><span class="glyphicon glyphicon-user"></span> {{user.displayName}}</a>
+	        <li><a style="padding:0px;padding-top: 10px;margin-right: 25px">
+		        {%if user.img%}
+		        	<img src="/view_photo/{{user.img}}" class="img-circle" height="35" width="35" alt="Avatar">
+		        {%else%}
+		        	<img src="/img/profile.jpg" class="img-circle" height="35" width="35" alt="Avatar">
+		        {%endif%}{{user.displayName}}</a>
 	        	<ul>
 	        		<li><a href="/profile">Mi perfil</a></li>
 	        		{%if user.user_type == 'admin'%}
@@ -164,19 +158,19 @@
 	      <p class="change-bg-bt"><a>Cambiar fondo ►</a></p>
 	  {%endif%}
     </div>
-    <div class="col-sm-7">
+    <div class="col-sm-9">
     
     {%if user%}
       <div class="row">
-        <div class="col-sm-12">
-          <div class="panel panel-default text-left">
+        <div class="col-sm-6">
+          <div class="panel panel-default text-left well" style="height: 90px;padding: 0px">
             <div class="panel-body">
-              <p style="display: inline-block;">Tienes alguna duda?&nbsp;<p id="subjectp" contenteditable="True" style="display: inline-block;">Pregunta...</p></p>
+              <p style="display: inline-block;">Tienes alguna duda?&nbsp;</p><p id="subjectp" contenteditable="True" style="display: inline-block;">Pregunta...</p>
             	<form action="/newpost" method="post">
             		<input type="hidden" name="subject" id="subject" value="Pregunta...">
-            		<input type="text" placeholder="Que quieres saber?" name="content" style="width: 100%"><br>
+            		<input type="text" placeholder="Que quieres saber?" name="content" style="width: 80%">
             		<input type="hidden" name="topic" value="Preguntas">
-            		<input type="submit" style="float: right;" name="submit" onclick="load_p()" value="Publicar">
+            		<input type="submit" style="float: right;width: 20%" name="submit" onclick="load_p()" value="Publicar">
             		<script type="text/javascript">
             			function load_p(){
             			var subject = $('#subjectp').html();
@@ -188,20 +182,29 @@
             </div>
           </div>
         </div>
-      </div>
-    {%endif%}
-      <div class="page-content">
-        {%block content%}
-        {%endblock%}
-      </div>
+        <div class="col-sm-6" style="padding-left: 15px;padding-right: 15px;">		      
+		      <div class="well" style="height: 90px;padding-bottom: 0px">
+		      <form class="navbar-form navbar-right" style="margin: 0px;float: inherit !important;" action="/search" role="search">
+		        <div class="form-group input-group">
+		          <input type="text" class="form-control" name="q" placeholder="Buscar..." required="true">
+		          <span class="input-group-btn">
+		            <button class="btn btn-default" type="submit">
+		              <span class="glyphicon glyphicon-search"></span>
+		            </button>
+		          </span>
+		        </div>
+		        <div><input type="radio" name="filter" checked="" value="all">Todo<input type="radio" name="filter" value="user">Personas<input type="radio" name="filter" value="post">Posts<input type="radio" name="filter" value="comment">Comentarios</div>
+		      </form>		      
+		  </div>
+		  </div>
     </div>
-    <div class="col-sm-2 well">
-      <div class="thumbnail">
-      </div>
-      <div class="well">
-      </div>
-      <div class="well">
-      </div>
+    {%endif%}
+      <div class="row">
+	      <div class="page-content">
+	        {%block content%}
+	        {%endblock%}
+	      </div>
+	  </div>
     </div>
   </div>
 </div>

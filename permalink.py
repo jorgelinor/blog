@@ -52,6 +52,8 @@ class Permalink(handler.Handler):
             post = self.display_names(user,[post])#camufla el usuario que lo envio
             comments = Comment.by_post(str(post[0].key().id()))#enlista los comentarios que tiene
             comments = self.display_names(user,comments)#camufla los usuarios de los comentarios
+            for comment in comments:
+                comment.submitter_pic = User.by_nickname(comment.submitter,user).img
             self.render('permalink.html',pagename='Post',reportcomment=reportcomment,editcomment=editcomment,post=post[0],user=user,comments=comments,comment=com,recent_msg=messages,newcomment=newcomment)
         else:
             self.redirect("/error?e=post-notfound")#error

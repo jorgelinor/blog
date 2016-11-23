@@ -42,7 +42,16 @@
     height: auto;
 }
 .well{
-	overflow:hidden;
+	opacity: 0.85;
+	word-break: wrap;
+	overflow-y:auto;
+}
+.navbar-right {
+    float: inherit;
+    margin-right: 0;
+}
+.navbar-form {
+	margin-bottom: 0px
 }
 .date-space {
 	width: 40px;
@@ -74,8 +83,7 @@
 	font-weight:bold;
 }
 #post-comment-content {
-	background-color: gray;
-	float: left;
+	text-align:center;
 	color: black;
 	
 }
@@ -95,7 +103,12 @@
 	text-decoration: underline;
 }
 .post-comment {
-	background-color:gray;
+	background-color:white;
+	margin-bottom: 7px;
+	margin-top: 7px;
+	border:1px solid;
+	opacity: 0.85;
+	padding:10px; 
 	width: 100%;
 	display:block;
 	overflow: hidden;
@@ -125,6 +138,8 @@ li-link {
 	text-decoration: none;
 }
 .page-content{
+	padding-left: 15px;
+	padding-right: 15px
 }
 .menu-left{
 	position: fixed;
@@ -226,6 +241,7 @@ ul, ol {
 	list-style: none;
 }
 * {
+	color: black;
 	border-radius: 4px;
 	margin: 0px;
 	padding: 0px;
@@ -321,15 +337,16 @@ ul, ol {
 	margin:25px;
 }
 
-/* Hora de empezar la responsividad*/
-
-@media screen and (max-width: 800px) {
-	#chart,#chart2 {
-		float:none;
-		border:none;
-	}
+.post-content{
+	max-height: 136px;
+	height: 136px;
 }
 
+/* Hora de empezar la responsividad*/
+
+@media (max-width: 768px){
+.post-content {margin-bottom: 150px}
+}
 .img-viewer-img{
 
     width: 70%;

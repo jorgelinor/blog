@@ -185,15 +185,15 @@ function load_data(posts,mios,request,limit) {
 		content = content.replace(/>/g, "&gt;");
 
 	if (posts[post].visible==true||mios=='True'){
-		$('.page-content').append('<div class="row">'+
-	        '<div class="col-sm-3">'+
-	          '<div class="well">'+
+		$('.page-content').append('<div class="row post-content">'+
+	        '<div class="col-sm-3" style="height: 100%;">'+
+	          '<div class="well" style="height: 100%;">'+
 	           '<p><a href="/profile?u='+posts[post].submitter.split("|")[0]+'">'+submitter.split("|")[0]+'</p>'+
 	           '<img src="'+posts[post].submitter_img+'" class="img-circle" height="55" width="55" alt="Avatar"></a>'+
 	          '</div>'+
 	        '</div>'+
-	        '<div class="col-sm-9">'+
-	          '<div style="padding-top: 10px" class="well">'+options+
+	        '<div class="col-sm-9" style="height: 100%;margin-bottom: 20px;">'+
+	          '<div style="padding-top: 10px;height: 100%;max-width: 100%;word-wrap: break-word;" class="well">'+options+
 	          '<a href="/'+posts[post].id+'"><b style="font-size:250%">'+title+'</b>'+
 	          	'<p style="font-size:130%">'+content+'</p>'+'<label style="font-size:80%;float:left;color:gray;font-style:italic">'+posts[post].comments+'&nbsp;&nbsp;</label>'+
 	 			'<label style="font-size:80%;float:right">'+posts[post].created_str+'</label></a>'+

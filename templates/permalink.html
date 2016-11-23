@@ -22,9 +22,8 @@
 		{%if comments%}
 			{%for comment in comments%}
 				<div class="post-comment">
-					<div id="post-comment-title">{{comment.title}}: </div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div>
-					<div>{{comment.created_str}}</div>
-					<br>
+				<div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{comment.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div>
+					<div style="font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
 					{%if post.submitter == 'ti'%}
 						<a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}" id="edit-link">Borrar</a>
 					{%endif%}
@@ -34,12 +33,8 @@
 						{%else%}
 							<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
 						{%endif%}
-						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
-					{%else%}
-						<div id="comment-submitter-deleted">Enviado por: {{comment.submitter.split("|")[0]}}</div><br>
 					{%endif%}
 				</div>
-				<hr>
 			{%endfor%}
 		{%endif%}
 		<br>
