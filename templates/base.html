@@ -135,22 +135,22 @@
       </div>
       {%if user%}
       	{%if user.banned_from_comments and user.banned_from_posting%}
-	      <div class="alert alert-success fade in">
+	      <div style='color:red'class="alert alert-success fade in">
 	        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
 	        <p><strong>Ey!</strong></p>
 	        No puedes comentar ni publicar
 	      </div>
 	    {%elif user.banned_from_comments%}
-	      <div class="alert alert-success fade in">
-	        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-	        <p><strong>Ey!</strong></p>
-	        No puedes publicar
-	      </div>
-	    {%elif user.banned_from_posting%}
-	      <div class="alert alert-success fade in">
+	      <div style='color:red'class="alert alert-success fade in">
 	        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
 	        <p><strong>Ey!</strong></p>
 	        No puedes comentar
+	      </div>
+	    {%elif user.banned_from_posting%}
+	      <div style='color:red'class="alert alert-success fade in">
+	        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+	        <p><strong>Ey!</strong></p>
+	        No puedes publicar
 	      </div>
 	    {%endif%}
 	   {%endif%}

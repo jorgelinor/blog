@@ -5,7 +5,7 @@ import time
 from message import Message
 from google.appengine.api import memcache
 from google.appengine.ext import ndb
-from user import User
+from user import *
 import logging
 from post import Post
 from google.appengine.ext import db 
@@ -154,9 +154,11 @@ class EditProfile(handler.Handler):
             if permisos_cambio == 'True':
                 logging.error('entar', permisos_cambio)
                 user.solicitud_cambio = True
+                user.state = False
             user.rason_solicitud_cambio = rason_de_solicitud
             user.put()
             time.sleep(2)
+            user_cache()
             self.get_data('User','dict',user.key().id(),user,actualizar=True)
             self.redirect('/profile')
 

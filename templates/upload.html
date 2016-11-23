@@ -19,38 +19,26 @@
         </form>
     {% elif query == 'user_cache' %}
     	<form method="post" name='{{info.userid}}' id='{{info.userid}}' class="col-lg-8">
-            <p>Nombre de usurio:{{info.displayName}}</p>
-            <p>Usuario Estado:{{info.user_type}}</p>
-            <p>Rason de Cambio:{{info.rason_solicitud_cambio}}</p>
-            <hr>
-            <label class="col-lg-8">
-            <label class='col-lg-4'>
-            <p>permiso de usuario </p>
+            <h3>{{info.user_id}}</h3><hr>
+            <label>Permiso de usuario </label>
             <select name='user_type'>
-            	<option value="">None</option>
-            	<option value="admin">admin</option>
-            	<option value="user">user</option>
+                  <option value="admin">Administrador</option>
+                  <option value="user">Usuario</option>
             </select>
-            </label>
-            <label class='col-lg-4'>
-            <p>permiso de posteo</p>
-            <select name="banned_from_posting">
-            	<option value="">None</option>
-            	<option value="True">true</option>
-            	<option value="False">false</option>
-            </select>
-            </label>
-            <label class='col-lg-4'>
-            <p>permiso de comentar</p>
-            <select name="banned_from_comments">
-            	<option value="">None</option>
-            	<option value="True">true</option>
-            	<option value="False">false</option>
-            </select>
-            </label>
-            </label>
             <br>
-	        <input class='button' type='submit'>
+            <label>Permiso de posteo</label>
+            <select name="banned_from_posting">
+                  <option value="False">Dar permisos de posteo</option>
+                  <option value="True">Quitar permisos de posteo</option>
+            </select>
+            <br>
+            <label>Permiso de comentar</label>
+            <select name="banned_from_comments">
+                  <option value="False">Dar permisos de comentars</option>
+                  <option value="True">Quitar permisos de comentar</option>
+            </select>
+            <br>
+            <input class='button' type='submit'>
         </form>
 	{% endif %}
 {%endblock%}

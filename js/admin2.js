@@ -62,12 +62,16 @@ $(":radio[name=user]").click(function() {
         $('#contenido').empty();
         $('#error').hide();
         $.each(data, function(index, val) {
+            var posts_perm = (val.banned_from_posting) ? 'No':'Si' 
+            var comments_perm = (val.banned_from_comments) ? 'No':'Si' 
+            var type = (val.user_type == "admin") ? 'Administrador':'Usuario'
             $('#contenido').append("<div id='"+val.userid+"' name='"+val.userid+"' class='col-md-8'>"
-                                        +"<p>Nombre de usurio:"+val.displayName+"</p>"
-                                        +"<p>Usuario Estado:"+val.user_type+"</p>"
-                                        +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"
-                                        +"<p>cambio de permiso para usuario </p>"
-                                        +"<a href=/admin/user_"+val.userid+">someter informacion</a>"
+                                        +"<h3 class='page-header'>"+val.user_id+"</h3>"
+                                        +"<p>Apodo: "+val.displayName+"</p>"
+                                        +"<p>Permisos de usuario: "+type+"</p>"
+                                        +"<p>Permisos para postear: "+posts_perm+"</p>"
+                                        +"<p>Permisos para comentar: "+comments_perm+"</p>"
+                                        +"<a href=/admin/user_"+val.userid+">Modificar permisos de usuario</a>"
                                         +"</div>");
 
         });

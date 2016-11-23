@@ -73,11 +73,10 @@ $("#administracion_user").click(function() {
         console.log(data);
         $.each(data, function(index, val) {
             $('#contenido').append("<div id='"+val.userid+"' name='"+val.userid+"' class='col-md-8'>"
-                                        +"<p class='page-header'>Nombre de usurio:"+val.displayName+"</p>"
-                                        +"<p>Usuario Estado:"+val.user_type+"</p>"
-                                        +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"
-                                        +"<p>cambio de permiso para usuario </p>"
-                                        +"<a href=/admin/user_"+val.userid+">someter informacion</a>"
+                                        +"<p class='page-header'>Nombre de usurio:"+val.user_id+"</p>"
+                                        +"<p>Tipo de permisos: "+val.user_type+"</p>"
+                                        +"<p>Razon de cambio: "+val.rason_solicitud_cambio+"</p><br>"
+                                        +"<a href=/admin/user_"+val.userid+">Modificar permisos de usuario</a>"
                                         +"<hr></div>");
 
         });

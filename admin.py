@@ -174,15 +174,18 @@ class Admin_submit(handler.Handler):
             cache = buscar(id_object, 'user_cache')
             if cache and user_type and banned_from_comments and banned_from_posting:
                 cache.user_type = user_type
-                cache.banned_from_posting = (True if banned_from_posting == 'True' else False)
-                cache.banned_from_comments = (True if banned_from_comments == 'True' else False)
+                cache.banned_from_posting = eval(banned_from_posting)
+                cache.banned_from_comments = eval(banned_from_comments)
+                rason_solicitud_cambio = None
+                solicitud_cambio = False
                 cache.state = True
                 cache.put()
+                time.sleep(2)
+                self.get_data('User','dict',cache.key().id(),cache,actualizar=True)
+                user_cache()
                 self.redirect('/admin')
             else:
                 self.redirect('/admin')
-    #     elif query == 'post_reposrted_cache':
-    #         pass
         
 
 #encuentra los post o usuario y comentario por el id
