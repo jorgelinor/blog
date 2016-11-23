@@ -104,7 +104,7 @@ class Admin_submit(handler.Handler):
                     query='user_cache'
 
                 info = buscar(id_object , query)
-                self.render('upload.html',info=info, query=query,user=user)
+                self.render('upload.html',info=info, query=query,user=user,pagename='Administracion')
             else:
                 self.redirect('/')
         else:

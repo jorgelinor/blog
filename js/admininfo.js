@@ -22,6 +22,7 @@ $("#asd").click(function() {
                     +"<a href="+el.post+">"+el.title+"</a></h4>"
                     +"<p>"+el.content+"</p>"
                     +"<p>Razon:</p><b style='color:red'>"+el.razon+"</b><br name='query' value='comments_reported_cache'>"
+                    +"<p class='glyphicon glyphicon-time'>"+el.created+"</p><br>"
                     +"<a href='/admin/come_"+el.comment_id+"'>Acciones de reporte</a>"
                     +"<hr></div>");
 
@@ -46,12 +47,11 @@ $("#modificacion").click(function() {
         $.each(data, function(index, el) {
             $('#contenido').append(
                     "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
-                    +"<h4 class='page-header'>post <a href="+el.title+">"+el.title+"</a></h4>"
-                    +"<p class='glyphicon glyphicon-time'>created:"+el.created+"</p>"
-                    +"<h3>"+el.topic+"</h3>"
-                    +"<b> "+el.post+" </b>"
-                    +"<b>"+el.razon+"</b><br>"
-                    +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
+                    +"<h4 class='page-header'>Pedido para <a href="+el.title+">este post</a> de "+el.topic+"</h4>"
+                    +"<p class='glyphicon glyphicon-time'>"+el.created+"</p>"
+                    +"<p>Razon para editar:</p>"
+                    +"<b style='color:red'>"+el.razon+"</b><br>"
+                    +"<a href='/admin/post_"+el.post_id+"'>Acciones de pedido</a>"
                     +"<hr></div>");
         });
     }).fail(function() {
