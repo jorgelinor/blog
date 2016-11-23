@@ -117,15 +117,28 @@ class Admin_submit(handler.Handler):
             comments_reported = self.request.get('report')
 
             cache = buscar(id_object, 'comments_cache')
-            if cache and comments_reported == 'on':
-                cache.show = False
-                cache.state = True
-                cache.put()
+            if cache and comments_reported == 'accept-report':
+                com=Comment.get_by_id(int(id_object))
+                if com:
+                    post = self.get_data('Post')#obtiene el post
+                    post = post.get(int(com.post))
+                    post.comments -= 1
+                    post.put()
+                    time.sleep(2)
+                    com.delete()
+                    self.get_data('Comment','dict',int(id_object),None,actualizar=True)
+                    self.get_data('Post','dict',post.key().id(),post,actualizar=True)
+                    comments_cache()
+                else:
+                    comments_cache()
                 self.redirect('/admin')
-            else:
-                cache.show = True
-                cache.state = True
-                cache.put()
+            elif cache and comments_reported == 'deny-report':
+                com = Comment.get_by_id(int(id_object))
+                com.reported=False
+                com.razon=[]
+                com.put()
+                time.sleep(2)
+                comments_cache()
                 self.redirect('/admin')
 
         elif ins == 'post':

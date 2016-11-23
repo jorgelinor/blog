@@ -17,12 +17,12 @@ $("#asd").click(function() {
             
             console.log('estado'+el.state);
             $('#contenido').append(
-                    "<div name='"+el.comment_id+" class='col-md-8'>"
-                    +"<h1 class='page-header'>coment submete by:"+el.submitter+"</h1>"
-                    +"<p class='glyphicon glyphicon-time'> creado: "+el.created+"</p><h4><a href="+el.post+">Post</a></h4>"
+                    "<div name='"+el.comment_id+"' class='col-md-8'>"
+                    +"<h1 class='page-header'>Reporte enviado por: "+el.submitter+"</h1>"
+                    +"<a href="+el.post+">"+el.title+"</a></h4>"
                     +"<p>"+el.content+"</p>"
-                    +"<p>Reportado</p><b>"+el.razon+"</b><br name='query' value='comments_reported_cache'>"
-                    +"<a href='/admin/come_"+el.comment_id+"'>Someter informacion</a>"
+                    +"<p>Razon:</p><b style='color:red'>"+el.razon+"</b><br name='query' value='comments_reported_cache'>"
+                    +"<a href='/admin/come_"+el.comment_id+"'>Acciones de reporte</a>"
                     +"<hr></div>");
 
         });

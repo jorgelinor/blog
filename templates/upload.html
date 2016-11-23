@@ -2,18 +2,12 @@
 {%block content%}
 	{% if query == 'comments_cache' %}
 		<form method="post" id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8" >
-	        <p>coment submete by:{{info.submitter}}</p>
-	        <p> creado: {{info.created}}</p>
-	        <p>
-	        	<a href="/{{info.post}}">Post</a>
-	        </p>
-	        <p>{{info.content}}</p>
-	        <p>Reportado</p>
-	        <b>{{info.razon}}</b>
-	        <br>
-	        <input type='checkbox' name='report'>Quitar comentario</input>
-	        <input type='submit'>
-	    </form>
+	          <input accesskey='1' id="test1" name='report' type='radio' checked='checked' value='accept-report'>
+                <label for='1'>Quitar comentario</label>
+                <input accesskey='2' id="test2" name='report' type='radio' value='deny-report'>
+                <label for'2'>Dejar comentario</label>
+	          <input type='submit'>
+	      </form>
 	{% elif query == 'post_cache' %}
 		<form method="post" name='{{info.post_id}}' id='{{info.post_id}}' class="col-lg-8">
             <p>post <a href="/{{info.title}}">{{info.title}}</a></p>

@@ -23,13 +23,15 @@ class Permalink(handler.Handler):
             if self.request.get('action') == 'deletecomment':
                 com = self.get_data('Comment')
                 com = com.get(int(self.request.get('c')))# si el comentario existe con el query
-                if com and int(com.post) == post.key().id() and post.submitter == user.user_id:
-                    db.delete(com)
-                    post.comments -= 1
-                    post.put()
-                    self.get_data('Post','dict',post.key().id(),post,actualizar=True)
-                    self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
-                    time.sleep(1)
+                if com:
+                    if int(com.post) == post.key().id() and post.submitter == user.user_id or com.submitter == user.user_id:
+                        db.delete(com)
+                        post.comments -= 1
+                        post.put()
+                        self.get_data('Post','dict',post.key().id(),post,actualizar=True)
+                        self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
+                        time.sleep(1)
+                self.redirect('/'+link)
             if self.request.get("action") == "newcomment": #query para verificar si se agrega un nuevo comentario
                 if not user.banned_from_comments:
                     newcomment = True# si es asi, manda algo al render para un espacio de comentario

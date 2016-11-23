@@ -32,7 +32,7 @@
 						{%if comment.submitter.split('|')[0]=='ti'%}
 							<a id="edit-link" href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a>
 						{%else%}
-							{%if post.submitter != 'ti'%}
+							{%if comment.submitter != 'ti'%}
 								<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
 							{%endif%}
 						{%endif%}
