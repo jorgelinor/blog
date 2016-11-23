@@ -10,7 +10,9 @@
 			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
 		{%endif%}
 		<label style="float:right">{{post.created_str}}</label><br>
-		<button><a class="button" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a></button>
+		{%if user%}
+			<button><a class="button" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a></button>
+		{%endif%}
 		{%if post.submitter == 'ti'%}
 			{%if post.modificable == 'pending'%}
 				<b style="color: red;float:right">Tu peticion esta en proceso</b>
@@ -22,7 +24,7 @@
 		{%if comments%}
 			{%for comment in comments%}
 				<div class="post-comment">
-				<div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{comment.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div>
+				<div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{comment.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div><div id="post-comment-content"> {{comment.content}}</div>
 					<div style="font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
 					{%if post.submitter == 'ti'%}
 						<a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}" id="edit-link">Borrar</a>
@@ -31,31 +33,49 @@
 						{%if comment.submitter.split('|')[0]=='ti'%}
 							<a id="edit-link" href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a>
 						{%else%}
-							<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
+							{%if post.submitter != 'ti' and user%}
+								<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
+							{%endif%}
 						{%endif%}
 					{%endif%}
 				</div>
+				<div style="display:none" id="hidden-edit-{{comment.key().id()}}">
+					<form method="post">
+						<textarea id="comment" name="content">{{comment.content}}</textarea>
+						<button type="submit">Guardar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
+					</form>
+				</div>
+				<div style="display:none" id="hidden-report-{{comment.key().id()}}">
+					<form method="post">
+						<input type="text" id="comment" name="razon" placeholder="Escribe una razon valida"></input>
+						<button type="submit">Reportar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
+					</form>
+				</div>
+				<hr>
 			{%endfor%}
 		{%endif%}
 		<br>
 		{%if newcomment==True%}
+			<script type='text/javascript'>
+				$(document).ready(function(){
+					$(window).scrollTop(document.body.scrollHeight)
+				})
+			</script>
 			<form method="post">
 				<textarea id="comment" name="content">{{content}}</textarea>
-				<button type="submit">Enviar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo comentar</button>
+				<button type="submit">Enviar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
 			</form>
 		{%endif%}
 		{%if editcomment==True%}
-			<form method="post">
-				<textarea id="comment" name="content">{{comment.content}}</textarea>
-				<button type="submit">Guardar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo guardar</button>
-			</form>
+			<script type='text/javascript'>
+				$("#hidden-edit-"+"{{comment.key().id()}}").css("display","block")
+			</script>
 		{%endif%}
 
 		{%if reportcomment==True%}
-			<form method="post">
-				<input type="text" id="comment" name="razon" placeholder="Escribe una razon valida"></input>
-				<button type="submit">Reportar comentario</button><button><a class="button" href="/{{post.key().id()}}">No deseo hacer esto</button>
-			</form>
+			<script type='text/javascript'>
+				$("#hidden-report-"+"{{comment.key().id()}}").css("display","block")
+			</script>
 		{%endif%}
 
 <br>

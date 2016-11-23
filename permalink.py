@@ -15,8 +15,6 @@ class Permalink(handler.Handler):
             user = self.get_data('User')
             user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             messages = self.GetMessages(persona=user)#para la bandeja
-        else:#si no 
-            self.redirect('/login')#pal login
         post = self.get_data('Post')
         post = post.get(int(link))#obtiene el post
         if post:#si existe

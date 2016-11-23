@@ -42,6 +42,29 @@ class User(db.Model):
 				return user
 		return None
 
+def buscar_user_tipe(user_type):
+	listas={}
+	users = memcache.get('user_cache')
+	if users is None:
+		cache=user_cache()
+		users = cache["user_cache"]
+	for user in users:
+		if users[user].user_type == user_type:
+			listas[str(users[user].key().id())]= users[user]
+	return listas
+
+
+def busqueda_user(nombre):
+	listas={}
+	users = memcache.get("user_cache")
+	if users is None:
+		cache=user_cache()
+		users = cache["user_cache"]
+	for user in users:
+		if nombre in user.user_id:
+			listas[str(user.key().id())]= users[user]
+	return listas
+
 # admin info para buscar los usuarios que solicitaron cambio de 
 def user_cambio():
 	reported = {}

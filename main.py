@@ -36,6 +36,8 @@ app = webapp2.WSGIApplication([
     ("/admin/?", admin.Admin),
     ("/admin/([a-z0-9_-]+)", admin.Admin_submit),
     ("/admin/Admin_info", admin.Admin_info),
+    ("/admin_load", admin.Users),
+    ("/admin_topic", admin.Topicos),
     ('/error/?', handler.ErrorHandler),
     ('/_stats', handler.Stats),
     ('/search', search.Search),

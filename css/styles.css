@@ -89,7 +89,7 @@
 }
 #comment-content-full {
 	display:none;
-	position: fixed;
+	position: absolute;
 	right:240px;
 	width:60%;
 	background:darkgray;
@@ -115,7 +115,7 @@
 }
 .button {
 	text-decoration: none;
-	font-weight: bold;
+
 }
 #comment-submitter-deleted {
 	float:left;
@@ -128,7 +128,9 @@
 #edit-link {
 	float:right;
 	text-decoration: none;
-	color:blue;
+	color:black;
+	margin-left:6px;
+	font-weight:bold;
 }
 li-link {
 	margin:2%;
