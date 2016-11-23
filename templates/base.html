@@ -54,10 +54,10 @@
 	          {{msg.subject|safe}}
 	        </center>
 	        <br>
-	        {%if msg.submitter != "Administracion"%}
+	        {%if msg.submitter != "Administracion|False"%}
 	          De: <a href="/profile?u={{msg.submitter}}">{{msg.submitter}}</a><br>
 	        {%else%}
-	          De: {{msg.submitter}}<br>
+	          De: {{msg.submitter.split("|")[0]}}<br>
 	        {%endif%}
 	        <center>
 	          {{msg.content|safe}}

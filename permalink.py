@@ -1,5 +1,5 @@
 import handler
-from post import Post
+from post import *
 import hashlib
 from user import User
 from comment import Comment
@@ -124,7 +124,7 @@ class EditPost(handler.Handler):
 
     def post(self,link):
         post = self.get_data('Post')
-        post.get(int(link))
+        post = post.get(int(link))
         content = self.request.get('content')
         if post and content:
             post.post = content
@@ -160,7 +160,10 @@ class EditRequest(handler.Handler):
             post = self.get_data('Post')
             post = post.get(int(link))
             post.modificable = 'pending'
+            post.state = False
             post.razon = razon
-            self.get_data('Post','dict',post.key().id(),post,actualizar=True)
             post.put()
+            self.get_data('Post','dict',post.key().id(),post,actualizar=True)
+            time.sleep(2)
+            post_cache()
         self.redirect('/'+link)

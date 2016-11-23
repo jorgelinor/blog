@@ -37,7 +37,7 @@ class Admin_info(handler.Handler):
             if user.user_type == "admin":
                 info={}
                 action = self.request.GET.get('action')
-                informacion= memcache.get(action)
+                informacion = memcache.get(action)
                 if informacion is None:
                     post_cache()
                     user_cache()
@@ -143,11 +143,26 @@ class Admin_submit(handler.Handler):
 
         elif ins == 'post':
             modificable = self.request.get('permiso')
+            mensaje_titulo = ''
+            mensaje_contenido = ''
+            if eval(modificable) == True:
+                mensaje_titulo = '<h3 style="color:green">PEDIDO ACEPTADO</h3>'
+                mensaje_contenido = 'Su pedido para modificar <a href="/'+id_object+'">este</a> post fue aceptado'
+            elif eval(modificable) == False:
+                mensaje_titulo = '<h3 style="color:red">PEDIDO DENEGADO</h3>'
+                mensaje_contenido = 'Su pedido para modificar <a href="/'+id_object+'">este</a> post fue rechazado'
             cache = buscar(id_object, 'post_cache')
             if cache and modificable:
                 cache.modificable = modificable
-                cache.state = True
+                cache.state = False
+                cache.razon = None
                 cache.put()
+                msg = Message(submitter='Administracion',destination=cache.submitter,subject=mensaje_titulo,content=mensaje_contenido)
+                msg.put()
+                time.sleep(2)
+                post_cache()
+                self.get_data('Post','dict',cache.key().id(),cache,actualizar=True)
+                Message.update(cache.submitter,msg)
                 self.redirect('/admin')
             else:
                 self.redirect('/admin')

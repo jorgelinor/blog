@@ -2,7 +2,7 @@
 {%block content%}
 	{% if query == 'comments_cache' %}
 		<form method="post" id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8" >
-	          <input accesskey='1' id="test1" name='report' type='radio' checked='checked' value='accept-report'>
+	          <input accesskey='1' id="test1" name='report' type='radio' value='accept-report'>
                 <label for='1'>Quitar comentario</label>
                 <input accesskey='2' id="test2" name='report' type='radio' value='deny-report'>
                 <label for'2'>Dejar comentario</label>
@@ -10,13 +10,11 @@
 	      </form>
 	{% elif query == 'post_cache' %}
 		<form method="post" name='{{info.post_id}}' id='{{info.post_id}}' class="col-lg-8">
-            <p>post <a href="/{{info.title}}">{{info.title}}</a></p>
-            <p>creado:{{info.created}}</p>
-            <p>{{info.topic}}</p>
-            <b> {{info.post}} </b>
-            <b>{{info.razon}}</b>
-            <br>
-            <input type='text' name='permiso'>
+                  <input type='radio' name='permiso' value='True' accesskey='1'>
+                  <label for='1'>Aceptar peticion</label>
+                  <input type='radio' name='permiso' value='False' accesskey='2'>
+                  <label for='2'>Denegar peticion</label>
+
 	        <input type='submit'>
         </form>
     {% elif query == 'user_cache' %}
