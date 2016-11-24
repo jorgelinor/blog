@@ -43,7 +43,7 @@ $(":radio[name=topic]").click(function() {
                     +"<p>Tópico: "+el.topic+"</p>"
                     +"<p class='glyphicon glyphicon-time'>"+el.created+"</p><br>"
                     +"<a class='admin-link' style='color:black' href='/admin/post2_"+el.post_id+"'>Acciones de post</a>"
-                    +"<hr></div>");    
+                    +"</div>");    
             }
             
         });
@@ -75,7 +75,7 @@ $(":radio[name=user]").click(function() {
                                         +"<p>Permisos de usuario: "+type+"</p>"
                                         +"<p>Permisos para postear: "+posts_perm+"</p>"
                                         +"<p>Permisos para comentar: "+comments_perm+"</p>"
-                                        +"<a href=/admin/user_"+val.userid+">Modificar permisos de usuario</a>"
+                                        +"<a style='color:black' href=/admin/user_"+val.userid+">Modificar permisos de usuario</a>"
                                         +"</div>");
 
         });
