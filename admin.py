@@ -120,7 +120,6 @@ class Admin_submit(handler.Handler):
         if ins == 'come':
             # coment_id = self.request.get('comment_id')
             comments_reported = self.request.get('report')
-
             cache = buscar(id_object, 'comments_cache')
             if cache and comments_reported == 'accept-report':
                 com=Comment.get_by_id(int(id_object))
@@ -212,7 +211,6 @@ class Admin_submit(handler.Handler):
             user_type = self.request.get('user_type')
             banned_from_comments = self.request.get('banned_from_comments')
             banned_from_posting = self.request.get('banned_from_posting')
-
             cache = buscar(id_object, 'user_cache')
             if cache and user_type and banned_from_comments and banned_from_posting:
                 cache.user_type = user_type

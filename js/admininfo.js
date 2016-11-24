@@ -18,7 +18,7 @@ $("#asd").click(function() {
             console.log('estado'+el.state);
             $('#contenido').append(
                     "<div name='"+el.comment_id+"' class='col-md-8'>"
-                    +"<h1 class='page-header'>Reporte enviado por: "+el.submitter+"</h1>"
+                    +"<h1 class='page-header'>Comentario de: "+el.submitter+"</h1>"
                     +"<a href="+el.post+">"+el.title+"</a></h4>"
                     +"<p>"+el.content+"</p>"
                     +"<p>Razon:</p><b style='color:red'>"+el.razon+"</b><br name='query' value='comments_reported_cache'>"
