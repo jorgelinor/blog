@@ -33,15 +33,18 @@ $(":radio[name=topic]").click(function() {
         $('#error').hide();
         console.log(data);
         $.each(data, function(index, el) {
-            $('#contenido').append(
+            if (el.modificable != 'pending'){
+                $('#contenido').append(
                     "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
-                    +"<h4 class='page-header'>post <a href="+el.title+">"+el.title+"</a></h4>"
+                    +"<h4 class='page-header'>post <a href="+el.post_id+">"+el.title+"</a></h4>"
                     +"<p class='glyphicon glyphicon-time'>created:"+el.created+"</p>"
                     +"<h3>"+el.topic+"</h3>"
                     +"<b> "+el.post+" </b>"
                     +"<b>"+el.razon+"</b><br>"
-                    +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
-                    +"<hr></div>");
+                    +"<a href='/admin/post2_"+el.post_id+"'>someter informacion</a>"
+                    +"<hr></div>");    
+            }
+            
         });
     }).fail(function() {
         $('#contenido').empty();

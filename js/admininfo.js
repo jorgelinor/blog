@@ -47,7 +47,7 @@ $("#modificacion").click(function() {
         $.each(data, function(index, el) {
             $('#contenido').append(
                     "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
-                    +"<h4 class='page-header'>Pedido para <a href="+el.title+">este post</a> de "+el.topic+"</h4>"
+                    +"<h4 class='page-header'>Pedido para <a href=/"+el.post_id+">este post</a> de "+el.topic+"</h4>"
                     +"<p class='glyphicon glyphicon-time'>"+el.created+"</p>"
                     +"<p>Razon para editar:</p>"
                     +"<b style='color:red'>"+el.razon+"</b><br>"

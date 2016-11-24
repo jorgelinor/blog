@@ -26,9 +26,9 @@ class Permalink(handler.Handler):
                         db.delete(com)
                         post.comments -= 1
                         post.put()
-                        self.get_data('Post','dict',post.key().id(),post,actualizar=True)
-                        self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
                         time.sleep(1)
+                        self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
+                        self.get_data('Post','dict',post.key().id(),post,actualizar=True)
                 self.redirect('/'+link)
             if self.request.get("action") == "newcomment": #query para verificar si se agrega un nuevo comentario
                 if not user.banned_from_comments:
@@ -76,8 +76,8 @@ class Permalink(handler.Handler):
                 com.put()
                 post.comments += 1
                 post.put()
-                self.get_data('Post','dict',int(link),post,actualizar=True)
                 self.get_data('Comment','dict',com.key().id(),com,actualizar=True)
+                self.get_data('Post','dict',int(link),post,actualizar=True)
                 self.redirect("/"+link)
         elif self.request.get('action') == 'editcomment':#para saber si la accion post o el metodo post es para editar un comentario
             content = self.request.get("content")

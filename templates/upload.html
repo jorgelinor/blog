@@ -1,5 +1,6 @@
 {%extends "base.html"%}
 {%block content%}
+{%if admin2 == False%}
 	{% if query == 'comments_cache' %}
 		<form method="post" id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8" >
 	          <input accesskey='1' id="test1" name='report' type='radio' value='accept-report'>
@@ -16,7 +17,7 @@
                   <label for='2'>Denegar peticion</label>
 
 	        <input type='submit'>
-        </form>
+      </form>
     {% elif query == 'user_cache' %}
     	<form method="post" name='{{info.userid}}' id='{{info.userid}}' class="col-lg-8">
             <h3>{{info.user_id}}</h3><hr>
@@ -41,5 +42,20 @@
             <input class='button' type='submit'>
         </form>
 	{% endif %}
+{%else%}
+<form method='post' name='{{info.post_id}}' id='{{info.post_id}}' class='col-lg-8'>
+    <h4>Las acciones tomadas deben ser por estas razones:
+      <b style='color:red'>Contenido sexual, </b>
+      <b style='color:red'>Racismo</b>
+    </h4>
+    <input type='radio' accesskey='1' name='action' value='borrar'>
+    <label for='1'>Eliminar este post</label><br>
+    <input type='radio' accesskey='2' name='action' value='advertir'>
+    <label for='2'>Advertir al duenio</label><br>
+    <input type='radio' accesskey='3' name='action' value='ocultar'>
+    <label for='3'>Ocultar este post</label><br>
+    <input type='submit' class='button'>
+</form>
+{%endif%}
 {%endblock%}
 
