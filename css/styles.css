@@ -36,9 +36,22 @@
 	float:right;
 }
 #edit-holder {
-	margin-left:10px;
-	width: 40%;
-	height:auto;
+    margin-left: 10px;
+    /* width: 40%; */
+    text-align: left;
+    height: auto;
+}
+.well{
+	opacity: 0.85;
+	word-break: break-word;
+	overflow-y:auto;
+}
+.navbar-right {
+    float: inherit;
+    margin-right: 0;
+}
+.navbar-form {
+	margin-bottom: 0px
 }
 .date-space {
 	width: 40px;
@@ -53,7 +66,7 @@
 	color: gray;
 }
 #post-title {
-	color: gray;
+	color: black;
 	text-decoration: none;
 }
 #post-submitter-deleted {
@@ -70,10 +83,10 @@
 	font-weight:bold;
 }
 #post-comment-content {
-	background-color: gray;
-	float: left;
-	color: black;
-	
+    width: 70%;
+    text-align: center;
+    color: black;
+    word-wrap: break-word;
 }
 #comment-content-full {
 	display:none;
@@ -91,7 +104,11 @@
 	text-decoration: underline;
 }
 .post-comment {
-	background-color:gray;
+	background-color:white;
+	margin-bottom: 7px;
+	margin-top: 7px;
+	border:1px solid;
+	padding:10px; 
 	width: 100%;
 	display:block;
 	overflow: hidden;
@@ -123,10 +140,8 @@ li-link {
 	text-decoration: none;
 }
 .page-content{
-	margin-left: 10%;
-	margin-right: 10%;
-	overflow-y: auto;
-	margin-top: 75px;
+	padding-left: 15px;
+	padding-right: 15px
 }
 .menu-left{
 	position: fixed;
@@ -212,24 +227,28 @@ li-link {
 	cursor:pointer;
 }
 #bandeja {
-	position:fixed;
-	top: 54px;
-	right:3%;
-	width:40%;
-	height:215px;
-	display:none;
-	border: groove 3px darkgray;
-	overflow:scroll;
-	z-index:2147483646;
+    position: fixed;
+    top: 54px;
+    right: 3%;
+    color: white;
+    background-color: #222;
+    width: 40%;
+    height: 215px;
+    display: none;
+    border: groove 3px #222;
+    overflow: scroll;
+    z-index: 2147483646;
 }
 ul, ol {
 	list-style: none;
 }
 * {
+	color: black;
+	border-radius: 4px;
 	margin: 0px;
 	padding: 0px;
 }
-.menu li a {
+/*.menu li a {
 	background-color: gray;
 	color: black;
 	text-decoration: none;
@@ -243,26 +262,59 @@ ul, ol {
 	margin-left:5%;
 	float:left;
 	margin-top: 15px
-}
+}*/
 .menu li ul {
 	display: none;
 	position:absolute;
 	max-width: 140px;
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    background-color: #222;
+	z-index:2147483647
 
 }
+#post-options{
+	display: none;
+	position:absolute;
+	width: 82px;
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    background-color: #f3f3f3;
+	z-index:2147483647	
+}
+.post-options-bt{
+	color:#c7c7c7;
+}
+
+#myNavbar{
+	overflow-y: inherit;
+}
+.navbar-inverse .navbar-nav>li>ul>li>a {
+    color: #9d9d9d;
+}
+.navbar-inverse .navbar-nav>li>ul>li>a:hover {
+  color: #fff;
+  background-color: transparent;
+  text-decoration:none;
+}
+.navbar-collapse {
+    overflow-y: inherit;
+}
 .menu li:hover > ul{
-	margin:0px;
 	display: block;
-	z-index:2147483647;
 }
 .admin-link {
+	cursor:pointer;
 	margin:2%;
 	font-weight: bold;
 	font-size: 20px;
 	color: gray;
 	text-decoration: none;
 }
-
 #report-razon {
 	color:red;
 	margin-left: 60%;
@@ -288,15 +340,16 @@ ul, ol {
 	margin:25px;
 }
 
-/* Hora de empezar la responsividad*/
-
-@media screen and (max-width: 800px) {
-	#chart,#chart2 {
-		float:none;
-		border:none;
-	}
+.post-content{
+	max-height: 136px;
+	height: 136px;
 }
 
+/* Hora de empezar la responsividad*/
+
+@media (max-width: 768px){
+.post-content {margin-bottom: 150px}
+}
 .img-viewer-img{
 
     width: 70%;
@@ -337,6 +390,28 @@ ul, ol {
     right: -7%;
     max-width: 25%;
     cursor: pointer;
+    color: #f3f3f3
+}
+.change-bg{
+	display: none;
+	position:absolute;
+	max-width: 140px;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    right: 0px;
+    bottom: 0px;
+    border: 1px solid #337ab7;
+    background-color: #f3f3f3;
+	z-index:2147483647	
+}
+.change-bg-close{
+	cursor: pointer;
+	float: right;
+}
+.change-bg-bt{
+	cursor: pointer;
 }
 
 li.username{
@@ -345,4 +420,20 @@ li.username{
 
 .prof-li hr {
 	margin:0px;
+}
+.comment-options-bt{
+	float: right;
+	color:#c7c7c7;
+}
+.comment-options{
+	display: none;
+    position: absolute;
+    width: 96px;
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    background-color: white;
+    z-index: 2147483647;
+    border: 1px solid;
 }

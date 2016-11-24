@@ -5,12 +5,13 @@ import time
 from message import Message
 from google.appengine.api import memcache
 from google.appengine.ext import ndb
-from user import User
+from user import *
 import logging
 from post import Post
 from google.appengine.ext import db 
 from google.appengine.ext import blobstore 
 from google.appengine.ext.webapp import blobstore_handlers 
+from comment import *
 
  
 class UserPhoto(ndb.Model): 
@@ -21,7 +22,8 @@ class UserPhoto(ndb.Model):
 class PhotoUploadHandler(handler.Handler,blobstore_handlers.BlobstoreUploadHandler): 
     def post(self,user=None): 
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
         try: 
             upload = self.get_uploads()[0] 
             user_photo = UserPhoto( 
@@ -30,12 +32,29 @@ class PhotoUploadHandler(handler.Handler,blobstore_handlers.BlobstoreUploadHandl
             user_photo.put() 
             user.img = str(upload.key())
             user.put()
-            memcache.delete('user_'+self.request.cookies.get('user_id').split('|')[0])
+            self.get_data('User','dict',user.key().id(),user,actualizar=True)
             time.sleep(2)
             self.redirect('/profile') 
 
         except: 
             self.redirect('/newpost')
+
+class ChangeBackground(handler.Handler):
+    def get(self):
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+        if user:
+            color = self.request.get('color')
+            img = self.request.get('img')
+            if color:
+                user.pref_color = color
+            elif img:
+                user.pref_color = None
+            user.put()
+            self.get_data('User','dict',user.key().id(),user,actualizar=True)
+        self.redirect('/')
+        
 
 class Profile(handler.Handler):
     #Handler que presenta la pagina del perfil propio, con toda la informacion para ver y cambiar
@@ -43,8 +62,10 @@ class Profile(handler.Handler):
         user = None
         upload_url = blobstore.create_upload_url('/upload_photo')
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            messages = self.GetMessages(actualizar=False,persona=user)#Los mensajes para mandarlos a la bandeja
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+            if user:
+                messages = self.GetMessages(persona=user)#Los mensajes para mandarlos a la bandeja
         if not self.request.get("u"):#Si no se va a ver el perfil de otra persona
             if not user:#Y no hay cookie
                 self.redirect("/login")#para el login
@@ -52,9 +73,8 @@ class Profile(handler.Handler):
                 profile = user#se condiciona para entrar a mi perfil
                 modificable = True
         else:
-            profile = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#Obtener el objeto y a la vez ponlo en el cache
-            if len(profile)>0:#si se va a ver el perfil de alguien
-                profile = profile[0]
+            profile = User.by_nickname(self.request.get('u'))#Obtener el objeto y a la vez ponlo en el cache
+            if profile:#si se va a ver el perfil de alguien
                 if user and str(profile.key().id()) == str(user.key().id()):#si el que se va a ver es mi perfil
                     self.redirect("/profile")#accede al primer paso
             elif self.request.get("u") == "ti":
@@ -97,10 +117,12 @@ class EditProfile(handler.Handler):
     def get(self):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:#verificacion de la cookie
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])#obtiene el objeto con la informacion del usuario a editar
-            date_pre = self.get_data('create_date',create_date())#creacion de los datos para la fecha,como el procedimiento usa loop lo almaceno en cache para evitar usar el loop nuevamente
-            messages = self.GetMessages(actualizar=False,persona=user)#Los mensajes para la bandeja
-            self.render("editprofile.html",pagename='Editar Perfil', user=user,years=date_pre[0],months=date_pre[1],days=date_pre[2],recent_msg=messages)
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+            date_pre = create_date()#creacion de los datos para la fecha,como el procedimiento usa loop lo almaceno en cache para evitar usar el loop nuevamente
+            date = str(user.user_date).split('-')
+            messages = self.GetMessages(persona=user)#Los mensajes para la bandeja
+            self.render("editprofile.html",date=date,pagename='Editar Perfil', user=user,years=date_pre[0],months=date_pre[1],days=date_pre[2],recent_msg=messages)
         else:
             self.redirect('/login')
    
@@ -116,10 +138,11 @@ class EditProfile(handler.Handler):
         
 
         #y aqui empieza la verificacion
-        user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-        messages = self.GetMessages(actualizar=False,persona=user)
+        user = self.get_data('User')
+        user = user.get(int(self.request.cookies.get('user_id').split('|')[0])) 
+        messages = self.GetMessages(persona=user)
         if not self.verify_edition(user,nickname,tel,date,actual_password)[0]:#el procedimiento de verificacion se define en handler.py, si no cumplese renderiza con errores
-            date_pre = self.get_data('create_date',create_date())
+            date_pre = create_date()
             unused,erroruser,errortel,errordesc,errordate,passerror = self.verify_edition(user,nickname,tel,date,actual_password)
             self.render('editprofile.html',pagename='Editar Perfil',user=user,errordate=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
                 years=date_pre[0],months=date_pre[1],days=date_pre[2],passerror=passerror,recent_msg=messages)
@@ -131,11 +154,12 @@ class EditProfile(handler.Handler):
             if permisos_cambio == 'True':
                 logging.error('entar', permisos_cambio)
                 user.solicitud_cambio = True
+                user.state = False
             user.rason_solicitud_cambio = rason_de_solicitud
             user.put()
             time.sleep(2)
-            memcache.delete('user_'+self.request.cookies.get('user_id').split('|')[0])            
-            memcache.delete('displayName_'+user.displayName)
+            user_cache()
+            self.get_data('User','dict',user.key().id(),user,actualizar=True)
             self.redirect('/profile')
 
 def valid_date(date):
@@ -168,24 +192,26 @@ class EditPass(handler.Handler):
     def get(self):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            messages = self.GetMessages(actualizar=False,persona=user)
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+            messages = self.GetMessages(persona=user)
             self.render("editpass.html",pagename='Editar contrasenia', user=user,recent_msg=messages)
         else:
             self.redirect("/login")
     def post(self):
-        user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+        user = self.get_data('User')
+        user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
         oldpass = valid_pass(self.request.get('oldpass'))
         newpass = valid_pass(self.request.get('newpass'))
         verify = self.request.get('verify') == newpass[1]
         if self.password_edition(user,oldpass,newpass,verify)[0]:
             user.user_pw = hashlib.sha256(newpass[1]).hexdigest()
             user.put()
-            self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1],actualizar=True)
+            self.get_data('User','dict',user.key().id(),user,actualizar=True)
             time.sleep(2)
             self.redirect('/profile')
         else:        
-            messages = self.GetMessages(actualizar=False,persona=user)
+            messages = self.GetMessages(persona=user)
             unused,errorpass,errornew,errorverify = self.password_edition(user,oldpass,newpass,verify)
             self.render('editpass.html',pagename='Editar contrasenia',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify,recent_msg=messages)
 
@@ -193,8 +219,9 @@ class ViewPosts(handler.Handler):
     def get(self,messages=None,mios=False):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            messages = self.GetMessages(actualizar=False,persona=user)
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+            messages = self.GetMessages(persona=user)
         if self.request.get('post').isdigit():
             post = Post.get_by_id(int(self.request.get('post')))
             if post:
@@ -203,23 +230,21 @@ class ViewPosts(handler.Handler):
                 elif self.request.get('visible') == '1':
                     post.visible = True
                 post.put()
+                self.get_data('Post','dict',post.key().id(),post,actualizar=True)
                 self.redirect("/profile/_viewposts")
         if self.request.get("u"):
-            profile = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#la informacion del perfil que estoy viendo
-            profile = list(profile)
-            if len(profile) > 0:#si se encontro
-                posts = self.get_data("posts_by_"+profile[0].user_id,db.GqlQuery("select * from Post where submitter='"+profile[0].user_id+"' order by created desc"))#me enlista sus posts
-                posts = self.display_names(user,list(posts))
-                if user.user_id == profile[0].user_id:
+            profile = User.by_nickname(self.request.get('u'))
+            if profile:#si se encontro
+                posts = Post.by_owner(profile.user_id)
+                if user.user_id == profile.user_id:
                     mios = True
                 self.load_data(lim=5,mios=mios,pagename="Ver posts",posts=posts)
             else:
                 self.redirect("/error?e=profile-notfound")
         else:
             if user:
-                messages = self.GetMessages(actualizar=False,persona=user)
-                posts = self.get_data("posts_by_"+user.user_id,db.GqlQuery("select * from Post where submitter='"+user.user_id+"' order by created desc"))
-                posts = self.display_names(user,list(posts))
+                messages = self.GetMessages(persona=user)
+                posts = Post.by_owner(user.user_id)
                 self.load_data(lim=5,mios=True,pagename="Ver posts",posts=posts) 
             else:
                 self.redirect("/login")
@@ -228,13 +253,14 @@ class ViewComments(handler.Handler):
     def get(self,author=None,mios=False,comments=None):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:#Verificacion de la cookie
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])#informacion del usuario logueado
-            messages = self.GetMessages(actualizar=False,persona=user)#los mensajes
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+            messages = self.GetMessages(persona=user)#los mensajes
             if self.request.get("u"):#si hay query
-                profile = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#busca el dueno de los comentarios
-                if len(profile) == 1:#y si existe
-                    comments = self.get_data("comments_by_"+profile[0].user_id,db.GqlQuery("select * from Comment where submitter='"+profile[0].user_id+"' order by created desc"))#enlista sus comentarios
-                    comments = self.display_names(user,list(comments))#camufla los nombres
+                profile = User.by_nickname(self.request.get('u'))
+                if profile:#y si existe
+                    comments = Comment.busqueda_comment(profile.user_id)
+                    comments = self.display_names(user,comments)#camufla los nombres
                     if user.displayName == self.request.get("u"):#si son mios
                         mios = True
                     else:#son de alguien mas
@@ -243,7 +269,7 @@ class ViewComments(handler.Handler):
                     self.redirect('/error?e=profile-notfound')
             else:   
                 mios = True
-                comments = self.get_data("comments_by_"+user.user_id,db.GqlQuery("select * from Comment where submitter='"+user.user_id+"' order by created desc"))#busca solo mis comentarios
+                comments = Comment.busqueda_comment(profile.user_id)
                 comments = self.display_names(user,list(comments))#ponles 'ti'
             self.render("just_comments.html",pagename='Ver comentarios',mios=mios,author=author,user=user,comments=comments,recent_msg=messages)
         else:
@@ -253,12 +279,12 @@ class SendPm(handler.Handler):#para enviar mensajes
     def get(self,messages=None,target=None):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            messages = self.GetMessages(actualizar=False,persona=user)
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+            messages = self.GetMessages(persona=user)
             if self.request.get("u"):#si hay a quien mandar mensaje
-                destination = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))#Busca el destino
-                if len(destination) > 0:#si existe
-                    target = destination[0]#sera target ahora
+                target = User.by_nickname(self.request.get('u'))
+                if target:#si existe
                     if target.user_id == user.user_id:#Si soy yo mismo
                         self.redirect('/error?e=self-messaging')# los mensajes para la bandeja
                 else:
@@ -270,18 +296,19 @@ class SendPm(handler.Handler):#para enviar mensajes
         self.render("sendpm.html",user=user,target=target,pagename="Mensaje Privado",recent_msg=messages)#target es el objeto del perfil a quien se mandara el mensaje
 
     def post(self):
-        user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+        user = self.get_data('User')
+        user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
         subject = self.request.get("pmtitle")
-        messages = self.GetMessages(actualizar=False,persona=user)
+        messages = self.GetMessages(persona=user)
         if not subject:
             subject = "Sin asunto"
         content = self.request.get("pmcontent")
-        destination = self.get_data("displayName_"+self.request.get("u"),db.GqlQuery("select * from User where displayName='"+self.request.get("u")+"'").fetch(1))[0]#El objet del usuario sera el destino
+        destination = User.by_nickname(self.request.get('u'))
         submitter = user.user_id
         if not content:
             self.render("sendpm.html",user=user,target=destination.user_id,pagename="Mensaje Privado",error="Mensaje requerido",recent_msg=messages)
         else:
             msg = Message(submitter=submitter,destination=destination.user_id,subject=subject,content=content)
             msg.put()
-            self.GetMessages(actualizar=True,persona=destination)
+            Message.update(destination.user_id,msg)
             self.redirect("/profile?u="+self.request.get("u"))

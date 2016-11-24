@@ -14,8 +14,9 @@ class Newpost(handler.Handler):
     def get(self):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            messages = self.GetMessages(actualizar=False,persona=user)
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+            messages = self.GetMessages(persona=user)
             if not user.banned_from_posting:
                 self.render_front(user=user,recent_msg=messages)
             else:
@@ -28,22 +29,22 @@ class Newpost(handler.Handler):
         title = self.request.get('subject')
         post = self.request.get('content')
         submitter = self.get_cookie_user(self.request.cookies.get('user_id'))[1]
-        messages = self.GetMessages(actualizar=False,persona=submitter)
+        messages = self.GetMessages(persona=submitter)
         if title and post and topic:
 
             a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,visible=True,state=False)
 
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
-            self.get_data('posts',db.GqlQuery('select * from Post order by created desc'),actualizar=True)
-            a.put()           
+            a.put()
+            self.get_data('Post','dict',a.key().id(),a,actualizar=True) 
             self.redirect('/'+str(a.key().id()))
-            memcache.delete('cantidad_'+self.request.get("topic"))
         else:
             error = 'Titulo y contenido y tema requeridos'
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             self.render_front(title,post,error,user,messages)
         else:
             self.redirect('/signup')
