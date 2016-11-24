@@ -148,6 +148,16 @@
 	      </div>
 	    {%endif%}
 	   {%endif%}
+		{%if post%}
+			{%if post.submitter == 'ti'%}
+				{%if post.modificable == 'pending'%}
+			      <div class="alert alert-success fade in">
+			        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+			        Tu peticion esta en proceso
+			      </div>					
+				{%endif%}
+			{%endif%}
+		{%endif%}
 	  {%if user%}
 	      <p><a href="/profile/_viewcomments?u={{user.displayName}}">Comentarios</a></p>
 	      <ul class="change-bg">

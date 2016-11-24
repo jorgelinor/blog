@@ -2,42 +2,58 @@
 {%block content%}
 <center>
 {%if post%}
-		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title">{{post.title}}</a></h2>
-		<div style="max-width:500px;word-wrap:break-word"><pre>{{post.post}}</pre></div>
-		{%if post.submitter.split("|")[1] != "False"%}
-			<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter.split('|')[0]}}">{{post.submitter.split("|")[0]}}</a></label>
-		{%else%}
-			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
-		{%endif%}
-		<label style="float:right">{{post.created_str}}</label><br>
-		{%if user%}
-			<button><a class="button" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a></button>
-		{%endif%}
+<div class="well">
 		{%if post.submitter == 'ti'%}
-			{%if post.modificable == 'pending'%}
-				<b style="color: red;float:right">Tu peticion esta en proceso</b>
-			{%else%}
-				<a style="float:right" href="/{{post.key().id()}}/_editpost">Editar post</a>
-			{%endif%}
+			<label class="post-options-bt" style="float:right">▼
+				<ul id="post-options">
+				<li><a href="/{{post.key().id()}}/_editpost">Editar</a></li>
+				{%if post.visible%}
+					<li><a href="/profile/_viewposts?post={{post.key().id()}}&visible=0">Ocultar</a></li>
+				{%else%}
+					<li><a href="/profile/_viewposts?post={{post.key().id()}}&visible=1">Mostrar</a></li>
+				{%endif%}
+				</ul></label>
 		{%endif%}
+		{%if post.submitter_pic%}
+			<a href="/profile?u={{post.submitter}}"><div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{post.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div></a>
+		{%else%}
+			<a href="/profile?u={{post.submitter}}"><div style="width: 55px;height: 55px;float: left;"><img src="/img/profile.jpg" class="img-circle" height="55" width="55" alt="Avatar"></div></a>
+		{%endif%}
+		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title">{{post.title}}</a></h2>
+		<div style="max-width:500px;word-wrap:break-word"><p style="max-width: 80%">{{post.post}}</p></div>
+		<label style="font-size:80%;float:right;color:gray;font-style:italic">{{post.created_str}}</label>
+		{%if user%}
+			<a class="button" style="float: left;" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a>
+		{%endif%}
+		<br>
 		<hr>
 		{%if comments%}
 			{%for comment in comments%}
 				<div class="post-comment">
-				<div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{comment.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div><div id="post-comment-content"> {{comment.content}}</div>
-					<div style="font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
-					{%if post.submitter == 'ti'%}
-						<a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}" id="edit-link">Borrar</a>
-					{%endif%}
-					{%if comment.submitter.split("|")[1] != "False"%}
-						{%if comment.submitter.split('|')[0]=='ti'%}
-							<a id="edit-link" href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a>
-						{%else%}
-							{%if post.submitter != 'ti' and user%}
-								<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
+				{%if comment.submitter_pic%}
+					<a href="/profile?u={{comment.submitter}}"><div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{comment.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div></a>
+				{%else%}
+					<a href="/profile?u={{comment.submitter}}"><div style="width: 55px;height: 55px;float: left;"><img src="/img/profile.jpg" class="img-circle" height="55" width="55" alt="Avatar"></div></a>
+				{%endif%}
+				{%if user%}
+					<label class="comment-options-bt">▼<ul class="comment-options">
+						{%if post.submitter == 'ti' and comment.submitter.split('|')[0]!='ti'%}
+							<li><a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}">Borrar</a></li>
+						{%endif%}
+						{%if comment.submitter.split("|")[1] != "False"%}
+							{%if comment.submitter.split('|')[0]=='ti'%}
+								<li><a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}">Borrar</a></li>
+								<li><a href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a></li>
+							{%else%}
+								{%if comment.submitter != 'ti' and user%}
+									<li><a href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a></li>
+								{%endif%}
 							{%endif%}
 						{%endif%}
-					{%endif%}
+					</ul></label>
+				{%endif%}
+				<div id="post-comment-content"> {{comment.content}}</div>
+					<div style="margin-top: 20px;font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
 				</div>
 				<div style="display:none" id="hidden-edit-{{comment.key().id()}}">
 					<form method="post">
@@ -51,10 +67,8 @@
 						<button type="submit">Reportar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
 					</form>
 				</div>
-				<hr>
 			{%endfor%}
 		{%endif%}
-		<br>
 		{%if newcomment==True%}
 			<script type='text/javascript'>
 				$(document).ready(function(){
@@ -77,8 +91,13 @@
 				$("#hidden-report-"+"{{comment.key().id()}}").css("display","block")
 			</script>
 		{%endif%}
+		<script type="text/javascript">
+			$('.post-options-bt').hover(function(){
+				$(this).children().css('display','block')},function(){$(this).children().css('display','none')
 
-<br>
+			})
+		</script>
+</div>
 {%endif%}
 </center>
 {%endblock%}

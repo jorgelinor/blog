@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class='well'>
 	<div id="user-holder" style="z-index: 1">
 		<div><b id="nickname">{{profile.displayName}}</b></div><br><br>
 		{%if profile.img%}
@@ -39,4 +40,5 @@
 
 	<script src="/js/jquery.js"></script>
 	<script src="/js/javascript.js"></script>
+</div>
 {%endblock%}

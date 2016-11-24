@@ -69,10 +69,12 @@ class Handler(webapp2.RequestHandler):
             else:
                 lista = data[key_cache+'_list']
                 for indice in range(len(lista)-1):
-                    if lista[indice].key().id() == test.key().id():
+                    if lista[indice].key().id() == key:
                         if query:
                             lista[indice] = query
+                            logging.error('lol')
                         else:
+                            logging.error('lal')
                             del lista[indice]
                 data[key_cache+'_list'] = lista
             memcache.set(key_cache, data)

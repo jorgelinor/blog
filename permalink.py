@@ -2,7 +2,7 @@ import handler
 from post import Post
 import hashlib
 from user import User
-from comment import Comment
+from comment import *
 import time
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -21,13 +21,14 @@ class Permalink(handler.Handler):
             if self.request.get('action') == 'deletecomment':
                 com = self.get_data('Comment')
                 com = com.get(int(self.request.get('c')))# si el comentario existe con el query
-                if com and int(com.post) == post.key().id() and post.submitter == user.user_id:
+                if com and int(com.post) == post.key().id():
                     db.delete(com)
                     post.comments -= 1
                     post.put()
                     self.get_data('Post','dict',post.key().id(),post,actualizar=True)
                     self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
                     time.sleep(1)
+                    self.redirect('/'+link)
             if self.request.get("action") == "newcomment": #query para verificar si se agrega un nuevo comentario
                 if not user.banned_from_comments:
                     newcomment = True# si es asi, manda algo al render para un espacio de comentario
@@ -47,12 +48,13 @@ class Permalink(handler.Handler):
                     reportcomment = True
                 else:
                     self.redirect("/error?e=comment-notfound")#se redirecciona a la pagina de error
-            post = self.display_names(user,[post])#camufla el usuario que lo envio
-            comments = Comment.by_post(str(post[0].key().id()))#enlista los comentarios que tiene
+            post = self.display_names(user,[post])[0]#camufla el usuario que lo envio
+            post.submitter_pic = User.by_nickname(post.submitter,user).img
+            comments = Comment.by_post(str(post.key().id()))#enlista los comentarios que tiene
             comments = self.display_names(user,comments)#camufla los usuarios de los comentarios
             for comment in comments:
                 comment.submitter_pic = User.by_nickname(comment.submitter,user).img
-            self.render('permalink.html',pagename='Post',reportcomment=reportcomment,editcomment=editcomment,post=post[0],user=user,comments=comments,comment=com,recent_msg=messages,newcomment=newcomment)
+            self.render('permalink.html',pagename='Post',reportcomment=reportcomment,editcomment=editcomment,post=post,user=user,comments=comments,comment=com,recent_msg=messages,newcomment=newcomment)
         else:
             self.redirect("/error?e=post-notfound")#error
     def post(self,link):
@@ -100,6 +102,7 @@ class Permalink(handler.Handler):
                 com.reported = True
                 com.put()
                 self.get_data('Comment','dict',com.key().id(),com,actualizar=True)
+                comments_cache()
                 self.redirect("/"+link)
 
 class EditPost(handler.Handler):
@@ -122,7 +125,7 @@ class EditPost(handler.Handler):
 
     def post(self,link):
         post = self.get_data('Post')
-        post.get(int(link))
+        post = post.get(int(link))
         content = self.request.get('content')
         if post and content:
             post.post = content

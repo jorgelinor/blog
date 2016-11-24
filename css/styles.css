@@ -66,7 +66,7 @@
 	color: gray;
 }
 #post-title {
-	color: gray;
+	color: black;
 	text-decoration: none;
 }
 #post-submitter-deleted {
@@ -83,9 +83,10 @@
 	font-weight:bold;
 }
 #post-comment-content {
-	text-align:center;
-	color: black;
-	
+    width: 70%;
+    text-align: center;
+    color: black;
+    word-wrap: break-word;
 }
 #comment-content-full {
 	display:none;
@@ -107,7 +108,6 @@
 	margin-bottom: 7px;
 	margin-top: 7px;
 	border:1px solid;
-	opacity: 0.85;
 	padding:10px; 
 	width: 100%;
 	display:block;
@@ -278,7 +278,7 @@ ul, ol {
 #post-options{
 	display: none;
 	position:absolute;
-	max-width: 140px;
+	width: 82px;
     padding-top: 10px;
     padding-right: 15px;
     padding-bottom: 10px;
@@ -419,4 +419,20 @@ li.username{
 
 .prof-li hr {
 	margin:0px;
+}
+.comment-options-bt{
+	float: right;
+	color:#c7c7c7;
+}
+.comment-options{
+	display: none;
+    position: absolute;
+    width: 96px;
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    background-color: white;
+    z-index: 2147483647;
+    border: 1px solid;
 }
