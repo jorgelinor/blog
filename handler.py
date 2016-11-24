@@ -69,7 +69,7 @@ class Handler(webapp2.RequestHandler):
                 data[key_cache+'_list'].insert(0,query)
             else:
                 lista = data[key_cache+'_list']
-                for indice in range(len(lista)-1):
+                for indice in range(len(lista)):
                     if lista[indice].key().id() == key:
                         if query:
                             lista[indice] = query

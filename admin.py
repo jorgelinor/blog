@@ -187,13 +187,13 @@ class Admin_submit(handler.Handler):
                 post_cache()
                 comments_cache()
             elif accion == 'ocultar' and cache and cache.modificable != 'pending':
-                cache.modificable = 'True'
                 cache.visible = False
+                cache.modificable = 'True'
                 cache.put()
                 msg = Message(submitter='Administracion',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Se ha ocultado un post de su propiedad por contenido sexual,racismo...')
                 msg.put()
                 time.sleep(2)
-                self.get_data('Post','dict',cache.key().id(),None,actualizar=True)
+                self.get_data('Post','dict',cache.key().id(),cache,actualizar=True)
                 Message.update(cache.submitter,msg)
                 post_cache()
             elif accion == 'advertir' and cache and cache.modificable != 'pending':
@@ -202,7 +202,7 @@ class Admin_submit(handler.Handler):
                 msg = Message(submitter='Administracion',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Su <a href="/'+id_object+'">post</a> tiene contenido sexual,racismo... editelo o sera eliminado/ocultado.')
                 msg.put()
                 time.sleep(2)
-                self.get_data('Post','dict',cache.key().id(),None,actualizar=True)
+                self.get_data('Post','dict',cache.key().id(),cache,actualizar=True)
                 Message.update(cache.submitter,msg)
                 post_cache()
             self.redirect('/admin')
