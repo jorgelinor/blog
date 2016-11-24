@@ -59,6 +59,7 @@ class Handler(webapp2.RequestHandler):
             data = {key_cache+'_list':data_list,key_cache+'_dict':data_dict}
             memcache.add(key_cache,data)
         if actualizar==True:
+            logging.error('test')
             test = data[key_cache+'_dict'].get(key)
             if query:
                 data[key_cache+'_dict'][key] = query

@@ -33,7 +33,6 @@ class User(db.Model):
 				return e
 		if name == 'ti':
 			return user
-
 	@classmethod
 	def by_username(cls, name):
 		u = handler.Handler().get_data('User','list')
@@ -69,7 +68,6 @@ def busqueda_user(nombre):
 def user_cambio():
 	reported = {}
 	users= memcache.get("user_cache")
-	
 	for user in users:
 		logging.error(users[user].state)
 		if users[user].solicitud_cambio == True and users[user].state != True:
@@ -79,9 +77,7 @@ def user_cambio():
 
 def user_cache():
 	users ={}
-
 	users_modificables =  db.GqlQuery("SELECT * FROM User ORDER by user_id")
-
 	for p in users_modificables:
 		users[str(p.key().id())] = p
 	memcache.set("user_cache", users)

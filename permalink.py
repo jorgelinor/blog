@@ -1,5 +1,5 @@
 import handler
-from post import Post
+from post import *
 import hashlib
 from user import User
 from comment import *
@@ -21,14 +21,15 @@ class Permalink(handler.Handler):
             if self.request.get('action') == 'deletecomment':
                 com = self.get_data('Comment')
                 com = com.get(int(self.request.get('c')))# si el comentario existe con el query
-                if com and int(com.post) == post.key().id():
-                    db.delete(com)
-                    post.comments -= 1
-                    post.put()
-                    self.get_data('Post','dict',post.key().id(),post,actualizar=True)
-                    self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
-                    time.sleep(1)
-                    self.redirect('/'+link)
+                if com:
+                    if int(com.post) == post.key().id() and post.submitter == user.user_id or com.submitter == user.user_id:
+                        db.delete(com)
+                        post.comments -= 1
+                        post.put()
+                        time.sleep(1)
+                        self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
+                        self.get_data('Post','dict',post.key().id(),post,actualizar=True)
+                self.redirect('/'+link)
             if self.request.get("action") == "newcomment": #query para verificar si se agrega un nuevo comentario
                 if not user.banned_from_comments:
                     newcomment = True# si es asi, manda algo al render para un espacio de comentario
@@ -76,8 +77,8 @@ class Permalink(handler.Handler):
                 com.put()
                 post.comments += 1
                 post.put()
-                self.get_data('Post','dict',int(link),post,actualizar=True)
                 self.get_data('Comment','dict',com.key().id(),com,actualizar=True)
+                self.get_data('Post','dict',int(link),post,actualizar=True)
                 self.redirect("/"+link)
         elif self.request.get('action') == 'editcomment':#para saber si la accion post o el metodo post es para editar un comentario
             content = self.request.get("content")
@@ -161,7 +162,10 @@ class EditRequest(handler.Handler):
             post = self.get_data('Post')
             post = post.get(int(link))
             post.modificable = 'pending'
+            post.state = False
             post.razon = razon
-            self.get_data('Post','dict',post.key().id(),post,actualizar=True)
             post.put()
+            self.get_data('Post','dict',post.key().id(),post,actualizar=True)
+            time.sleep(2)
+            post_cache()
         self.redirect('/'+link)

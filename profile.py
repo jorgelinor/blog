@@ -5,7 +5,7 @@ import time
 from message import Message
 from google.appengine.api import memcache
 from google.appengine.ext import ndb
-from user import User
+from user import *
 import logging
 from post import Post
 from google.appengine.ext import db 
@@ -154,9 +154,11 @@ class EditProfile(handler.Handler):
             if permisos_cambio == 'True':
                 logging.error('entar', permisos_cambio)
                 user.solicitud_cambio = True
+                user.state = False
             user.rason_solicitud_cambio = rason_de_solicitud
             user.put()
             time.sleep(2)
+            user_cache()
             self.get_data('User','dict',user.key().id(),user,actualizar=True)
             self.redirect('/profile')
 
@@ -308,12 +310,5 @@ class SendPm(handler.Handler):#para enviar mensajes
         else:
             msg = Message(submitter=submitter,destination=destination.user_id,subject=subject,content=content)
             msg.put()
-            mensajes = memcache.get('Message')
-            mensaje = mensajes.get(destination.user_id)
-            if mensaje:
-                mensaje.insert(0,msg)
-            else:
-                mensaje = list(db.GqlQuery("select * from Message where destination='%s'"%destination.user_id))
-            mensajes[destination.user_id] = mensaje
-            memcache.set('Message',mensajes)
+            Message.update(destination.user_id,msg)
             self.redirect("/profile?u="+self.request.get("u"))

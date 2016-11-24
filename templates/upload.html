@@ -1,65 +1,61 @@
 {%extends "base.html"%}
 {%block content%}
+{%if admin2 == False%}
 	{% if query == 'comments_cache' %}
 		<form method="post" id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8" >
-	        <p>coment submete by:{{info.submitter}}</p>
-	        <p> creado: {{info.created}}</p>
-	        <p>
-	        	<a href="/{{info.post}}">Post</a>
-	        </p>
-	        <p>{{info.content}}</p>
-	        <p>Reportado</p>
-	        <b>{{info.razon}}</b>
-	        <br>
-	        <input type='checkbox' name='report'>Quitar comentario</input>
-	        <input type='submit'>
-	    </form>
+	          <input accesskey='1' id="test1" name='report' type='radio' value='accept-report'>
+                <label for='1'>Quitar comentario</label>
+                <input accesskey='2' id="test2" name='report' type='radio' value='deny-report'>
+                <label for'2'>Dejar comentario</label>
+	          <input type='submit'>
+	      </form>
 	{% elif query == 'post_cache' %}
 		<form method="post" name='{{info.post_id}}' id='{{info.post_id}}' class="col-lg-8">
-            <p>post <a href="/{{info.title}}">{{info.title}}</a></p>
-            <p>creado:{{info.created}}</p>
-            <p>{{info.topic}}</p>
-            <b> {{info.post}} </b>
-            <b>{{info.razon}}</b>
-            <br>
-            <input type='text' name='permiso'>
+                  <input type='radio' name='permiso' value='True' accesskey='1'>
+                  <label for='1'>Aceptar peticion</label>
+                  <input type='radio' name='permiso' value='False' accesskey='2'>
+                  <label for='2'>Denegar peticion</label>
+
 	        <input type='submit'>
-        </form>
+      </form>
     {% elif query == 'user_cache' %}
     	<form method="post" name='{{info.userid}}' id='{{info.userid}}' class="col-lg-8">
-            <p>Nombre de usurio:{{info.displayName}}</p>
-            <p>Usuario Estado:{{info.user_type}}</p>
-            <p>Rason de Cambio:{{info.rason_solicitud_cambio}}</p>
-            <hr>
-            <label class="col-lg-8">
-            <label class='col-lg-4'>
-            <p>permiso de usuario </p>
+            <h3>{{info.user_id}}</h3><hr>
+            <label>Permiso de usuario </label>
             <select name='user_type'>
-            	<option value="">None</option>
-            	<option value="admin">admin</option>
-            	<option value="user">user</option>
+                  <option value="admin">Administrador</option>
+                  <option value="user">Usuario</option>
             </select>
-            </label>
-            <label class='col-lg-4'>
-            <p>permiso de posteo</p>
-            <select name="banned_from_posting">
-            	<option value="">None</option>
-            	<option value="True">true</option>
-            	<option value="False">false</option>
-            </select>
-            </label>
-            <label class='col-lg-4'>
-            <p>permiso de comentar</p>
-            <select name="banned_from_comments">
-            	<option value="">None</option>
-            	<option value="True">true</option>
-            	<option value="False">false</option>
-            </select>
-            </label>
-            </label>
             <br>
-	        <input class='button' type='submit'>
+            <label>Permiso de posteo</label>
+            <select name="banned_from_posting">
+                  <option value="False">Dar permisos de posteo</option>
+                  <option value="True">Quitar permisos de posteo</option>
+            </select>
+            <br>
+            <label>Permiso de comentar</label>
+            <select name="banned_from_comments">
+                  <option value="False">Dar permisos de comentars</option>
+                  <option value="True">Quitar permisos de comentar</option>
+            </select>
+            <br>
+            <input class='button' type='submit'>
         </form>
 	{% endif %}
+{%else%}
+<form method='post' name='{{info.post_id}}' id='{{info.post_id}}' class='col-lg-8'>
+    <h4>Las acciones tomadas deben ser por estas razones:
+      <b style='color:red'>Contenido sexual, </b>
+      <b style='color:red'>Racismo</b>
+    </h4>
+    <input type='radio' accesskey='1' name='action' value='borrar'>
+    <label for='1'>Eliminar este post</label><br>
+    <input type='radio' accesskey='2' name='action' value='advertir'>
+    <label for='2'>Advertir al duenio</label><br>
+    <input type='radio' accesskey='3' name='action' value='ocultar'>
+    <label for='3'>Ocultar este post</label><br>
+    <input type='submit' class='button'>
+</form>
+{%endif%}
 {%endblock%}
 
