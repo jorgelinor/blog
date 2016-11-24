@@ -9,7 +9,7 @@
 		data.addColumn('string','Tematica');
 		data.addColumn('number','cantidad de publicaciones');		
 		data.addRows([['Animales',{{t1}}],['Tecnologia',{{t2}}],['Preguntas',{{t3}}],['Musica',{{t4}}],['Programacion',{{t5}}]]);
-		var opciones = {'is3D':true,'title':'Porcentage de posts por tematica'};
+		var opciones = {'is3D':true,'title':'Porcentaje de posts por tematica'};
 		var opciones2 = {'title':"Cantidad de posts por tematica"}
 		var grafica = new google.visualization.PieChart(document.getElementById('chart'));
 		grafica.draw(data,opciones);

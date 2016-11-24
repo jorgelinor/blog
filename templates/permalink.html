@@ -10,7 +10,9 @@
 			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
 		{%endif%}
 		<label style="float:right">{{post.created_str}}</label><br>
-		<button><a class="button" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a></button>
+		{%if user%}
+			<button><a class="button" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a></button>
+		{%endif%}
 		{%if post.submitter == 'ti'%}
 			{%if post.modificable == 'pending'%}
 				<b style="color: red;float:right">Tu peticion esta en proceso</b>
@@ -22,23 +24,19 @@
 		{%if comments%}
 			{%for comment in comments%}
 				<div class="post-comment">
-					<div id="post-comment-title">{{comment.title}}: </div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div>
-					<div>{{comment.created_str}}</div>
-					<br>
-					{%if comment.submitter == 'ti'%}
+				<div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{comment.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div><div id="post-comment-content"> {{comment.content}}</div>
+					<div style="font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
+					{%if post.submitter == 'ti'%}
 						<a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}" id="edit-link">Borrar</a>
 					{%endif%}
 					{%if comment.submitter.split("|")[1] != "False"%}
 						{%if comment.submitter.split('|')[0]=='ti'%}
 							<a id="edit-link" href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a>
 						{%else%}
-							{%if post.submitter != 'ti'%}
+							{%if comment.submitter != 'ti' and user%}
 								<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
 							{%endif%}
 						{%endif%}
-						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
-					{%else%}
-						<div id="comment-submitter-deleted">Enviado por: {{comment.submitter.split("|")[0]}}</div><br>
 					{%endif%}
 				</div>
 				<div style="display:none" id="hidden-edit-{{comment.key().id()}}">

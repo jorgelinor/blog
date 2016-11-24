@@ -10,11 +10,9 @@
 		{%for comment in comments%}
 			<div class="post-comment">
 				<div id="post-comment-title"><a id="link-to-post" href="/{{comment.post}}">{{comment.title}}</a>: </div> <div id="post-comment-content"> {{comment.content}}</div><br>
-				<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
-				<div>created: {{comment.created_str}}</div>
+				<div style="font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
 				<br>
 			</div>
-			<hr>
 		{%endfor%}
 	{%else%}
 		Ningun comentario encontrado.

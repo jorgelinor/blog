@@ -15,68 +15,29 @@ class Admin(handler.Handler):
     def get(self):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             if user.user_type == "admin":
-                messages = self.GetMessages(actualizar=False,persona=user)
+                messages = self.GetMessages(persona=user)
                 self.render("admin.html", pagename="Administracion",user=user,recent_msg=messages)
             else:
                 self.redirect("/")
         else:
             self.redirect("/login")
 
-class PostRequest(handler.Handler):
-    def get(self):
-        user = None
-        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            messages = self.GetMessages(actualizar=False,persona=user)
-            if user.user_type == "admin":
-                posts = self.get_data("pending_posts",list(db.GqlQuery("select * from Post where modificable='pending'")))
-                if self.request.get("post"):
-                    post = Post.get_by_id(int(self.request.get("post")))
-                    if post:
-                        if self.request.get("action") == "accept_request":
-                            post.modificable = 'True'
-                            self.get_data('post_'+str(post.key().id()),post,actualizar=True)
-                            message = Message(submitter="Administracion", destination=post.submitter, subject="<div style='color:green'><b>PEDIDO ACEPTADO</b></div>", content="Se ha aceptado su pedido para cambiar <a href='/"+self.request.get("post")+"'>este post.</a>")
-                            message.put()
-                            post.put()
-                            self.redirect("/admin/post_requests")
-                        elif self.request.get("action") == "deny_request":
-                            post.modificable = "False"
-                            self.get_data('post_'+str(post.key().id()),post,actualizar=True)
-                            message = Message(submitter="Administracion", destination=post.submitter, subject="<div style='color:red'><b>PEDIDO DENEGADO</b></div>", content="Se ha denegado su pedido para cambiar <a href='/"+self.request.get("post")+"'>este post.</a>")
-                            message.put()
-                            post.put()
-                            self.redirect("/admin/post_requests")
-                        else:
-                            self.redirect("/admin/post_requests")
-                    else:
-                        self.redirect("/admin/post_requests")
-                elif len(posts)<1:
-                    posts = None
-            else:
-                self.redirect("/")
-        else:
-            self.redirect("/login")
-        self.render("page.html", user=user,posts=posts,pagename="Edicion de publicaciones",recent_msg=messages,request=True)
-
-# fabian
-# 
-# 
 class Admin_info(handler.Handler):
     def get(self):
         # los querys deben ser comments_reported_cache o 
         # post_modificable_cache o user_permisos_cache o post_reposrted_cache
-        # if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
 
             if user.user_type == "admin":
                 info={}
                 action = self.request.GET.get('action')
-                informacion= memcache.get(action)
+                informacion = memcache.get(action)
                 if informacion is None:
                     post_cache()
                     user_cache()
@@ -100,7 +61,7 @@ class Admin_info(handler.Handler):
 
 class Users(handler.Handler):
     def get(self):
-        logging.error('nooooooooooooooooooooo')
+        user_cache()
         user = self.request.get('user')
         topicos = buscar_user_tipe(user)
         informacion = diccio(topicos,'user_cache')
@@ -109,6 +70,7 @@ class Users(handler.Handler):
 
 class Topicos(handler.Handler):
     def get(self):
+        post_cache()
         topi= self.request.get('topico')
         logging.error(topi)
         topicos = buscar_topico(topi,'post_cache')
@@ -129,8 +91,10 @@ class Admin_submit(handler.Handler):
     def get(self, id_obj):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            user = self.get_data('User')
+            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             if user.user_type == "admin":
+                admin2 = False
                 query=''
                 ins, id_object = id_obj.split('_')[0], id_obj.split('_')[1]
                 if ins == 'come':
@@ -139,9 +103,13 @@ class Admin_submit(handler.Handler):
                     query='post_cache'
                 elif ins == 'user':
                     query='user_cache'
+                elif ins == 'post2':
+                    admin2 = True
+                    query='post_cache'
+
 
                 info = buscar(id_object , query)
-                self.render('upload.html',info=info, query=query,user=user)
+                self.render('upload.html',admin2=admin2,info=info, query=query,user=user,pagename='Administracion')
             else:
                 self.redirect('/')
         else:
@@ -152,46 +120,112 @@ class Admin_submit(handler.Handler):
         if ins == 'come':
             # coment_id = self.request.get('comment_id')
             comments_reported = self.request.get('report')
-
             cache = buscar(id_object, 'comments_cache')
-            if cache and comments_reported == 'on':
-                cache.show = False
-                cache.state = True
-                cache.put()
+            if cache and comments_reported == 'accept-report':
+                com=Comment.get_by_id(int(id_object))
+                if com and com.reported == True:
+                    post = Post.get_by_id(int(com.post))
+                    post.comments -= 1
+                    post.put()
+                    com.delete()
+                    time.sleep(2)
+                    self.get_data('Comment','dict',com.key().id(),None,actualizar=True)
+                    self.get_data('Post','dict',post.key().id(),post,actualizar=True)
+                    comments_cache()
+                else:
+                    comments_cache()
                 self.redirect('/admin')
-            else:
-                cache.show = True
-                cache.state = True
-                cache.put()
+            elif cache and comments_reported == 'deny-report':
+                com = Comment.get_by_id(int(id_object))
+                if com and com.reported == True:
+                    com.reported=False
+                    com.razon=[]
+                    com.put()
+                    time.sleep(2)
+                    comments_cache()
                 self.redirect('/admin')
 
         elif ins == 'post':
             modificable = self.request.get('permiso')
+            mensaje_titulo = ''
+            mensaje_contenido = ''
+            if eval(modificable) == True:
+                mensaje_titulo = '<h3 style="color:green">PEDIDO ACEPTADO</h3>'
+                mensaje_contenido = '* Su pedido para modificar <a href="/'+id_object+'">este</a> post fue aceptado'
+            elif eval(modificable) == False:
+                mensaje_titulo = '<h3 style="color:red">PEDIDO DENEGADO</h3>'
+                mensaje_contenido = '* Su pedido para modificar <a href="/'+id_object+'">este</a> post fue rechazado'
             cache = buscar(id_object, 'post_cache')
-            if cache and modificable:
+            if cache and cache.modificable == 'pending' and modificable:
                 cache.modificable = modificable
-                cache.state = True
+                cache.state = False
+                cache.razon = None
                 cache.put()
+                msg = Message(submitter='Administracion',destination=cache.submitter,subject=mensaje_titulo,content=mensaje_contenido)
+                msg.put()
+                time.sleep(2)
+                post_cache()
+                self.get_data('Post','dict',cache.key().id(),cache,actualizar=True)
+                Message.update(cache.submitter,msg)
                 self.redirect('/admin')
             else:
                 self.redirect('/admin')
+        elif ins == 'post2':
+            accion = self.request.get('action')
+            cache = buscar(id_object, 'post_cache')
+            if accion == 'borrar' and cache and cache.modificable != 'pending':
+                comentarios = Comment.by_post(id_object)
+                for coment in comentarios:
+                    self.get_data('Comment','dict',int(coment.key().id()),None,actualizar=True)
+                    coment.delete()
+                self.get_data('Post','dict',cache.key().id(),None,actualizar=True)
+                cache.delete()
+                msg = Message(submitter='Administracion',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Se ha eliminado un post de su propiedad por contenido sexual,racismo...')
+                msg.put()
+                time.sleep(2)
+                Message.update(cache.submitter,msg)
+                post_cache()
+                comments_cache()
+            elif accion == 'ocultar' and cache and cache.modificable != 'pending':
+                cache.visible = False
+                cache.modificable = 'True'
+                cache.put()
+                msg = Message(submitter='Administracion',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Se ha ocultado un post de su propiedad por contenido sexual,racismo...')
+                msg.put()
+                time.sleep(2)
+                self.get_data('Post','dict',cache.key().id(),cache,actualizar=True)
+                Message.update(cache.submitter,msg)
+                post_cache()
+            elif accion == 'advertir' and cache and cache.modificable != 'pending':
+                cache.modificable = 'True'
+                cache.put()
+                msg = Message(submitter='Administracion',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Su <a href="/'+id_object+'">post</a> tiene contenido sexual,racismo... editelo o sera eliminado/ocultado.')
+                msg.put()
+                time.sleep(2)
+                self.get_data('Post','dict',cache.key().id(),cache,actualizar=True)
+                Message.update(cache.submitter,msg)
+                post_cache()
+            self.redirect('/admin')
+
         elif ins == 'user':
             user_type = self.request.get('user_type')
             banned_from_comments = self.request.get('banned_from_comments')
             banned_from_posting = self.request.get('banned_from_posting')
-
             cache = buscar(id_object, 'user_cache')
             if cache and user_type and banned_from_comments and banned_from_posting:
                 cache.user_type = user_type
-                cache.banned_from_posting = (True if banned_from_posting == 'True' else False)
-                cache.banned_from_comments = (True if banned_from_comments == 'True' else False)
+                cache.banned_from_posting = eval(banned_from_posting)
+                cache.banned_from_comments = eval(banned_from_comments)
+                rason_solicitud_cambio = None
+                solicitud_cambio = False
                 cache.state = True
                 cache.put()
+                time.sleep(2)
+                self.get_data('User','dict',cache.key().id(),cache,actualizar=True)
+                user_cache()
                 self.redirect('/admin')
             else:
                 self.redirect('/admin')
-    #     elif query == 'post_reposrted_cache':
-    #         pass
         
 
 #encuentra los post o usuario y comentario por el id
