@@ -5,7 +5,7 @@
 				<label>Nombre de usuario fijo: <b>{{user.user_id}}</b></label><br><br>
 				<label>Apodo</label>
 				<input type="text" name="nickname" value="{{user.displayName}}" class="editable"><div class="error">{{erroruser}}</div></input><br><br>
-				<label>Numero de telefono</label>
+				<label>Numero de teléfono</label>
 				<input type="text" name="tel" value="{{user.user_tel}}" class="editable"><div class="error">{{errortel}}</div></input><br><br>
 				<label>Fecha de nacimiento</label>
 		            <select name='date1' value='{{date[0]}}'>
@@ -23,12 +23,12 @@
 		                    <option value='{{day}}'>{{day}}</option>
 		                {%endfor%}
 		            </select><div class="error">{{errordate}}</div></input><br><br>
-				<label>Descripcion</label><br>
+				<label>Descripción</label><br>
 				<textarea name="description" id="desc-area">{{user.user_desc}}</textarea><br><br>
 				<label>Solicitar cambios de permisos<input type="checkbox" name="solicitar" value="True"></label>
-				<input type="text" name="rason" placeholder='Razon de esta solicitud'>
+				<input type="text" name="rason" placeholder='Razón de esta solicitud'>
 				<br>
-				<label>Para guardar introduzca su contrasena actual aqui >>></label>
+				<label>Para guardar introduzca su contraseña actual aquí >>></label>
 				<input type="password" name="actualpassword" class="editable"><div class="error">{{passerror}}<div></input><br>
 				<button type="submit">Guardar</button>
 			</div>

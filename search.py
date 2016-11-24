@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from handler import Handler
 from google.appengine.ext import db
 
@@ -50,4 +51,4 @@ class Search(Handler):
             html.append(html1)
             html.append(html2)
             html.append(html3)
-        self.render('search.html',pagename='Resultados de busqueda',user=user,data=html,data_type=filter_search,recent_msg=messages,menu='filter',search=search)
+        self.render('search.html',pagename=u'Resultados de búsqueda',user=user,data=html,data_type=filter_search,recent_msg=messages,menu='filter',search=search)

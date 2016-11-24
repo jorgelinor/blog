@@ -34,14 +34,15 @@ $(":radio[name=topic]").click(function() {
         console.log(data);
         $.each(data, function(index, el) {
             if (el.modificable != 'pending'){
+                var editable = (el.modificable) ? 'Sí':'No'
                 $('#contenido').append(
                     "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
-                    +"<h4 class='page-header'>post <a href="+el.post_id+">"+el.title+"</a></h4>"
-                    +"<p class='glyphicon glyphicon-time'>created:"+el.created+"</p>"
-                    +"<h3>"+el.topic+"</h3>"
-                    +"<b> "+el.post+" </b>"
-                    +"<b>"+el.razon+"</b><br>"
-                    +"<a href='/admin/post2_"+el.post_id+"'>someter informacion</a>"
+                    +"<h4 class='page-header'><a class='admin-link' style='color:black' href="+el.post_id+">"+el.title+"</a></h4>"
+                    +"<p>Dueño de este post: " + el.submitter + "</p>"
+                    +"<p>Este post es editable: "+ editable + "</p>"
+                    +"<p>Tópico: "+el.topic+"</p>"
+                    +"<p class='glyphicon glyphicon-time'>"+el.created+"</p><br>"
+                    +"<a class='admin-link' style='color:black' href='/admin/post2_"+el.post_id+"'>Acciones de post</a>"
                     +"<hr></div>");    
             }
             
