@@ -188,8 +188,8 @@ class Admin_submit(handler.Handler):
                 post_cache()
                 comments_cache()
             elif accion == 'ocultar' and cache and cache.modificable != 'pending':
-                cache.modificable = 'True'
                 cache.visible = False
+                cache.modificable = 'True'
                 cache.put()
                 msg = Message(submitter=u'Administración',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Se ha ocultado un post de su propiedad por contenido sexual,racismo...')
                 msg.put()
