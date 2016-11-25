@@ -35,9 +35,6 @@ class Handler(webapp2.RequestHandler):
             messages_persona = messages.get(persona.user_id)
             if messages_persona == None:
                 msgs = list(db.GqlQuery("select * from Message where destination='%s'"%persona.user_id))
-                for e in msgs:
-                    if e.submitter != "Administracion":
-                        e.submitter = User.by_username(e.submitter).displayName
                 messages[persona.user_id] = msgs
                 memcache.set('Message',messages)
             return self.display_names(persona,memcache.get('Message').get(persona.user_id))
@@ -178,7 +175,7 @@ class Handler(webapp2.RequestHandler):
                 e.submitter = "ti"
             else:
                 submitter = User.by_username(e.submitter)
-                if e.submitter != "ti":
+                if e.submitter != "ti" and e.submitter != "Administracion":
                     if not submitter:
                         e.submitter = e.submitter+"|False"
                     else:
