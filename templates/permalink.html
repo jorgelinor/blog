@@ -24,12 +24,12 @@
 		<div style="max-width:500px;word-wrap:break-word"><p style="max-width: 80%">{{post.post}}</p></div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<label style="font-size:80%;float:right;color:gray;font-style:italic">{{post.created_str}}</label>
-		<label class="container"> 
+		<label class="container" id='{{post.key().id()}}'> 
 		    <a class="like"><i class="fa fa-thumbs-o-up"></i>  
-		        Like: <input class="qty1" name="qty1" readonly="readonly" type="text" value="0" />
+		        Like: <input class="qty1" name="qty1" readonly="readonly" type="text" value="{{post.like}}" />
 		    </a>
 		    <a class="dislike"><i class="fa fa-thumbs-o-down"></i> 
-		        Dislike: <input class="qty2"  name="qty2" readonly="readonly" type="text" value="0" />
+		        Dislike: <input class="qty2"  name="qty2" readonly="readonly" type="text" value="{{post.dislike}}" />
 		    </a>
 		</label>
 		{%if user%}
@@ -65,7 +65,7 @@
 				<div id="post-comment-content"> {{comment.content}}</div>
 					<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 					<div style="margin-top: 20px;font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
-					<label class="container"> 
+					<label class="container" id='{{comment.key().id()}}'> 
 					    <a class="like"><i class="fa fa-thumbs-o-up"></i>  
 					        Like <input class="qty1" name="qty1" readonly="readonly" type="text" value="0" />
 					    </a>

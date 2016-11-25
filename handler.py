@@ -290,7 +290,7 @@ class Like(Handler):
         option ="like"
         user_id = self.request.cookies.get('user_id').split('|')[0]
         logging.error=(self.request.GET.get('id_obj'))
-        # self.write(json.dumps(verificaruser(user_id,self.request.GET.get('id_obj'),option)))
+        self.write(json.dumps(verificaruser(user_id,self.request.GET.get('id_obj'),option)))
 
 class DisLike(Handler):
     def get(self):

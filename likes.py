@@ -15,6 +15,7 @@ def verificaruser(id_user, id_object, desicion):
 	cacheL = memcache.get('likesdilike_cache')
 	cacheP = memcache.get('post_cache')
 	cacheC = memcache.get('comments_cache')
+	logging.error(id_user+"**"+id_object+"**"+desicion)
 	if cacheL is None:
 		comments_cache()
 		post_cache()
