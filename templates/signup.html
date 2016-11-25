@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class="well">
     <form method='post'>
         <h2>Registrate</h2>
         <br>
@@ -39,10 +40,11 @@
             </select>
         </label><label name='errordate' style='color:red' value=''>{{errordate}}</label><br>
         <label><b>Descripción (opcional)</b>
-            <textarea id="desc-area" name='description' value='{{description}}'>
+           <textarea name="description" id="desc-area">{{description}}</textarea>
         </label><label name='errordesc' style='color:red' value=''>{{errordesc}}</label><br>
         <br>
         <button>Registrar</button>
         <br>
     </form>
+</div>
 {%endblock%}

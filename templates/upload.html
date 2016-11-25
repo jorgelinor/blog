@@ -1,5 +1,6 @@
 {%extends "base.html"%}
 {%block content%}
+<div class="well">
 {%if admin2 == False%}
 	{% if query == 'comments_cache' %}
 		<form method="post" id="{{info.comment_id}}" name="{{info.comited_id}}" class="col-lg-8" >
@@ -57,5 +58,6 @@
     <input type='submit' class='button'>
 </form>
 {%endif%}
+</div>
 {%endblock%}
 

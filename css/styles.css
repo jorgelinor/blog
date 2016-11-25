@@ -4,7 +4,7 @@
 	margin-left:10px
 }
 #nickname {
-	float:left;
+    font-size: 3ex;
 }
 #profile-picture {
 	width:100px;
@@ -347,6 +347,9 @@ ul, ol {
 
 @media (max-width: 768px){
 .post-content {margin-bottom: 150px}
+#bandeja {
+	width: 80%;
+}
 }
 .img-viewer-img{
 

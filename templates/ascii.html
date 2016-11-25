@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class="well">
 		{%if editable%}
 			<h1>Edita tu post</h1>
 		<form method="post">
@@ -35,4 +36,8 @@
 			<div><button>Enviar</button></div>
 		</form><FORM><INPUT style="float:right" Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM><br>
 		<hr>
+<script type="text/javascript">
+	$('ul.navbar-nav > li#newpost-link').addClass('active');
+</script>
+</div>
 {%endblock%}

@@ -136,7 +136,7 @@ function load_data(posts,mios,request,limit) {
 	})
 	$(window).scroll(function() {
 		if (mios=="True") {
-			setCookie('limit',limit+"|"+$(window).scrollTop())
+			setCookie('limit',lim+"|"+$(window).scrollTop())
 		}
 		if($(window).scrollTop() == $(document).height() - $(window).height()) {
 		    if (posts.length > lim){
@@ -162,3 +162,8 @@ $('.change-bg-close').click(function(){
 
 $('.comment-options-bt').hover(function(){
 		$(this).children().css('display','block')},function(){$(this).children().css('display','none')})
+
+$('ul.navbar-nav > li').click(function(){
+	$('ul.navbar-nav > li').removeClass('active');
+	$(this).toggleClass('active')
+})

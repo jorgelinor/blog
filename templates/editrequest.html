@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class="well">
 	<h1>¿Por qué quieres editar tu post?</h1>
 	<br>
 	<form method="post">
@@ -8,4 +9,5 @@
 		<div>Nota: la razón es obligatoria si quieres editar un post, si se deja el campo vacío, se anulará la petición automáticamente.</div>
 		<button>Enviar petición</button><a href="/{{post.key().id()}}"><button>Volver</button></a>
 	</form>
+</div>
 {%endblock%}
