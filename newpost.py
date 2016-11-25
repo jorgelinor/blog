@@ -20,7 +20,7 @@ class Newpost(handler.Handler):
             if not user.banned_from_posting:
                 self.render_front(user=user,recent_msg=messages)
             else:
-                self.redirect('/')
+                self.redirect('/posts/news')
         else:
             self.redirect('/signup')
     

@@ -37,11 +37,11 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/">Blog</a>
+      <a class="navbar-brand" href="/posts/news">Blog</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/posts/news">Principal</a></li>
+        <li class="active"><a href="/">Principal</a></li>
         {%if user%}
 	        <li><a id="inbox-link" onclick="activate()">Mensajes</a></li>
 	        <li><a href="/newpost">Postear</a></li>
@@ -54,14 +54,18 @@
 	          {{msg.subject|safe}}
 	        </center>
 	        <br>
-	        {%if msg.submitter != "Administracion|False"%}
+	        {%if msg.submitter != "Administracion"%}
 	          De: <a href="/profile?u={{msg.submitter}}">{{msg.submitter}}</a><br>
 	        {%else%}
-	          De: {{msg.submitter.split("|")[0]}}<br>
+	          De: Administración<br>
 	        {%endif%}
 	        <center style='color: white'>
 	          {{msg.content|safe}}
 	        </center>
+	        <br>
+	        {%if msg.submitter != 'Administracion'%}
+	          <a href='/profile/_sendpm?u={{msg.submitter}}'>Responder</a>
+	        {%endif%}
 	        <hr>
 	      {%endfor%}
 	    {%endif%}

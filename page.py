@@ -11,8 +11,7 @@ from handler import Handler
 
 class Page(newpost.Newpost):
     def get(self):
-    	posts = self.get_data('Post','list')
-        self.load_data(lim=5,pagename=u"Página Principal",posts=posts)
+        self.render('home.html')
 
 class FilterPosts(Handler):
 	"""docstring for ClassName"""
@@ -20,11 +19,11 @@ class FilterPosts(Handler):
 		if link:
 			if link.title() == 'News':
 				posts = self.get_data('Post','list')
-				self.load_data(lim=5,pagename=u"Página Principal",posts=posts)
+				self.load_data(lim=5,pagename=u"Publicaciones",posts=posts)
 			else:
 				try:
 					posts = Post.by_topic(link.title())
-					self.load_data(lim=5,pagename=u"Página Principal",posts=posts)
+					self.load_data(lim=5,pagename=u"Publicaciones",posts=posts)
 				except self.redirect('/') as e:
 					raise e
 		
