@@ -27,19 +27,16 @@
 				<b>Descripción</b>: {{profile.user_desc}}
 			{%endif%}<br><br>
 			{%if modificable == True%}
-				<button><a href="/profile/_edit">Modificar información</a></button>
-				<button><a href="/profile/_editpass">Cambiar contraseña</a></button>
-				<br>
+				<a href="/profile/_edit"><button>Modificar información</button></a>
+				<a href="/profile/_editpass"><button>Cambiar contraseña</button></a>
+			{%endif%}
+			<a href="/profile/_viewposts?u={{profile.displayName}}"><button>Públicaciones/tópicos</button></a>
+			<a href="/profile/_viewcomments?u={{profile.displayName}}"><button>Comentarios</button></a>
+			{%if modificable!=True%}
+				<a href="/profile/_sendpm?u={{profile.displayName}}"><button>Enviar un Mensaje</button></a>
 			{%endif%}
 		</div>
 	</div>
-	<br>
-	<a href="/profile/_viewposts?u={{profile.displayName}}">Públicaciones/tópicos</a><br>
-	<a href="/profile/_viewcomments?u={{profile.displayName}}">Comentarios</a><br>
-	{%if modificable!=True%}
-		<a href="/profile/_sendpm?u={{profile.displayName}}">Enviar un Mensaje</a><br>
-	{%endif%}
-
 	<script src="/js/jquery.js"></script>
 	<script src="/js/javascript.js"></script>
 </div>
