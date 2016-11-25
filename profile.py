@@ -54,7 +54,11 @@ class ChangeBackground(handler.Handler):
                 user.pref_color = None
             user.put()
             self.get_data('User','dict',user.key().id(),user,actualizar=True)
+<<<<<<< HEAD
         self.redirect(self.request.get('pathname'))
+=======
+        self.redirect('/posts/news')
+>>>>>>> 95f28ed0ee6cf173c1f791587fe6a21a31d42427
         
 
 class Profile(handler.Handler):
@@ -291,7 +295,7 @@ class SendPm(handler.Handler):#para enviar mensajes
                 else:
                     self.redirect('/error?e=profile-notfound')
             else:
-                self.redirect("/")
+                self.redirect('/posts/news')
         else:
             self.redirect('/login')
         self.render("sendpm.html",user=user,target=target,pagename="Mensaje Privado",recent_msg=messages)#target es el objeto del perfil a quien se mandara el mensaje
