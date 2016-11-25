@@ -1,36 +1,46 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class="well">
 		<form method="post">
 			<div id="edit-holder">
 				<label>Nombre de usuario fijo: <b>{{user.user_id}}</b></label><br><br>
 				<label>Apodo</label>
 				<input type="text" name="nickname" value="{{user.displayName}}" class="editable"><div class="error">{{erroruser}}</div></input><br><br>
-				<label>Numero de telefono</label>
+				<label>Numero de teléfono</label>
 				<input type="text" name="tel" value="{{user.user_tel}}" class="editable"><div class="error">{{errortel}}</div></input><br><br>
 				<label>Fecha de nacimiento</label>
-		            <select name='date1' placeholder="AAAA">
+		            <select name='date1' value='{{date[0]}}'>
 		                {%for year in years%}
 		                    <option value='{{year}}'>{{year}}</option>
 		                {%endfor%}
 		            </select>
-		             <select name='date2' placeholder="MM">
+		             <select name='date2' value='{{date[1]}}'>
 		                {%for month in months%}
 		                    <option value='{{month}}'>{{month}}</option>
 		                {%endfor%}
 		             </select> 
-		             <select name='date3' placeholder="DD">
+		             <select name='date3' value='{{date[2]}}'>
 		                {%for day in days%}
 		                    <option value='{{day}}'>{{day}}</option>
 		                {%endfor%}
 		            </select><div class="error">{{errordate}}</div></input><br><br>
-				<label>Descripcion</label><br>
+				<label>Descripción</label><br>
 				<textarea name="description" id="desc-area">{{user.user_desc}}</textarea><br><br>
-				<label>solicitar cambio de usuario<input type="checkbox" name="solicitar" value="True"></label>
-				<input type="textarea" name="rason">
+				<label>Solicitar cambios de permisos<input type="checkbox" name="solicitar" value="True"></label>
+				<input type="text" name="rason" placeholder='Razón de esta solicitud'>
 				<br>
-				<label>Para guardar introduzca su contrasena actual aqui >>></label>
+				<label>Para guardar introduzca su contraseña actual aquí >>></label>
 				<input type="password" name="actualpassword" class="editable"><div class="error">{{passerror}}<div></input><br>
 				<button type="submit">Guardar</button>
 			</div>
-
+			<script type="text/javascript">
+				var date = {{date|safe}}
+				$('select[name=date1]').val(date[0])
+				$('select[name=date2]').val(date[1])
+				$('select[name=date3]').val(date[2])
+			</script>
+		</div>
+		</div>
+		</form>
+</div>
 {%endblock%}

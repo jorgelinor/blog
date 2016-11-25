@@ -1,7 +1,8 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class="well">
 	{%if data%}
-		<h1>Resultados de busqueda</h1>
+		<h1>Resultados de búsqueda</h1>
 		<br>
 		<div class="search-container">
 		{%if data_type == 'User'%}
@@ -13,7 +14,7 @@
 					{%if ob.img%}
 						<img class="profile-pic" src="/view_photo/{{ob.img}}">
 					{%else%}
-						<img class="profile-pic" src="http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg">
+						<img class="profile-pic" src="/img/profile.jpg">
 					{%endif%}
 					<label style="margin-left: 15px">{{ob.displayName}}</label>
 					<hr></div></a>
@@ -72,7 +73,7 @@
 					{%if ob.img%}
 						<img class="profile-pic" src="/view_photo/{{ob.img}}">
 					{%else%}
-						<img class="profile-pic" src="http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg">
+						<img class="profile-pic" src="/img/profile.jpg">
 					{%endif%}
 					<label style="margin-left: 15px">{{ob.displayName}}</label>
 					<hr></div></a>
@@ -88,5 +89,5 @@
 	{%else%}
 		<h1>No hay resultados</h1>
 	{%endif%}
-
+</div>
 {%endblock%}

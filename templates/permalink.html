@@ -3,70 +3,81 @@
 <center>
 
 {%if post%}
-		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title">{{post.title}}</a></h2>
-		<div style="max-width:500px;word-wrap:break-word"><pre>{{post.post}}</pre></div>
-		{%if post.submitter.split("|")[1] != "False"%}
-			<label style="float:left">Enviado por: <a id="post-submitter" href="/profile?u={{post.submitter.split('|')[0]}}">{{post.submitter.split("|")[0]}}</a></label>
-		{%else%}
-			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
+<div class="well">
+		{%if post.submitter == 'ti'%}
+			<label class="post-options-bt" style="float:right">▼
+				<ul id="post-options">
+				<li><a href="/{{post.key().id()}}/_editpost">Editar</a></li>
+				{%if post.visible%}
+					<li><a href="/profile/_viewposts?post={{post.key().id()}}&visible=0">Ocultar</a></li>
+				{%else%}
+					<li><a href="/profile/_viewposts?post={{post.key().id()}}&visible=1">Mostrar</a></li>
+				{%endif%}
+				</ul></label>
 		{%endif%}
-		<label style="float:right">{{post.created_str}}</label>
+		{%if post.submitter_pic%}
+			<a href="/profile?u={{post.submitter}}"><div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{post.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div></a>
+		{%else%}
+			<a href="/profile?u={{post.submitter}}"><div style="width: 55px;height: 55px;float: left;"><img src="/img/profile.jpg" class="img-circle" height="55" width="55" alt="Avatar"></div></a>
+		{%endif%}
+		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title">{{post.title}}</a></h2>
+		<div style="max-width:500px;word-wrap:break-word"><p style="max-width: 80%">{{post.post}}</p></div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-		<div class="container" id='{{post.key().id()}}'> 
+		<label style="font-size:80%;float:right;color:gray;font-style:italic">{{post.created_str}}</label>
+		<label class="container"> 
 		    <a class="like"><i class="fa fa-thumbs-o-up"></i>  
-		        Like <input class="qty1" name="qty1" readonly="readonly" type="text" value="{{post.like}}" />
+		        Like: <input class="qty1" name="qty1" readonly="readonly" type="text" value="0" />
 		    </a>
 		    <a class="dislike"><i class="fa fa-thumbs-o-down"></i> 
-		        Dislike <input class="qty2"  name="qty2" readonly="readonly" type="int" value="{{post.dislike}}" />
+		        Dislike: <input class="qty2"  name="qty2" readonly="readonly" type="text" value="0" />
 		    </a>
-		</div>
-		<br>
-		<button><a class="button" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a></button>
-
-		{%if post.submitter == 'ti'%}
-			{%if post.modificable == 'pending'%}
-				<b style="color: red;float:right">Tu peticion esta en proceso</b>
-			{%else%}
-				<a style="float:right" href="/{{post.key().id()}}/_editpost">Editar post</a>
-			{%endif%}
+		</label>
+		{%if user%}
+			<a class="button" style="float: left;" href="/{{post.key().id()}}?action=newcomment">Envía tu comentario</a>
 		{%endif%}
+		<br>
 		<hr>
 		{%if comments%}
 			{%for comment in comments%}
 				<div class="post-comment">
-					<div id="post-comment-title">{{comment.title}}: </div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div>
-					<div class="container" id ="{{comment.key().id()}}"> 
-					    <a class="like"><i class="fa fa-thumbs-o-up"></i>  
-					        Like <input class="qty1" name="qty1" readonly="readonly" type="text" value="" />
-					        {{comment.like}}
-					    </a>
-					    <a class="dislike"><i class="fa fa-thumbs-o-down"></i> 
-					        Dislike <input class="qty2"  name="qty2" readonly="readonly" type="text" value="" />{{comment.dislike}}
-					    </a>
-					</div>
-					<div>{{comment.created_str}}</div>
-					<br>
-					{%if comment.submitter == 'ti'%}
-						<a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}" id="edit-link">Borrar</a>
-					{%endif%}
-					{%if comment.submitter.split("|")[1] != "False"%}
-						{%if comment.submitter.split('|')[0]=='ti'%}
-							<a id="edit-link" href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a>
-						{%else%}
-							{%if post.submitter != 'ti'%}
-								<a id="edit-link" href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a>
+				{%if comment.submitter_pic%}
+					<a href="/profile?u={{comment.submitter}}"><div style="width: 55px;height: 55px;float: left;"><img src="/view_photo/{{comment.submitter_pic}}" class="img-circle" height="55" width="55" alt="Avatar"></div></a>
+				{%else%}
+					<a href="/profile?u={{comment.submitter}}"><div style="width: 55px;height: 55px;float: left;"><img src="/img/profile.jpg" class="img-circle" height="55" width="55" alt="Avatar"></div></a>
+				{%endif%}
+				{%if user%}
+					<label class="comment-options-bt">▼<ul class="comment-options">
+						{%if post.submitter == 'ti' and comment.submitter.split('|')[0]!='ti'%}
+							<li><a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}">Borrar</a></li>
+						{%endif%}
+						{%if comment.submitter.split("|")[1] != "False"%}
+							{%if comment.submitter.split('|')[0]=='ti'%}
+								<li><a href="/{{post.key().id()}}?action=deletecomment&c={{comment.key().id()}}">Borrar</a></li>
+								<li><a href="/{{post.key().id()}}?action=editcomment&c={{comment.key().id()}}">Modificar</a></li>
+							{%else%}
+								{%if comment.submitter != 'ti' and user%}
+									<li><a href="/{{post.key().id()}}?action=reportcomment&c={{comment.key().id()}}">Reportar</a></li>
+								{%endif%}
 							{%endif%}
 						{%endif%}
-						<div id="post-comment-submitter">Enviado por: <a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div><br>
-					{%else%}
-						<div id="comment-submitter-deleted">Enviado por: {{comment.submitter.split("|")[0]}}</div><br>
-					{%endif%}
+					</ul></label>
+				{%endif%}
+				<div id="post-comment-content"> {{comment.content}}</div>
+					<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+					<div style="margin-top: 20px;font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
+					<label class="container"> 
+					    <a class="like"><i class="fa fa-thumbs-o-up"></i>  
+					        Like <input class="qty1" name="qty1" readonly="readonly" type="text" value="0" />
+					    </a>
+					    <a class="dislike"><i class="fa fa-thumbs-o-down"></i> 
+					        Dislike <input class="qty2"  name="qty2" readonly="readonly" type="text" value="0" />
+					    </a>
+					</label>
 				</div>
 				<div style="display:none" id="hidden-edit-{{comment.key().id()}}">
 					<form method="post">
 						<textarea id="comment" name="content">{{comment.content}}</textarea>
 						<button type="submit">Guardar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
-
 					</form>
 				</div>
 				<div style="display:none" id="hidden-report-{{comment.key().id()}}">
@@ -75,10 +86,8 @@
 						<button type="submit">Reportar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
 					</form>
 				</div>
-				<hr>
 			{%endfor%}
 		{%endif%}
-		<br>
 		{%if newcomment==True%}
 			<script type='text/javascript'>
 				$(document).ready(function(){
@@ -101,16 +110,37 @@
 				$("#hidden-report-"+"{{comment.key().id()}}").css("display","block")
 			</script>
 		{%endif%}
+
+
+		{%if editcomment==True%}
+			<script type='text/javascript'>
+				$("#hidden-edit-"+"{{comment.key().id()}}").css("display","block")
+			</script>
+		{%endif%}
+
+		{%if reportcomment==True%}
+			<script type='text/javascript'>
+				$("#hidden-report-"+"{{comment.key().id()}}").css("display","block")
+			</script>
+		{%endif%}
 		<script type="text/javascript">
+			$('.post-options-bt').hover(function(){
+				$(this).children().css('display','block')},function(){$(this).children().css('display','none')
+
+			})
+		</script>
+		<script type="text/javascript">
+
 		$(function () {
 			$(".like").click(function () {
 				var input = $(this).find('.qty1');
 				var id_obj = $(this).parent().attr('id');
+				console.log(id_obj);
 				$.ajax({
-					url: '/likes_dislikes',
+					url: '/likes',
 					type: 'GET',
 					dataType: 'json',
-					data: {'option': 'like','id_obj': id_obj},
+					data: {'id_obj': id_obj},
 				})
 				.done(function(data) {
 					if (data) {
@@ -129,10 +159,10 @@
          		var input = $(this).find('.qty2');
          		var id_obj = $(this).parent().attr('id')
          		$.ajax({
-					url: '/likes_dislikes',
+					url: '/dislikes',
 					type: 'GET',
 					dataType: 'json',
-					data: {'option': 'dislike','id_obj': id_obj},
+					data: {'id_obj': id_obj},
 				})
 				.done(function(data) {
 					if (data) {
@@ -148,8 +178,7 @@
      		});
   		});
 		</script>
-
-<br>
+</div>
 {%endif%}
 </center>
 {%endblock%}

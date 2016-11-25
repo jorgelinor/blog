@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class="well">
 <h2>{%if mios == True%}
 		Mis comentarios
 	{%else%}
@@ -9,6 +10,7 @@
 	{%if comments%}
 		{%for comment in comments%}
 			<div class="post-comment">
+
 				<a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}</a></div>
 				<div id="post-comment-submitter" style="align-self: center">Enviado por: 
 					<a id="comment-submitter" href="/profile?u={{comment.submitter.split('|')[0]}}">{{comment.submitter.split("|")[0]}}
@@ -17,14 +19,18 @@
 						{{comment.created_str}}
 					</p>
 				</div>
+
+				<div id="post-comment-title"><a id="link-to-post" href="/{{comment.post}}">{{comment.title}}</a>: </div> <div id="post-comment-content"> {{comment.content}}</div><br>
+				<div style="font-size:80%;float:right;color:gray;font-style:italic">{{comment.created_str}}</div>
+
 				<br>
 				
 				<div id="post-comment-content"> {{comment.content}}</div><br>
 			</div>
-			<hr>
 		{%endfor%}
 	{%else%}
-		Ningun comentario encontrado.
+		Ningún comentario encontrado.
 		<FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
 	{%endif%}
+</div>
 {%endblock%}

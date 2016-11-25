@@ -2,7 +2,7 @@
 from google.appengine.ext import db
 from google.appengine.api import memcache
 import logging
-
+import handler
 
 class Post(db.Model):
 	topic = db.StringProperty(required=False)
@@ -20,6 +20,23 @@ class Post(db.Model):
 	dislikes = db.IntegerProperty(required=False)
 
 
+	@classmethod
+	def by_owner(self,name):
+		result = []
+		m = handler.Handler().get_data('Post','list')
+		for post in m:
+			if post.submitter == name:
+				result.append(post)
+		return result
+
+	@classmethod
+	def by_topic(cls,topic):
+		result = []
+		m = handler.Handler().get_data('Post','list')
+		for post in m:
+			if post.topic == topic:
+				result.append(post)
+		return result
 # busca el post por topico
 def buscar_topico(id_elemento, elemento):#id_elemento= topicos,Animales.etc: elemento= post_cache
 	topic={}

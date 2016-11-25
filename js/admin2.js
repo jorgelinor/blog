@@ -33,15 +33,19 @@ $(":radio[name=topic]").click(function() {
         $('#error').hide();
         console.log(data);
         $.each(data, function(index, el) {
-            $('#contenido').append(
+            if (el.modificable != 'pending'){
+                var editable = (el.modificable) ? 'Sí':'No'
+                $('#contenido').append(
                     "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
-                    +"<h4 class='page-header'>post <a href="+el.title+">"+el.title+"</a></h4>"
-                    +"<p class='glyphicon glyphicon-time'>created:"+el.created+"</p>"
-                    +"<h3>"+el.topic+"</h3>"
-                    +"<b> "+el.post+" </b>"
-                    +"<b>"+el.razon+"</b><br>"
-                    +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
-                    +"<hr></div>");
+                    +"<h4 class='page-header'><a class='admin-link' style='color:black' href="+el.post_id+">"+el.title+"</a></h4>"
+                    +"<p>Dueño de este post: " + el.submitter + "</p>"
+                    +"<p>Este post es editable: "+ editable + "</p>"
+                    +"<p>Tópico: "+el.topic+"</p>"
+                    +"<p class='glyphicon glyphicon-time'>"+el.created+"</p><br>"
+                    +"<a class='admin-link' style='color:black' href='/admin/post2_"+el.post_id+"'>Acciones de post</a>"
+                    +"</div>");    
+            }
+            
         });
     }).fail(function() {
         $('#contenido').empty();
@@ -62,12 +66,16 @@ $(":radio[name=user]").click(function() {
         $('#contenido').empty();
         $('#error').hide();
         $.each(data, function(index, val) {
+            var posts_perm = (val.banned_from_posting) ? 'No':'Si' 
+            var comments_perm = (val.banned_from_comments) ? 'No':'Si' 
+            var type = (val.user_type == "admin") ? 'Administrador':'Usuario'
             $('#contenido').append("<div id='"+val.userid+"' name='"+val.userid+"' class='col-md-8'>"
-                                        +"<p>Nombre de usurio:"+val.displayName+"</p>"
-                                        +"<p>Usuario Estado:"+val.user_type+"</p>"
-                                        +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"
-                                        +"<p>cambio de permiso para usuario </p>"
-                                        +"<a href=/admin/user_"+val.userid+">someter informacion</a>"
+                                        +"<h3 class='page-header'>"+val.user_id+"</h3>"
+                                        +"<p>Apodo: "+val.displayName+"</p>"
+                                        +"<p>Permisos de usuario: "+type+"</p>"
+                                        +"<p>Permisos para postear: "+posts_perm+"</p>"
+                                        +"<p>Permisos para comentar: "+comments_perm+"</p>"
+                                        +"<a style='color:black' href=/admin/user_"+val.userid+">Modificar permisos de usuario</a>"
                                         +"</div>");
 
         });

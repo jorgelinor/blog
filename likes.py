@@ -36,7 +36,7 @@ def verificaruser(id_user, id_object, desicion):
 					cacheC[id_object].put()
 			return True
 		else:	
-			like = LikesDislike(id_objeto=id_object,id_person=id_user,like=True,dislike=False)
+			like = LikesDislike(id_objeto=id_object,id_person=int(id_user),like=True,dislike=False)
 			like.put()
 			if cacheP[id_object]:
 				cacheP[id_object].like+=1

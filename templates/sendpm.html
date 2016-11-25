@@ -1,6 +1,7 @@
 {%extends "base.html"%}
 {%block content%}
-Estas enviando un mensaje privado a {{target.displayName}}
+<div class="well">
+Estás enviando un mensaje privado a {{target.displayName}}
 <form method="post">
 	<br>
 	<label>Asunto</label>
@@ -16,4 +17,5 @@ Estas enviando un mensaje privado a {{target.displayName}}
 	<button type="submit">Enviar mensaje</button>
 </form>
 <FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
+</div>
 {%endblock%}

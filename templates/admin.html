@@ -1,11 +1,12 @@
 {%extends "base.html"%}
 {%block content%}
+
 <div class="col-md-9">
     <button class="admin-link" id='asd'>Reportes recientes</button>
     <button class="admin-link" id='modificacion'>modificacion de posts</button>
     <button class="admin-link" id='administracion_user'>Administracion usuarios</button>
     <div id="posts" class="col-lg-12">
-        <h3 id='error' style='color:#c15646' hidden>No hay informacion que verificar</h3>
+        <h3 id='error' style='color:#c15646' hidden>No hay información que verificar</h3>
         <form  id='contenido' >
             <!-- contenido se agrega con ajax -->
         </form>
@@ -13,34 +14,33 @@
     </div>
 </div>
 
-<div class="col-md-3">
+<div class="col-md-4">
     <br><br>
     <div class="well">
             <div class="row">
-            <label class="col-lg-6">
-                <input type="radio" class="Seleccion" name="seleccion" value="topic" >Posts
-                <label>
-                    <div class="col-lg-5" id='topicos'>
-                    <input type="radio" name="topic" value="Animales">Animales
-                    <input type="radio" name="topic" value="Tecnologia">Tecnologia
-                    <input type="radio" name="topic" value="Preguntas">Preguntas
-                    <input type="radio" name="topic" value="Musica">Musica
-                    <input type="radio" name="topic" value="Programacion">Programacion
+            <label class="col-ms-6">
+                <p style="text-align: left"><input type="radio" class="Seleccion" name="seleccion" value="topic" >Posts</p>
+                <label style="text-align: left">
+                    <div class="col-ms-12" id='topicos'>
+                    <p><input type="radio" name="topic" value="Animales">Animales</p>
+                    <p><input type="radio" name="topic" value="Tecnologia">Tecnología</p>
+                    <p><input type="radio" name="topic" value="Preguntas">Preguntas</p>
+                    <p><input type="radio" name="topic" value="Musica">Música</p>
+                    <p><input type="radio" name="topic" value="Programacion">Programación</p>
                 </div>
                 </label>
             </label>
             <label class="col-lg-6">
-                    <input type="radio" class="Seleccion" name="seleccion" value="user">Users
-                    <label>
-                    <div class="col-lg-5" id='users'>
-                        <input type="radio" name="user" value="admin">Admin
-                        <input type="radio" name="user" value="user">User
-                    </div>
+                    <p style="text-align: left"><input type="radio" class="Seleccion" name="seleccion" value="user">Users</p>
+                    <label style="text-align: left" id='users'>
+                        <p><input type="radio" name="user" value="admin">Admin</p>
+                        <p><input type="radio" name="user" value="user">User</p>
                 </label>
             </label>
             </div>
                         <!-- end topicos -->
     </div>
+</div>
 </div>
 <!-- scripts -->
 <script src="/js/admininfo.js"></script>

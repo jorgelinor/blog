@@ -1,13 +1,15 @@
 {%extends 'base.html'%}
 {%block content%}
-<h1>Login</h1>
+<div class="well">
+<h1>Identifícate</h1>
 	<form method="post">
-		<label><b>Username</b>
+		<label><b>Usuario</b>
 			<input type="text" name="username" value="{{username}}">
-		</label><label style='color:red'>{{erroruser}}</label><br>
-		<label><b>Password</b>
+		</label><br><label style='color:red'>{{erroruser}}</label><br>
+		<label><b>Contraseña</b>
 			<input type="password" name="password">
-		</label><label style="color:red">{{errorpass}}</label><br>
-		<button>Submit</button>
+		</label><br><label style="color:red">{{errorpass}}</label><br>
+		<button>Enviar</button>
 	</form>
+</div>
 {%endblock%}

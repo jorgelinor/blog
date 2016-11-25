@@ -1,7 +1,10 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class='well'>
 	<div id="user-holder" style="z-index: 1">
-		<div><b id="nickname">{{profile.displayName}}</b></div><br><br>
+	<center>
+		<div style="margin-bottom: 20px"><b id="nickname">{{profile.displayName}}</b></div>
+	</center>
 		{%if profile.img%}
 		<div class="img">
 			<img class="img" src="/view_photo/{{profile.img}}">
@@ -9,7 +12,7 @@
 		</div>
 		{%else%}
 		<div class="img">
-			<img class="img" src="http://digiphotostatic.libero.it/STEPPER1/med/50dbc7f16e_3883137_med.jpg">
+			<img class="img" src="/img/profile.jpg">
 			<div id="hover-view"></div>
 		</div>
 		{%endif%}
@@ -18,26 +21,23 @@
 				<b>Nombre de usuario:</b> {{profile.user_id}}<br>
 			{%endif%}
 			<b>Fecha de nacimiento</b>: {{profile.user_date}}<br>
-			<b>Numero de telefono</b>: {{profile.user_tel}}<br>
+			<b>Número de teléfono</b>: {{profile.user_tel}}<br>
 			<b>E-Mail</b>: {{profile.user_mail}}<br>
 			{%if profile.user_desc%}
-				<b>Descripcion</b>: {{profile.user_desc}}
+				<b>Descripción</b>: {{profile.user_desc}}
 			{%endif%}<br><br>
 			{%if modificable == True%}
-				<button><a href="/profile/_edit">Modificar informacion</a></button>
-				<button><a href="/profile/_editpass">Cambiar contrasenia</a></button>
-				<br>
-				{{cambiodeimagen}}
+				<a href="/profile/_edit"><button>Modificar información</button></a>
+				<a href="/profile/_editpass"><button>Cambiar contraseña</button></a>
+			{%endif%}
+			<a href="/profile/_viewposts?u={{profile.displayName}}"><button>Públicaciones/tópicos</button></a>
+			<a href="/profile/_viewcomments?u={{profile.displayName}}"><button>Comentarios</button></a>
+			{%if modificable!=True%}
+				<a href="/profile/_sendpm?u={{profile.displayName}}"><button>Enviar un Mensaje</button></a>
 			{%endif%}
 		</div>
 	</div>
-	<br>
-	<a href="/profile/_viewposts?u={{profile.displayName}}">Publicaciones/topicos</a><br>
-	<a href="/profile/_viewcomments?u={{profile.displayName}}">Comentarios</a><br>
-	{%if modificable!=True%}
-		<a href="/profile/_sendpm?u={{profile.displayName}}">Enviar un Mensaje</a><br>
-	{%endif%}
-
 	<script src="/js/jquery.js"></script>
 	<script src="/js/javascript.js"></script>
+</div>
 {%endblock%}

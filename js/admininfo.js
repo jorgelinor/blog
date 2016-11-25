@@ -14,12 +14,13 @@ $("#asd").click(function() {
             
             console.log('estado'+el.state);
             $('#contenido').append(
-                    "<div name='"+el.comment_id+" class='col-md-8'>"
-                    +"<h1 class='page-header'>coment submete by:"+el.submitter+"</h1>"
-                    +"<p class='glyphicon glyphicon-time'> creado: "+el.created+"</p><h4><a href="+el.post+">Post</a></h4>"
+                    "<div name='"+el.comment_id+"' class='col-md-8'>"
+                    +"<h1 class='page-header'>Comentario de: "+el.submitter+"</h1>"
+                    +"<a href="+el.post+">"+el.title+"</a></h4>"
                     +"<p>"+el.content+"</p>"
-                    +"<p>Reportado</p><b>"+el.razon+"</b><br name='query' value='comments_reported_cache'>"
-                    +"<a href='/admin/come_"+el.comment_id+"'>Someter informacion</a>"
+                    +"<p>Razon:</p><b style='color:red'>"+el.razon+"</b><br name='query' value='comments_reported_cache'>"
+                    +"<p class='glyphicon glyphicon-time'>"+el.created+"</p><br>"
+                    +"<a href='/admin/come_"+el.comment_id+"'>Acciones de reporte</a>"
                     +"<hr></div>");
 
         });
@@ -43,12 +44,11 @@ $("#modificacion").click(function() {
         $.each(data, function(index, el) {
             $('#contenido').append(
                     "<div name='"+el.post_id+"' id='"+el.post_id+"' class='col-md-8'>"
-                    +"<h4 class='page-header'>post <a href="+el.title+">"+el.title+"</a></h4>"
-                    +"<p class='glyphicon glyphicon-time'>created:"+el.created+"</p>"
-                    +"<h3>"+el.topic+"</h3>"
-                    +"<b> "+el.post+" </b>"
-                    +"<b>"+el.razon+"</b><br>"
-                    +"<a href='/admin/post_"+el.post_id+"'>someter informacion</a>"
+                    +"<h4 class='page-header'>Pedido para <a href=/"+el.post_id+">este post</a> de "+el.topic+"</h4>"
+                    +"<p class='glyphicon glyphicon-time'>"+el.created+"</p>"
+                    +"<p>Razon para editar:</p>"
+                    +"<b style='color:red'>"+el.razon+"</b><br>"
+                    +"<a href='/admin/post_"+el.post_id+"'>Acciones de pedido</a>"
                     +"<hr></div>");
         });
     }).fail(function() {
@@ -73,11 +73,10 @@ $("#administracion_user").click(function() {
         console.log(data);
         $.each(data, function(index, val) {
             $('#contenido').append("<div id='"+val.userid+"' name='"+val.userid+"' class='col-md-8'>"
-                                        +"<p class='page-header'>Nombre de usurio:"+val.displayName+"</p>"
-                                        +"<p>Usuario Estado:"+val.user_type+"</p>"
-                                        +"<p>Rason de Cambio"+val.rason_solicitud_cambio+"</p>"
-                                        +"<p>cambio de permiso para usuario </p>"
-                                        +"<a href=/admin/user_"+val.userid+">someter informacion</a>"
+                                        +"<p class='page-header'>Nombre de usurio:"+val.user_id+"</p>"
+                                        +"<p>Tipo de permisos: "+val.user_type+"</p>"
+                                        +"<p>Razon de cambio: "+val.rason_solicitud_cambio+"</p><br>"
+                                        +"<a href=/admin/user_"+val.userid+">Modificar permisos de usuario</a>"
                                         +"<hr></div>");
 
         });
@@ -107,3 +106,4 @@ $("#administracion_user").click(function() {
 //     .always(function() {
 //         console.log("complete");
 //     });
+

@@ -1,6 +1,7 @@
 from google.appengine.ext import db
 from google.appengine.api import memcache
 import logging
+from handler import *
 
 class Comment(db.Model):
 	title = db.TextProperty(required=True)
@@ -22,6 +23,26 @@ class Comment(db.Model):
 # 		return comment
 
 
+# busca el comentario por el usuario que lo somtio
+	@classmethod
+	def busqueda_comment(cls,nombre):
+		listas=[]
+		comments = handlre.Handler().get_data('Comment','list')
+		for comment in comments:
+			if nombre == comment.submitter:
+				listas.append(comment)
+		return listas
+
+	@classmethod
+	def by_post(cls,post):
+		listas=[]
+		comments = handler.Handler().get_data('Comment','list')
+		for comment in comments:
+			if post == comment.post:
+				listas.append(comment)
+		return listas
+
+
 #retorna comentarios reportados 
 def comment_report():
 	reported= {}
@@ -31,6 +52,7 @@ def comment_report():
 		if comments[comment].reported == True and comments[comment].state == False:
 			reported[str(comments[comment].key().id())]=comments[comment]
 	return reported
+
 
 # busca el comentario por el usuario que lo sometio
 def busqueda_comment(nombre):
@@ -43,6 +65,7 @@ def busqueda_comment(nombre):
 		if nombre in comment.submitter:
 			listas[str(comment.key().id())]= comment
 	return listas
+
 
 # crea ql query para el memcache
 def comments_cache():
