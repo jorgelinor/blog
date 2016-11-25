@@ -282,4 +282,4 @@ class Stats(Handler):
                 programacion = len(list(Post.by_topic('Programacion')))
                 self.render("graficos.html",pagename="Stats de la página", t1=animales,t2=tecnologia,t3=preguntas,t4=musica,t5=programacion,user=user,recent_msg=messages)
             else:
-                self.redirect("/")
+                self.redirect('/posts/news')

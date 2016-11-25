@@ -22,7 +22,7 @@ class Admin(handler.Handler):
                 messages = self.GetMessages(persona=user)
                 self.render("admin.html", pagename=u"Administración",user=user,recent_msg=messages)
             else:
-                self.redirect("/")
+                self.redirect('/posts/news')
         else:
             self.redirect("/login")
 
@@ -56,7 +56,7 @@ class Admin_info(handler.Handler):
                 informacion = diccionarisarcache(info,action)
                 self.write(json.dumps(informacion))
             else:
-                self.redirect('/')
+                self.redirect('/posts/news')
         else:
             self.redirect('/login')
 
@@ -112,7 +112,7 @@ class Admin_submit(handler.Handler):
                 info = buscar(id_object , query)
                 self.render('upload.html',admin2=admin2,info=info, query=query,user=user,pagename=u'Administración')
             else:
-                self.redirect('/')
+                self.redirect('/posts/news')
         else:
             self.redirect('/login')
 
