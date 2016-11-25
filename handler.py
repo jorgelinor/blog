@@ -1,4 +1,5 @@
 #Esta es la clase principal, la cual hereda a la mayoria de las demas.
+# -*- coding: utf-8 -*-
 import webapp2 
 import os
 import jinja2
@@ -113,13 +114,13 @@ class Handler(webapp2.RequestHandler):
         erroruser,errorpass='',''
         if not(user[0] and pw[0] and query and query.user_pw == hashlib.sha256(pw[1]).hexdigest()):
             if not user[0]:
-                erroruser = 'Usuario invalido'
+                erroruser = u'Usuario inválido'
             if not query:
-                erroruser = "Este usuario no existe"
+                erroruser = u"Este usuario no exíste"
             if not pw[0]:
-                errorpass = 'Contrasenia incorrecta'
+                errorpass = u'Contraseña incorrecta'
             if query and query.user_pw != hashlib.sha256(pw[1]).hexdigest():
-                errorpass = "Contrasenia invalida"
+                errorpass = u"Contraseña inválida"
             return (False,errorpass,erroruser)
         return (True,errorpass,erroruser)
 
@@ -128,23 +129,23 @@ class Handler(webapp2.RequestHandler):
 
         if not(username[0] and nick[0] and tel[0] and len(date)>7 and pw[0] and verify and email[0] and not (user and user1)):
             if not nick[0]:
-                errordisplay = 'Nombre invalido'
+                errordisplay = u'Nombre inválido'
             if user1:
                 errordisplay = 'Nombre tomado'
             if not username[0]:
-                erroruser = 'Nombre de usuario invalido'
+                erroruser = u'Nombre de usuario inválido'
             if user:
-                erroruser = 'Este usuario ya existe'
+                erroruser = u'Este usuario ya exíste'
             if not pw[0]:
-                errorpass = 'Contrasenia invalida'
+                errorpass = u'Contraseña inválida'
             if not verify:
-                errorverify = "Las contrasenias no coinciden"
+                errorverify = u"Las contraseñas no coinciden"
             if not tel[0]:
-                errortel = 'Introduce un numero de telefono'
+                errortel = u'Introduce un número de teléfono'
             if not len(date)>7:
-                errordate = 'Fecha invalida'
+                errordate = u'Fecha inválida'
             if not email[0]:
-                errormail = 'Correo invalido'
+                errormail = u'Correo electrónico inválido'
             return (False,erroruser,errordisplay,errormail,errorpass,errorverify,errortel,errordesc,errordate)
         return (True,erroruser,errordisplay,errormail,errorpass,errorverify,errortel,errordesc,errordate)
 
@@ -159,15 +160,15 @@ class Handler(webapp2.RequestHandler):
                 check_nick = False
         if (not nick[0]) or (not tel[0]) or (len(date)<7) or (check_pw == False) or (check_nick == False):
             if not nick[0]:
-                erroruser = 'Nombre invalido'
+                erroruser = u'Nombre inválido'
             if not tel[0]:
-                errortel = 'Numero invalido'
+                errortel = u'Número inválido'
             if not len(date)>7:
-                errordate = 'Fecha invalida'
+                errordate = u'Fecha inválida'
             if check_pw ==False:
-                passerror = 'Contrasena erronea'
+                passerror = u'Contraseña errónea'
             if check_nick == False:
-                erroruser = 'Nombre tomado'
+                erroruser = u'Nombre tomado'
             return (False,erroruser,errortel,errordesc,errordate,passerror)
         return (True,erroruser,errortel,errordesc,errordate,passerror)
 
@@ -192,13 +193,13 @@ class Handler(webapp2.RequestHandler):
                     if verify:
                         return (True,errorpass,errornew,errorverify)
                     else:
-                        errorverify = "Las contrasenias no coinciden"
+                        errorverify = u"Las contraseñas no coinciden"
                 else:
-                    errornew = 'Contrasenia invalida'
+                    errornew = u'Contraseña inválida'
             else:
-                errorpass = 'Contrasenia incorrecta'
+                errorpass = u'Contraseña incorrecta'
         else:
-            errorpass = 'Contrasenia incorrecta'
+            errorpass = u'Contraseña incorrecta'
         return (False,errorpass,errornew,errorverify)
     def make_json_data(self,posts=None,mios=None,user=None):
         index = {}
@@ -251,15 +252,15 @@ class ErrorHandler(Handler):
                 messages = self.GetMessages(persona=user)
         query = self.request.get('e')
         if query == "profile-notfound":
-            error = 'Perfil no encontrado.'
+            error = u'Perfíl no encontrado.'
         if query == 'already-logged':
-            error = 'Ya estas logueado.'
+            error = u'Ya estás identificado.'
         if query == 'already-registered':
-            error = 'Ya estas registrado.'
+            error = u'Ya estás registrado.'
         if query == 'self-messaging':
-        	error = 'No puedes enviarte un mensaje a ti mismo.'
+        	error = u'No puedes enviarte un mensaje a tí mismo.'
         if query == 'post-notfound':
-            error = 'Este post no existe.'
+            error = u'Este post no existe.'
         if query == 'comment-notfound':
             error = 'Este comentario no existe o no pertenece a este post.'
         if query == 'not-yourpost':
@@ -279,6 +280,6 @@ class Stats(Handler):
                 preguntas = len(list(Post.by_topic('Preguntas')))
                 musica = len(list(Post.by_topic('Musica')))
                 programacion = len(list(Post.by_topic('Programacion')))
-                self.render("graficos.html",pagename="Stats de la pagina", t1=animales,t2=tecnologia,t3=preguntas,t4=musica,t5=programacion,user=user,recent_msg=messages)
+                self.render("graficos.html",pagename="Stats de la página", t1=animales,t2=tecnologia,t3=preguntas,t4=musica,t5=programacion,user=user,recent_msg=messages)
             else:
                 self.redirect("/")

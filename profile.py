@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import handler
 import hashlib
 import re
@@ -81,7 +82,7 @@ class Profile(handler.Handler):
                 self.redirect("/profile")
             else:
                 self.redirect('/error?e=profile-notfound')#si el perfil no se encuentra da error
-        self.render("profile.html",pagename='Perfil',user=user, profile=profile,modificable=modificable,recent_msg=messages,img=profile,upload_url=upload_url)
+        self.render("profile.html",pagename=u'Perfíl',user=user, profile=profile,modificable=modificable,recent_msg=messages,img=profile,upload_url=upload_url)
 
 
 class ViewPhotoHandler(handler.Handler,blobstore_handlers.BlobstoreDownloadHandler): 
@@ -122,7 +123,7 @@ class EditProfile(handler.Handler):
             date_pre = create_date()#creacion de los datos para la fecha,como el procedimiento usa loop lo almaceno en cache para evitar usar el loop nuevamente
             date = str(user.user_date).split('-')
             messages = self.GetMessages(persona=user)#Los mensajes para la bandeja
-            self.render("editprofile.html",date=date,pagename='Editar Perfil', user=user,years=date_pre[0],months=date_pre[1],days=date_pre[2],recent_msg=messages)
+            self.render("editprofile.html",date=date,pagename=u'Editar Perfíl', user=user,years=date_pre[0],months=date_pre[1],days=date_pre[2],recent_msg=messages)
         else:
             self.redirect('/login')
    
@@ -144,7 +145,7 @@ class EditProfile(handler.Handler):
         if not self.verify_edition(user,nickname,tel,date,actual_password)[0]:#el procedimiento de verificacion se define en handler.py, si no cumplese renderiza con errores
             date_pre = create_date()
             unused,erroruser,errortel,errordesc,errordate,passerror = self.verify_edition(user,nickname,tel,date,actual_password)
-            self.render('editprofile.html',pagename='Editar Perfil',user=user,errordate=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
+            self.render('editprofile.html',pagename=u'Editar Perfíl',user=user,errordate=errordate, erroruser=erroruser,errortel=errortel,date=user.user_date.split("-"),
                 years=date_pre[0],months=date_pre[1],days=date_pre[2],passerror=passerror,recent_msg=messages)
         else:#de lo contrario, se establecen los nuevos datos al usuario
             user.displayName=nickname[1]
@@ -177,14 +178,14 @@ def valid_display(username):
         return (False,username)
 
 def create_date():
-    years,months,days = [],['MES'],['DIA']
+    years,months,days = [],['Mes'],[u'Día']
     for e in range(1,32):
         days.append(e)
     for e in range(1,13):
         months.append(e)
     for e in range(1950,2013):
         years.append(e)
-    years.append('ANIO')
+    years.append(u'Año')
     years = list(reversed(years))
     return (years,months,days)
 
@@ -195,7 +196,7 @@ class EditPass(handler.Handler):
             user = self.get_data('User')
             user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             messages = self.GetMessages(persona=user)
-            self.render("editpass.html",pagename='Editar contrasenia', user=user,recent_msg=messages)
+            self.render("editpass.html",pagename=u'Editar contraseña', user=user,recent_msg=messages)
         else:
             self.redirect("/login")
     def post(self):
@@ -213,7 +214,7 @@ class EditPass(handler.Handler):
         else:        
             messages = self.GetMessages(persona=user)
             unused,errorpass,errornew,errorverify = self.password_edition(user,oldpass,newpass,verify)
-            self.render('editpass.html',pagename='Editar contrasenia',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify,recent_msg=messages)
+            self.render('editpass.html',pagename=u'Editar contraseña',user=user,errorpass=errorpass,errornew=errornew,errorverify=errorverify,recent_msg=messages)
 
 class ViewPosts(handler.Handler):
     def get(self,messages=None,mios=False):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from google.appengine.ext import db
 from google.appengine.api import memcache
 import handler
@@ -19,7 +20,7 @@ class Admin(handler.Handler):
             user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
             if user.user_type == "admin":
                 messages = self.GetMessages(persona=user)
-                self.render("admin.html", pagename="Administracion",user=user,recent_msg=messages)
+                self.render("admin.html", pagename=u"Administración",user=user,recent_msg=messages)
             else:
                 self.redirect("/")
         else:
@@ -109,7 +110,7 @@ class Admin_submit(handler.Handler):
 
 
                 info = buscar(id_object , query)
-                self.render('upload.html',admin2=admin2,info=info, query=query,user=user,pagename='Administracion')
+                self.render('upload.html',admin2=admin2,info=info, query=query,user=user,pagename=u'Administración')
             else:
                 self.redirect('/')
         else:
@@ -161,7 +162,7 @@ class Admin_submit(handler.Handler):
                 cache.state = False
                 cache.razon = None
                 cache.put()
-                msg = Message(submitter='Administracion',destination=cache.submitter,subject=mensaje_titulo,content=mensaje_contenido)
+                msg = Message(submitter=u'Administración',destination=cache.submitter,subject=mensaje_titulo,content=mensaje_contenido)
                 msg.put()
                 time.sleep(2)
                 post_cache()
@@ -180,17 +181,17 @@ class Admin_submit(handler.Handler):
                     coment.delete()
                 self.get_data('Post','dict',cache.key().id(),None,actualizar=True)
                 cache.delete()
-                msg = Message(submitter='Administracion',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Se ha eliminado un post de su propiedad por contenido sexual,racismo...')
+                msg = Message(submitter=u'Administración',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Se ha eliminado un post de su propiedad por contenido sexual,racismo...')
                 msg.put()
                 time.sleep(2)
                 Message.update(cache.submitter,msg)
                 post_cache()
                 comments_cache()
             elif accion == 'ocultar' and cache and cache.modificable != 'pending':
-                cache.modificable = 'True'
                 cache.visible = False
+                cache.modificable = 'True'
                 cache.put()
-                msg = Message(submitter='Administracion',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Se ha ocultado un post de su propiedad por contenido sexual,racismo...')
+                msg = Message(submitter=u'Administración',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Se ha ocultado un post de su propiedad por contenido sexual,racismo...')
                 msg.put()
                 time.sleep(2)
                 self.get_data('Post','dict',cache.key().id(),cache,actualizar=True)
@@ -199,7 +200,7 @@ class Admin_submit(handler.Handler):
             elif accion == 'advertir' and cache and cache.modificable != 'pending':
                 cache.modificable = 'True'
                 cache.put()
-                msg = Message(submitter='Administracion',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Su <a href="/'+id_object+'">post</a> tiene contenido sexual,racismo... editelo o sera eliminado/ocultado.')
+                msg = Message(submitter=u'Administración',destination=cache.submitter,subject='<h3 style="color:red">IMPORTANTE</h3>',content='* Su <a href="/'+id_object+'">post</a> tiene contenido sexual,racismo... editelo o sera eliminado/ocultado.')
                 msg.put()
                 time.sleep(2)
                 self.get_data('Post','dict',cache.key().id(),cache,actualizar=True)

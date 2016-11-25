@@ -1,5 +1,5 @@
 #clase para crear un post nuevo, depende del objeto Post
-
+# -*- coding: utf-8 -*-
 import handler
 from post import Post
 from user import User
@@ -40,7 +40,7 @@ class Newpost(handler.Handler):
             self.get_data('Post','dict',a.key().id(),a,actualizar=True) 
             self.redirect('/'+str(a.key().id()))
         else:
-            error = 'Titulo y contenido y tema requeridos'
+            error = u'Título y contenido y tema requeridos'
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('User')

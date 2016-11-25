@@ -21,20 +21,20 @@
 				<b>Nombre de usuario:</b> {{profile.user_id}}<br>
 			{%endif%}
 			<b>Fecha de nacimiento</b>: {{profile.user_date}}<br>
-			<b>Numero de telefono</b>: {{profile.user_tel}}<br>
+			<b>Número de teléfono</b>: {{profile.user_tel}}<br>
 			<b>E-Mail</b>: {{profile.user_mail}}<br>
 			{%if profile.user_desc%}
-				<b>Descripcion</b>: {{profile.user_desc}}
+				<b>Descripción</b>: {{profile.user_desc}}
 			{%endif%}<br><br>
 			{%if modificable == True%}
-				<button><a href="/profile/_edit">Modificar informacion</a></button>
-				<button><a href="/profile/_editpass">Cambiar contrasenia</a></button>
+				<button><a href="/profile/_edit">Modificar información</a></button>
+				<button><a href="/profile/_editpass">Cambiar contraseña</a></button>
 				<br>
 			{%endif%}
 		</div>
 	</div>
 	<br>
-	<a href="/profile/_viewposts?u={{profile.displayName}}">Publicaciones/topicos</a><br>
+	<a href="/profile/_viewposts?u={{profile.displayName}}">Públicaciones/tópicos</a><br>
 	<a href="/profile/_viewcomments?u={{profile.displayName}}">Comentarios</a><br>
 	{%if modificable!=True%}
 		<a href="/profile/_sendpm?u={{profile.displayName}}">Enviar un Mensaje</a><br>
