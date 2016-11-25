@@ -1,7 +1,5 @@
 {%extends 'base.html'%}
 {%block content%}
-<center>
-<div class="banned-error">{{errorbanned}}</div>
 {%if data%}
 <script type="text/javascript" src="/js/javascript.js"></script>
 <script type="text/javascript">
@@ -14,10 +12,8 @@
 	var limit = {{limit}}
 	load_data(posts=posts,mios=mios,request=request,limit=limit)
 </script>
-{%else%}
-<h1>Esto esta vacio</h1>
-<FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
-<br>
+<script type="text/javascript">
+	$('ul.navbar-nav > li#page-link').addClass('active');
+</script>
 {%endif%}
-</center>
 {%endblock%}

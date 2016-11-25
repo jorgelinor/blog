@@ -53,7 +53,7 @@ class ChangeBackground(handler.Handler):
                 user.pref_color = None
             user.put()
             self.get_data('User','dict',user.key().id(),user,actualizar=True)
-        self.redirect('/')
+        self.redirect(self.request.get('pathname'))
         
 
 class Profile(handler.Handler):

@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {%block content%}
+<div class="well">
 <h1>Login</h1>
 	<form method="post">
 		<label><b>Username</b>
@@ -10,4 +11,5 @@
 		</label><br><label style="color:red">{{errorpass}}</label><br>
 		<button>Submit</button>
 	</form>
+</div>
 {%endblock%}

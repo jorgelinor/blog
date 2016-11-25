@@ -41,10 +41,10 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/posts/news">Principal</a></li>
+        <li id='page-link'><a href="/posts/news">Principal</a></li>
         {%if user%}
 	        <li><a id="inbox-link" onclick="activate()">Mensajes</a></li>
-	        <li><a href="/newpost">Postear</a></li>
+	        <li id="newpost-link"><a href="/newpost">Postear</a></li>
       	{%endif%}
       </ul>
 	  <div id='bandeja'>
@@ -112,12 +112,13 @@
       	<form action="/login" method="post">
       		<input style="width: 100%;margin:2%" type="text" name="username" placeholder="Usuario">
       		<input style="width: 100%;margin:2%" type="password" name="password" placeholder="Contrasenia">
+      		<input type="hidden" name="pathname" class="pathname">
       		<input style="margin:2%" type="submit" name="submit" value="Iniciar Sesion">
       	</form>
       {%endif%}
       </div>
       <div class="well">
-        <p><a href="#">Publicaciones</a></p>
+        <p>Publicaciones</p>
         <p>
           <a href="/posts/news"><span class="label label-default">Novedades</span></a>
           <a href="/posts/animales"><span class="label label-primary">Animales</span></a>
@@ -162,7 +163,13 @@
 	      <p><a href="/profile/_viewcomments?u={{user.displayName}}">Comentarios</a></p>
 	      <ul class="change-bg">
 		  <label class="change-bg-close">x</label>
-		  <form action="/change-bg"><input type="color" name="color"><input type="submit" name="submit" value="Guardar"></form><form action="/change-bg"><input type="hidden" name="img" value="{{user.img}}"><button>Usar foto de perfil</button></form></ul>
+		  <form action="/change-bg">
+		  <input type="hidden" name="pathname" class="pathname">
+		  <input type="color" name="color">
+		  <input type="submit" name="submit" value="Guardar"></form>
+		  <form action="/change-bg">
+		  <input type="hidden" name="pathname" class="pathname">
+		  <input type="hidden" name="img" value="{{user.img}}"><button>Usar foto de perfil</button></form></ul>
 	      <p><a href="/profile/_viewposts?u={{user.displayName}}">Posts</a></p>
 	      <p><a href="/profile/_edit">Editar perfil</a></p>
 	      <p class="change-bg-bt"><a>Cambiar fondo ►</a></p>
@@ -242,6 +249,11 @@
 <footer class="container-fluid text-center">
   <p>Hola que ase</p>
 </footer>
+	<script type="text/javascript">
+		var pathname = window.location.pathname;
+		$('.pathname').val(pathname)
+
+	</script>
 
   <script src="/js/jquery.js"></script>
   <script src="/js/javascript.js"></script>

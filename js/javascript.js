@@ -162,3 +162,8 @@ $('.change-bg-close').click(function(){
 
 $('.comment-options-bt').hover(function(){
 		$(this).children().css('display','block')},function(){$(this).children().css('display','none')})
+
+$('ul.navbar-nav > li').click(function(){
+	$('ul.navbar-nav > li').removeClass('active');
+	$(this).toggleClass('active')
+})

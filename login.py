@@ -15,6 +15,7 @@ class Login(handler.Handler):
             self.render('login.html',pagename='Iniciar sesion',url='Login',link='/')
 
     def post(self):
+        pathname = self.request.get('pathname')
         username = valid_username(self.request.get('username'))
         password = valid_pass(self.request.get('password'))
         user_query = User.by_username(self.request.get('username')) #<---esta variable la uso mucho a la hora de asignar un objeto usuario
@@ -23,7 +24,10 @@ class Login(handler.Handler):
             self.render('login.html',pagename='Iniciar sesion',username=username[1],erroruser=erroruser,errorpass=errorpass)
         else: #si todo esta correcto
             self.response.headers.add_header('Set-Cookie','user_id='+str(user_query.key().id())+'|'+hashlib.sha256(str(user_query.key().id())).hexdigest()+';Path=/') #se hace la cookie del usuario
-            self.redirect('/profile')
+            if pathname:
+                self.redirect(pathname)
+            else:
+                self.redirect('/profile')
 
 #estas funciones sirven para validar el usuario y la contrasenia, pero se le pueden agregar mas condiciones al verificar.
 #Las salidas de dichas funciones son una tupla con un boolean como primer elemento y el usuario o contrasenia en el segundo

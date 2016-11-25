@@ -2,7 +2,9 @@
 {%block content%}
 <div class='well'>
 	<div id="user-holder" style="z-index: 1">
-		<div><b id="nickname">{{profile.displayName}}</b></div><br><br>
+	<center>
+		<div style="margin-bottom: 20px"><b id="nickname">{{profile.displayName}}</b></div>
+	</center>
 		{%if profile.img%}
 		<div class="img">
 			<img class="img" src="/view_photo/{{profile.img}}">
