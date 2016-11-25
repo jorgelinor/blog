@@ -136,7 +136,7 @@ function load_data(posts,mios,request,limit) {
 	})
 	$(window).scroll(function() {
 		if (mios=="True") {
-			setCookie('limit',limit+"|"+$(window).scrollTop())
+			setCookie('limit',lim+"|"+$(window).scrollTop())
 		}
 		if($(window).scrollTop() == $(document).height() - $(window).height()) {
 		    if (posts.length > lim){

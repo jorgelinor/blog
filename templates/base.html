@@ -62,6 +62,10 @@
 	        <center style='color: white'>
 	          {{msg.content|safe}}
 	        </center>
+	        <br>
+	        {%if msg.submitter != 'Administracion'%}
+	          <a href='/profile/_sendpm?u={{msg.submitter}}'>Responder</a>
+	        {%endif%}
 	        <hr>
 	      {%endfor%}
 	    {%endif%}

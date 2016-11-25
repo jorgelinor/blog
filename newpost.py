@@ -25,27 +25,32 @@ class Newpost(handler.Handler):
             self.redirect('/signup')
     
     def post(self,error=''):
+        user = self.get_data('User')
+        user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
         topic = self.request.get('topic')
         title = self.request.get('subject')
         post = self.request.get('content')
         submitter = self.get_cookie_user(self.request.cookies.get('user_id'))[1]
         messages = self.GetMessages(persona=submitter)
-        if title and post and topic:
+        if user and not user.banned_from_posting:
+            if title and post and topic:
 
-            a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,visible=True,state=False)
+                a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,visible=True,state=False)
 
-            a.created_str = str(a.created)
-            a.created_str = a.created_str[0:16]
-            a.put()
-            self.get_data('Post','dict',a.key().id(),a,actualizar=True) 
-            self.redirect('/'+str(a.key().id()))
+                a.created_str = str(a.created)
+                a.created_str = a.created_str[0:16]
+                a.put()
+                self.get_data('Post','dict',a.key().id(),a,actualizar=True) 
+                self.redirect('/'+str(a.key().id()))
+            else:
+                error = u'Título y contenido y tema requeridos'
+            user = None
+            if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+                user = self.get_data('User')
+                user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
+                self.render_front(title,post,error,user,messages)
+            else:
+                self.redirect('/signup')
         else:
-            error = u'Título y contenido y tema requeridos'
-        user = None
-        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
-            user = self.get_data('User')
-            user = user.get(int(self.request.cookies.get('user_id').split('|')[0]))
-            self.render_front(title,post,error,user,messages)
-        else:
-            self.redirect('/signup')
+            self.redirect('/')
             
