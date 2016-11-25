@@ -232,8 +232,13 @@ class Admin_submit(handler.Handler):
 #encuentra los post o usuario y comentario por el id
 def buscar(id_elemento, elemento):
     cache = memcache.get(elemento)
-    if id_elemento in cache:
+    if cache != None and id_elemento in cache:
         return cache[id_elemento]
+    else:
+        post_cache()
+        user_cache()
+        comments_cache()
+        return
 
 
 
