@@ -1,4 +1,5 @@
 #Clase de registro
+# -*- coding: utf-8 -*-
 import random
 import string
 import handler
@@ -89,13 +90,13 @@ def valid_date(date):
     return (False,'')
 
 def create_date():
-    years,months,days = [],['MES'],['DIA']
+    years,months,days = [],['Mes'],[u'Día']
     for e in range(1,32):
         days.append(e)
     for e in range(1,13):
         months.append(e)
     for e in range(1950,2013):
         years.append(e)
-    years.append('ANIO')
+    years.append(u'Año')
     years = list(reversed(years))
     return (years,months,days)

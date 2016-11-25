@@ -1,11 +1,11 @@
 {%extends 'base.html'%}
 {%block content%}
-	<h1>Porque quieres editar tu post?</h1>
+	<h1>¿Por qué quieres editar tu post?</h1>
 	<br>
 	<form method="post">
 		<textarea style="width: 755px;height: 80px;" name='razon'></textarea>
 		<br>
-		<div>Nota: la razon es obligatoria si quieres editar un post, si se deja el campo vacio, se anulara la peticion automaticamente.</div>
-		<button>Enviar peticion</button><a href="/{{post.key().id()}}"><button>Volver</button></a>
+		<div>Nota: la razón es obligatoria si quieres editar un post, si se deja el campo vacío, se anulará la petición automáticamente.</div>
+		<button>Enviar petición</button><a href="/{{post.key().id()}}"><button>Volver</button></a>
 	</form>
 {%endblock%}

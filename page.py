@@ -1,4 +1,5 @@
 #esta es la clase que muestra los posts
+# -*- coding: utf-8 -*-
 import newpost
 from user import User
 from post import *
@@ -11,7 +12,7 @@ from handler import Handler
 class Page(newpost.Newpost):
     def get(self):
     	posts = self.get_data('Post','list')
-        self.load_data(lim=5,pagename="Pagina Principal",posts=posts)
+        self.load_data(lim=5,pagename=u"Página Principal",posts=posts)
 
 class FilterPosts(Handler):
 	"""docstring for ClassName"""
@@ -19,11 +20,11 @@ class FilterPosts(Handler):
 		if link:
 			if link.title() == 'News':
 				posts = self.get_data('Post','list')
-				self.load_data(lim=5,pagename="Pagina Principal",posts=posts)
+				self.load_data(lim=5,pagename=u"Página Principal",posts=posts)
 			else:
 				try:
 					posts = Post.by_topic(link.title())
-					self.load_data(lim=5,pagename="Pagina Principal",posts=posts)
+					self.load_data(lim=5,pagename=u"Página Principal",posts=posts)
 				except self.redirect('/') as e:
 					raise e
 		

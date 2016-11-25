@@ -12,9 +12,9 @@
 	{% elif query == 'post_cache' %}
 		<form method="post" name='{{info.post_id}}' id='{{info.post_id}}' class="col-lg-8">
                   <input type='radio' name='permiso' value='True' accesskey='1'>
-                  <label for='1'>Aceptar peticion</label>
+                  <label for='1'>Aceptar petición</label>
                   <input type='radio' name='permiso' value='False' accesskey='2'>
-                  <label for='2'>Denegar peticion</label>
+                  <label for='2'>Denegar petición</label>
 
 	        <input type='submit'>
       </form>
@@ -45,13 +45,13 @@
 {%else%}
 <form method='post' name='{{info.post_id}}' id='{{info.post_id}}' class='col-lg-8'>
     <h4>Las acciones tomadas deben ser por estas razones:
-      <b style='color:red'>Contenido sexual, </b>
-      <b style='color:red'>Racismo</b>
+      <b style='color:white'>Contenido sexual, </b>
+      <b style='color:white'>Racismo</b>
     </h4>
     <input type='radio' accesskey='1' name='action' value='borrar'>
     <label for='1'>Eliminar este post</label><br>
     <input type='radio' accesskey='2' name='action' value='advertir'>
-    <label for='2'>Advertir al duenio</label><br>
+    <label for='2'>Advertir al dueño</label><br>
     <input type='radio' accesskey='3' name='action' value='ocultar'>
     <label for='3'>Ocultar este post</label><br>
     <input type='submit' class='button'>

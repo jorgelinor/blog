@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import handler
 from post import *
 import hashlib

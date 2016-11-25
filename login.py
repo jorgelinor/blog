@@ -1,5 +1,5 @@
 #Clase de inicio de sesion
-
+# -*- coding: utf-8 -*-
 import handler
 import hashlib
 from user import User
@@ -20,7 +20,7 @@ class Login(handler.Handler):
         user_query = User.by_username(self.request.get('username')) #<---esta variable la uso mucho a la hora de asignar un objeto usuario
         if not self.verify_login(username,password,user_query)[0]:
             unused,errorpass,erroruser = self.verify_login(username,password,user_query)
-            self.render('login.html',pagename='Iniciar sesion',username=username[1],erroruser=erroruser,errorpass=errorpass)
+            self.render('login.html',pagename=u'Iniciar sesión',username=username[1],erroruser=erroruser,errorpass=errorpass)
         else: #si todo esta correcto
             self.response.headers.add_header('Set-Cookie','user_id='+str(user_query.key().id())+'|'+hashlib.sha256(str(user_query.key().id())).hexdigest()+';Path=/') #se hace la cookie del usuario
             self.redirect('/profile')

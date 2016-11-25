@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>{{pagename}} - Blog</title>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="/css/styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -75,12 +75,12 @@
 		        	<img src="/img/profile.jpg" class="img-circle" height="35" width="35" alt="Avatar">
 		        {%endif%}{{user.displayName}}</a>
 	        	<ul>
-	        		<li><a href="/profile">Mi perfil</a></li>
+	        		<li><a href="/profile">Mi perfíl</a></li>
 	        		{%if user.user_type == 'admin'%}
-	        		<li><a href="/admin">Administracion</a></li>
+	        		<li><a href="/admin">Administración</a></li>
 	        		{%endif%}
-	        		<li><a href="/profile/_edit">Editar perfil</a></li>
-	        		<li><a href="/profile/_editpass">Cambiar contrasenia</a></li>
+	        		<li><a href="/profile/_edit">Editar perfíl</a></li>
+	        		<li><a href="/profile/_editpass">Cambiar contraseña</a></li>
 	        		<li><a href="/logout">Salir</a></li>
 	        	</ul>
 	        </li>
@@ -89,7 +89,7 @@
 	  	  <ul class="nav navbar-nav navbar-right">
 	        <li><a href="/signup"> Registrar</a>
 	        </li>
-	        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Iniciar sesion</a></li>
+	        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Iniciar sesión</a></li>
 	      </ul>
 	  {%endif%}
     </div>
@@ -101,7 +101,7 @@
     <div class="col-sm-3 well">
       <div class="well">
       {%if user%}
-        <a href="/profile"><p>Mi perfil</p>
+        <a href="/profile"><p>Mi perfíl</p>
         {%if user.img%}
         	<img src="/view_photo/{{user.img}}" class="img-circle" height="65" width="65" alt="Avatar">
         {%else%}
@@ -111,8 +111,8 @@
       {%else%}
       	<form action="/login" method="post">
       		<input style="width: 100%;margin:2%" type="text" name="username" placeholder="Usuario">
-      		<input style="width: 100%;margin:2%" type="password" name="password" placeholder="Contrasenia">
-      		<input style="margin:2%" type="submit" name="submit" value="Iniciar Sesion">
+      		<input style="width: 100%;margin:2%" type="password" name="password" placeholder="Contraseña">
+      		<input style="margin:2%" type="submit" name="submit" value="Iniciar Sesión">
       	</form>
       {%endif%}
       </div>
@@ -121,10 +121,10 @@
         <p>
           <a href="/posts/news"><span class="label label-default">Novedades</span></a>
           <a href="/posts/animales"><span class="label label-primary">Animales</span></a>
-          <a href="/posts/musica"><span class="label label-success">Musica</span></a>
-          <a href="/posts/tecnologia"><span class="label label-info">Tecnologia</span></a>
-          <a href="/posts/preguntas"><span class="label label-warning">Preguntas</span></a>
-          <a href="/posts/programacion"><span class="label label-danger">Programacion</span></a>
+          <a href="/posts/musica"><span class="label label-success">Música</span></a>
+          <a href="/posts/tecnologia"><span class="label label-info">Tecnología</span></a>
+          <a href="/posts/preguntas"><span class="label label-warning">Pregúntas</span></a>
+          <a href="/posts/programacion"><span class="label label-danger">Programación</span></a>
         </p>
       </div>
       {%if user%}
@@ -153,7 +153,7 @@
 				{%if post.modificable == 'pending'%}
 			      <div class="alert alert-success fade in">
 			        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-			        Tu peticion esta en proceso
+			        Tu petición esta en proceso
 			      </div>					
 				{%endif%}
 			{%endif%}
@@ -162,9 +162,9 @@
 	      <p><a href="/profile/_viewcomments?u={{user.displayName}}">Comentarios</a></p>
 	      <ul class="change-bg">
 		  <label class="change-bg-close">x</label>
-		  <form action="/change-bg"><input type="color" name="color"><input type="submit" name="submit" value="Guardar"></form><form action="/change-bg"><input type="hidden" name="img" value="{{user.img}}"><button>Usar foto de perfil</button></form></ul>
+		  <form action="/change-bg"><input type="color" name="color"><input type="submit" name="submit" value="Guardar"></form><form action="/change-bg"><input type="hidden" name="img" value="{{user.img}}"><button>Usar foto de perfíl</button></form></ul>
 	      <p><a href="/profile/_viewposts?u={{user.displayName}}">Posts</a></p>
-	      <p><a href="/profile/_edit">Editar perfil</a></p>
+	      <p><a href="/profile/_edit">Editar perfíl</a></p>
 	      <p class="change-bg-bt"><a>Cambiar fondo ►</a></p>
 	  {%endif%}
     </div>
@@ -175,7 +175,7 @@
         <div class="col-sm-6">
           <div class="panel panel-default text-left well" style="height: 90px;padding: 0px">
             <div class="panel-body">
-              <p style="display: inline-block;">Tienes alguna duda?&nbsp;</p><p id="subjectp" contenteditable="True" style="display: inline-block;">Pregunta...</p>
+              <p style="display: inline-block;">¿Tienes alguna duda?&nbsp;</p><p id="subjectp" contenteditable="True" style="display: inline-block;">Pregunta...</p>
             	<form action="/newpost" method="post">
             		<input type="hidden" name="subject" id="subject" value="Pregunta...">
             		<input type="text" placeholder="Que quieres saber?" name="content" style="width: 80%">
@@ -239,10 +239,6 @@
  	    {%endif%}
  		 </div>
 {%endif%}
-<footer class="container-fluid text-center">
-  <p>Hola que ase</p>
-</footer>
-
   <script src="/js/jquery.js"></script>
   <script src="/js/javascript.js"></script>
 </body>
