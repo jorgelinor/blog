@@ -345,8 +345,6 @@ ul, ol {
 	height: 136px;
 }
 
-/* Hora de empezar la responsividad*/
-
 @media (max-width: 768px){
 .post-content {margin-bottom: 150px}
 }

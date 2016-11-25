@@ -2,8 +2,20 @@
   cursor: crosshair;
   text-decoration: none;
 }
+
 a{
   color:inherit;
+}
+@media screen and (max-width: 768px){
+  #marioGG {
+    display:none;
+  }
+  .ninja {
+    display:none;
+  }
+  .character {
+    display:none;
+  }
 }
 canvas {
   margin:0 auto;
