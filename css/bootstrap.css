@@ -108,7 +108,7 @@ samp {
   font-family: monospace, monospace;
   font-size: 1em;
 }
-button,
+/*button,*/
 input,
 optgroup,
 select,
@@ -117,7 +117,7 @@ textarea {
   font: inherit;
   color: inherit;
 }
-button {
+/*button {
   overflow: visible;
 }
 button,
@@ -139,7 +139,7 @@ button::-moz-focus-inner,
 input::-moz-focus-inner {
   padding: 0;
   border: 0;
-}
+}*/
 input {
   line-height: normal;
 }

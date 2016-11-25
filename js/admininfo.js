@@ -1,6 +1,3 @@
-
-
-
 // informacion sometida por los usuarios
 $("#asd").click(function() {
     console.log("asdfasdfsaf");
@@ -60,6 +57,9 @@ $("#modificacion").click(function() {
         console.log("error");
     });   
 });
+
+
+
 $("#administracion_user").click(function() {
     $.ajax({
         url: '/admin/Admin_info',
@@ -89,6 +89,8 @@ $("#administracion_user").click(function() {
     
    
 });
+
+
 // $("#administracion_post").click(function() {
 //     $.ajax({
 //         url: '/admin/Admin_info',
@@ -105,4 +107,3 @@ $("#administracion_user").click(function() {
 //     .always(function() {
 //         console.log("complete");
 //     });
-

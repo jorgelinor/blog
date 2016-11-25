@@ -7,6 +7,9 @@ from google.appengine.ext import db
 import logging
 import hashlib
 from user import User
+from post import *
+from comment import *
+from likes import *
 import json
 
 template_dir = os.path.join(os.path.dirname(__file__),'templates')
@@ -211,3 +214,20 @@ class Stats(Handler):
                 self.render("graficos.html",pagename="Stats de la pagina", t1=animales,t2=tecnologia,t3=preguntas,t4=musica,t5=programacion,user=user,recent_msg=messages)
             else:
                 self.redirect("/")
+
+
+
+class LikiDislike(Handler):
+    def post(self):
+        user = None
+        if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
+            user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
+            option =self.request.GET.get('option')
+            self.write(json.dumps(verificaruser(self.request.cookies.get('user_id'),
+                self.request.GET.get('id_obj'),
+                option)))
+
+        else:
+                self.redirect("/")
+    
+        

@@ -9,8 +9,8 @@ from google.appengine.ext import db
 from google.appengine.api import memcache
 
 class Newpost(handler.Handler):
-    def render_front(self,title = '',post = '',error = '',user='',recent_msg=None):
-        self.render('ascii.html',user=user,title=title,post=post,error=error,pagename='Postear',recent_msg=recent_msg)
+    def render_front(self,title = '',post = '',errorS = '',errorT='',errorC='',user='',recent_msg=None):
+        self.render('ascii.html',user=user,title=title,post=post,errorS = '',errorT='',errorC='',pagename='Postear',recent_msg=recent_msg)
     def get(self):
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
@@ -23,7 +23,7 @@ class Newpost(handler.Handler):
         else:
             self.redirect('/signup')
     
-    def post(self,error=''):
+    def post(self,errorS='',errorC='',errorT=''):
         topic = self.request.get('topic')
         title = self.request.get('subject')
         post = self.request.get('content')
@@ -31,7 +31,7 @@ class Newpost(handler.Handler):
         messages = self.GetMessages(actualizar=False,persona=submitter)
         if title and post and topic:
 
-            a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,visible=True,state=False)
+            a = Post(topic= topic, title=title,post=post,submitter=submitter.user_id,modificable="False",comments=0,visible=True,state=False,likes=0,dislikes=0)
 
             a.created_str = str(a.created)
             a.created_str = a.created_str[0:16]
@@ -40,11 +40,16 @@ class Newpost(handler.Handler):
             self.redirect('/'+str(a.key().id()))
             memcache.delete('cantidad_'+self.request.get("topic"))
         else:
-            error = 'Titulo y contenido y tema requeridos'
+            if len(title)<1:
+                errorS = 'Titulo requerido'
+            if len(post)<1:
+                errorC = 'Contenido de post requerido'
+            if len(topic)<1:
+                errorT = 'Topico de post requerido'
         user = None
         if self.get_cookie_user(self.request.cookies.get('user_id'))[0]:
             user = self.get_data('user_'+self.request.cookies.get('user_id').split('|')[0],self.get_cookie_user(self.request.cookies.get('user_id'))[1])
-            self.render_front(title,post,error,user,messages)
+            self.render_front(title,post,errorS,errorC,errorT,user,messages)
         else:
             self.redirect('/signup')
             

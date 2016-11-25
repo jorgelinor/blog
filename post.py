@@ -16,6 +16,8 @@ class Post(db.Model):
 	comments = db.IntegerProperty(required=True)
 	visible = db.BooleanProperty(required=True)
 	state = db.BooleanProperty(required=False)
+	likes = db.IntegerProperty(required=False)
+	dislikes = db.IntegerProperty(required=False)
 
 
 # busca el post por topico

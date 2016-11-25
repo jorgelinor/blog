@@ -11,28 +11,31 @@
 			<br>
 			<br>
 		{%else%}
-			<h1>Manda lo que quieras</h1>
+			<h1>Publica lo que quieras</h1>
 		<form method="post">
 			<label>
 				<h4 style="margin:0px">Título</h4>
 				<input type="text" name="subject" value="{{title}}">
 			</label>
-			<br>
+			<div class='error' style="color:red" value='{{errorS}}'>{{errorS}}</div>
+			<hr>
 			<h3>Topicos o Temas del post</h3>
 			<label><input type="radio" name="topic" value="Animales">Animales</label>
 			<label><input type="radio" name="topic" value="Tecnologia">Tecnologia</label>
 			<label><input type="radio" name="topic" value="Preguntas">Preguntas</label>
 			<label><input type="radio" name="topic" value="Musica">Musica</label>
 			<label><input type="radio" name="topic" value="Programacion">Programacion</label>
-			<br>
-			<br>
-		{%endif%}
+			<div class='error' style="color:red">{{errorT}}</div>
+			<hr>
+		
 			<label>
 				<h4 style="margin:0px">Contenido</h4>
 				<textarea name="content" style="width:400px;height:150px">{{post}}</textarea>
 			</label>
-			<div class='error' style="color:red">{{error}}</div>
+			<div class='error' style="color:red">{{errorC}}</div>
 			<div><button>Enviar</button></div>
-		</form><FORM><INPUT style="float:right" Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM><br>
+			<hr>
+		{%endif%}
+		</form><FORM><INPUT style="float:right" Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
 		<hr>
 {%endblock%}

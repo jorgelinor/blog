@@ -12,6 +12,8 @@ class Comment(db.Model):
 	reported = db.BooleanProperty(required=True)
 	razon = db.ListProperty(str,required=True)
 	state= db.BooleanProperty(required=False)
+	likes = db.IntegerProperty(required=False)
+	dislikes = db.IntegerProperty(required=False)
 
 
 
@@ -30,7 +32,7 @@ def comment_report():
 			reported[str(comments[comment].key().id())]=comments[comment]
 	return reported
 
-# busca el comentario por el usuario que lo somtio
+# busca el comentario por el usuario que lo sometio
 def busqueda_comment(nombre):
 	listas={}
 	comments = memcache.get("comments_cache")

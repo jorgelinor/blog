@@ -14,10 +14,6 @@ handlers:
 - url: /img
   static_dir: img
 
-- url: /font
-  static_dir: font
-
-
 - url: /favicon\.png
   static_files: favicon.png
   upload: favicon\.png

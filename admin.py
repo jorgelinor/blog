@@ -167,9 +167,12 @@ class Admin_submit(handler.Handler):
 
         elif ins == 'post':
             modificable = self.request.get('permiso')
+            mostrar = self.request.get('show')
+            logging.error(mostrar)
             cache = buscar(id_object, 'post_cache')
-            if cache and modificable:
+            if cache and modificable or mostrar:
                 cache.modificable = modificable
+                cache.visible = (True if mostrar == "True" else False)
                 cache.state = True
                 cache.put()
                 self.redirect('/admin')

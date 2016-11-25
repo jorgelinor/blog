@@ -1,6 +1,7 @@
 {%extends 'base.html'%}
 {%block content%}
 <center>
+
 {%if post%}
 		<h2 style="margin-left:20%;margin-right:20%"><a id="post-title">{{post.title}}</a></h2>
 		<div style="max-width:500px;word-wrap:break-word"><pre>{{post.post}}</pre></div>
@@ -9,8 +10,19 @@
 		{%else%}
 			<label style="float:left">Enviado por: <a id="post-submitter-deleted">{{post.submitter.split("|")[0]}}</a></label>
 		{%endif%}
-		<label style="float:right">{{post.created_str}}</label><br>
+		<label style="float:right">{{post.created_str}}</label>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<div class="container" id='{{post.key().id()}}'> 
+		    <a class="like"><i class="fa fa-thumbs-o-up"></i>  
+		        Like <input class="qty1" name="qty1" readonly="readonly" type="text" value="{{post.like}}" />
+		    </a>
+		    <a class="dislike"><i class="fa fa-thumbs-o-down"></i> 
+		        Dislike <input class="qty2"  name="qty2" readonly="readonly" type="int" value="{{post.dislike}}" />
+		    </a>
+		</div>
+		<br>
 		<button><a class="button" href="/{{post.key().id()}}?action=newcomment">Deja tu comentario</a></button>
+
 		{%if post.submitter == 'ti'%}
 			{%if post.modificable == 'pending'%}
 				<b style="color: red;float:right">Tu peticion esta en proceso</b>
@@ -23,6 +35,15 @@
 			{%for comment in comments%}
 				<div class="post-comment">
 					<div id="post-comment-title">{{comment.title}}: </div><div id="post-comment-content"> {{comment.content}}<div id="comment-content-full">{{comment.content}}</div></div>
+					<div class="container" id ="{{comment.key().id()}}"> 
+					    <a class="like"><i class="fa fa-thumbs-o-up"></i>  
+					        Like <input class="qty1" name="qty1" readonly="readonly" type="text" value="" />
+					        {{comment.like}}
+					    </a>
+					    <a class="dislike"><i class="fa fa-thumbs-o-down"></i> 
+					        Dislike <input class="qty2"  name="qty2" readonly="readonly" type="text" value="" />{{comment.dislike}}
+					    </a>
+					</div>
 					<div>{{comment.created_str}}</div>
 					<br>
 					{%if comment.submitter == 'ti'%}
@@ -45,6 +66,7 @@
 					<form method="post">
 						<textarea id="comment" name="content">{{comment.content}}</textarea>
 						<button type="submit">Guardar comentario</button><FORM><INPUT Type="button" VALUE="Volver" onClick="history.go(-1);return true;"></FORM>
+
 					</form>
 				</div>
 				<div style="display:none" id="hidden-report-{{comment.key().id()}}">
@@ -79,6 +101,53 @@
 				$("#hidden-report-"+"{{comment.key().id()}}").css("display","block")
 			</script>
 		{%endif%}
+		<script type="text/javascript">
+		$(function () {
+			$(".like").click(function () {
+				var input = $(this).find('.qty1');
+				var id_obj = $(this).parent().attr('id');
+				$.ajax({
+					url: '/likes_dislikes',
+					type: 'GET',
+					dataType: 'json',
+					data: {'option': 'like','id_obj': id_obj},
+				})
+				.done(function(data) {
+					if (data) {
+						input.val(input.val() + 1);
+						$(this).next('input: first-child').val()-1;
+					}
+					else {input.val(input.val() + 1);}
+					console.log("success");
+				})
+				.fail(function() {
+					console.log("error");
+				});
+
+			});
+     		$(".dislike").click(function () {
+         		var input = $(this).find('.qty2');
+         		var id_obj = $(this).parent().attr('id')
+         		$.ajax({
+					url: '/likes_dislikes',
+					type: 'GET',
+					dataType: 'json',
+					data: {'option': 'dislike','id_obj': id_obj},
+				})
+				.done(function(data) {
+					if (data) {
+						input.val(input.val() + 1);
+						$(this).sibling().children().val()-1;
+					}
+					else {input.val(input.val() + 1);}
+					console.log("success");
+				})
+				.fail(function() {
+					console.log("error");
+				});
+     		});
+  		});
+		</script>
 
 <br>
 {%endif%}

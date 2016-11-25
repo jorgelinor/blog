@@ -41,5 +41,6 @@ app = webapp2.WSGIApplication([
     ('/_stats', handler.Stats),
     ('/search', search.Search),
     ('/upload_photo', profile.PhotoUploadHandler),
-    ('/view_photo/([^/]+)?', profile.ViewPhotoHandler)
+    ('/view_photo/([^/]+)?', profile.ViewPhotoHandler),
+    ('/likes_dislikes', handler.LikiDislike)
 ], debug=True)
